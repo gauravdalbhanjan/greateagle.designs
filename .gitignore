@@ -1,0 +1,25 @@
+# HTTrack cache files
+hts-cache/
+hts-log.txt
+cookies.txt
+backblue.gif
+fade.gif
+
+# Video segments (too large for GitHub)
+images/*.ts
+images/*.m3u8
+images/videokey-*
+
+# CDN mirrors (not needed, loaded from Squarespace CDN)
+images.squarespace-cdn.com/
+static1.squarespace.com/
+platform.twitter.com/
+www.exploretock.com/
+definitions.sqspcdn.com/
+
+# Vercel
+.vercel
+
+# OS
+.DS_Store
+Thumbs.db

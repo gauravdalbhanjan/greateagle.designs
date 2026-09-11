@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gaurav Dalbhanjan Designs</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #fff;
+      color: #4d4d4d;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 3rem;
+      border-bottom: 1px solid #e8e8e8;
+    }
+
+    .logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: #1a1a1a;
+      text-decoration: none;
+    }
+
+    nav {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+      align-items: center;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #4d4d4d;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      transition: color 0.2s;
+    }
+
+    nav a:hover { color: #ff5500; }
+
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 5rem 2rem 3rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      color: #1a1a1a;
+      line-height: 1.15;
+      max-width: 700px;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: #666;
+      max-width: 520px;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.8rem 2rem;
+      border-radius: 2px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #ff5500;
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: #e04a00; }
+
+    .btn-secondary {
+      background: transparent;
+      color: #1a1a1a;
+      border: 1.5px solid #1a1a1a;
+    }
+
+    .btn-secondary:hover { background: #1a1a1a; color: #fff; }
+
+    /* Pages grid */
+    .pages-section {
+      padding: 4rem 3rem;
+      background: #f7f7f7;
+    }
+
+    .pages-section h2 {
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .pages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .page-card {
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 4px;
+      padding: 1.5rem 1.75rem;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+
+    .page-card:hover {
+      border-color: #ff5500;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    .page-card .tag {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #ff5500;
+      font-weight: 600;
+    }
+
+    .page-card .title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .page-card .desc {
+      font-size: 0.8rem;
+      color: #888;
+      line-height: 1.5;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.8rem;
+      color: #bbb;
+      border-top: 1px solid #e8e8e8;
+    }
+
+    @media (max-width: 600px) {
+      header { padding: 1rem 1.5rem; flex-wrap: wrap; gap: 1rem; }
+      .pages-section { padding: 3rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a class="logo" href="greateagledesigns.squarespace.com/index.html">Gaurav Dalbhanjan</a>
+    <nav>
+      <a href="greateagledesigns.squarespace.com/index.html">Home</a>
+      <a href="greateagledesigns.squarespace.com/portfolio-1/project-one-f5w4d-er9cr.html">Work</a>
+      <a href="greateagledesigns.squarespace.com/blog.html">Blog</a>
+      <a href="greateagledesigns.squarespace.com/home.html">About</a>
+      <a href="greateagledesigns.squarespace.com/contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Creative Designer &amp; UX Problem Solver</h1>
+    <p>Hey, I'm Gaurav — a multidisciplinary product designer who dives deep to make insightful decisions that create business value and customer loyalty.</p>
+    <div class="btn-group">
+      <a class="btn btn-primary" href="greateagledesigns.squarespace.com/index.html">View Portfolio</a>
+      <a class="btn btn-secondary" href="greateagledesigns.squarespace.com/contact.html">Get in Touch</a>
+    </div>
+  </section>
+
+  <section class="pages-section">
+    <h2>All Pages</h2>
+    <div class="pages-grid">
+
+      <a class="page-card" href="greateagledesigns.squarespace.com/index.html">
+        <span class="tag">Main</span>
+        <span class="title">Home</span>
+        <span class="desc">Portfolio homepage with all case studies</span>
+      </a>
+
+      <a class="page-card" href="greateagledesigns.squarespace.com/home.html">
+        <span class="tag">About</span>
+        <span class="title">About Gaurav</span>
+        <span class="desc">Background, philosophy, and approach</span>
+      </a>
+
+      <a class="page-card" href="greateagledesigns.squarespace.com/contact.html">
+        <span class="tag">Contact</span>
+        <span class="title">Get in Touch</span>
+        <span class="desc">Reach out for collaborations or inquiries</span>
+      </a>
+
+      <a class="page-card" href="greateagledesigns.squarespace.com/blog.html">
+        <span class="tag">Blog</span>
+        <span class="title">Blog</span>
+        <span class="desc">Articles and design thoughts</span>
+      </a>
+
+      <a class="page-card" href="greateagledesigns.squarespace.com/portfolio-1/project-one-f5w4d-er9cr.html">
+        <span class="tag">Case Study</span>
+        <span class="title">Financial Allocation Dashboard</span>
+        <span class="desc">Review time reduced 94% — 9.7hrs to 33min</span>
+      </a>
+
+      <a class="page-card" href="greateagledesigns.squarespace.com/portfolio-1/project-one-f5w4d-er9cr-etb9a-jjlpy.html">
+        <span class="tag">Case Study</span>
+        <span class="title">Executive Product Metrics</span>
+        <span class="desc">Automated dashboard replacing manual monthly reports</span>
+      </a>
+
+      <a class="page-card" href="greateagledesigns.squarespace.com/portfolio-1/project-one-f5w4d-nphhy.html">
+        <span class="tag">Case Study</span>
+        <span class="title">AI Cooking Assistant (Sous Chef)</span>
+        <span class="desc">End-to-end product design tested with 20+ users</span>
+      </a>
+
+      <a class="page-card" href="greateagledesigns.squarespace.com/portfolio-1/project-one-f5w4d-er9cr-np7wa.html">
+        <span class="tag">Case Study</span>
+        <span class="title">Enterprise UX Design System</span>
+        <span class="desc">30–40% reduction in dev &amp; review time</span>
+      </a>
+
+      <a class="page-card" href="greateagledesigns.squarespace.com/portfolio-1/workspace-interior-design.html">
+        <span class="tag">Case Study</span>
+        <span class="title">BMW Workspace Redesign</span>
+        <span class="desc">Post-COVID collaborative innovation hub</span>
+      </a>
+
+      <a class="page-card" href="greateagledesigns.squarespace.com/portfolio-1/stance.html">
+        <span class="tag">Case Study</span>
+        <span class="title">Sustainable Origami Chair</span>
+        <span class="desc">Bio-based polycarbonate — 65% less carbon</span>
+      </a>
+
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 Gaurav Dalbhanjan Designs &nbsp;·&nbsp; greateagle.designs
+  </footer>
+
+</body>
+</html>
