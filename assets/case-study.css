@@ -1,0 +1,396 @@
+/* ══════════════════════════════════════════════════════════════
+   CASE STUDY — 14-section component system
+   Depends on site.css (design tokens)
+   ══════════════════════════════════════════════════════════════ */
+
+/* ─── Scroll progress indicator ─────────────────────────────────── */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+  background: var(--accent); z-index: 200;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 8px rgba(255,42,0,0.5);
+}
+
+/* ─── LEFT SIDEBAR (section-wise contents nav) ──────────────────── */
+:root { --tile-pad: 28px; --chip-pad: 8px 16px; }
+
+/* FLUID GLASS NAV WIDTH — the nav pill is a touch narrower on project pages
+   and wider on the home page; the width eases softly (glass length morph). */
+nav {
+  transition:
+    max-width 0.6s var(--hover-ease),
+    background 0.4s var(--ease),
+    backdrop-filter 0.4s var(--ease);
+}
+body.cs-page nav { max-width: 860px; }
+
+/* ─── PINNED SCROLLYTELLING ─────────────────────────────────────
+   .pin-track is a tall spacer; .pin-stage sticks to the viewport
+   while the track scrolls past, so internal steps advance in place.
+   Enabled only when <html> has class "pin-on" (desktop, motion-ok).
+──────────────────────────────────────────────────────────────── */
+.pin-track { position: relative; }
+.pin-stage { }
+
+html.pin-on .pin-stage {
+  position: sticky; top: 0;
+  height: 100vh;
+  display: flex; flex-direction: column; justify-content: flex-start;
+  padding: 104px 24px 72px;
+  overflow-y: auto; overflow-x: hidden;   /* safety valve — never clip content */
+  max-width: 1100px; margin: 0 auto;
+  --pin-gap: 18px;           /* single source of truth for all vertical gaps */
+  scrollbar-width: none;
+}
+html.pin-on .pin-stage::-webkit-scrollbar { display: none; }
+/* Uniform spacing: neutralise built-in margins, then apply ONE gap value
+   via margin-top on each direct child except the first. Collapsed (hidden)
+   items get 0 gap so they leave no phantom space. */
+html.pin-on .pin-stage > * { margin: 0 !important; }
+html.pin-on .pin-stage > * + * { margin-top: var(--pin-gap) !important; }
+/* Title/eyebrow anchored at the top; steps grow in the space below it */
+html.pin-on .pin-stage .cs-num,
+html.pin-on .pin-stage .cs-h2,
+html.pin-on .pin-stage .cs-lead { flex: 0 0 auto; }
+html.pin-on .pin-stage.cs-section--narrow { max-width: 780px; }
+/* Content block inside the stage stays anchored so growing steps don't jump */
+html.pin-on .pin-stage .cs-steps,
+html.pin-on .pin-stage .cs-walk,
+html.pin-on .pin-stage .cs-decisions,
+html.pin-on .pin-stage .cs-impact { align-self: stretch; }
+/* In pinned mode, every step container flows as a single column. We use
+   margin-top (not gap) between steps so collapsed/hidden steps leave no
+   phantom space and every revealed step is spaced uniformly. */
+html.pin-on .pin-stage .cs-steps,
+html.pin-on .pin-stage .cs-walk,
+html.pin-on .pin-stage .cs-decisions,
+html.pin-on .pin-stage .cs-impact {
+  display: flex; flex-direction: column; gap: 0;
+}
+html.pin-on .pin-stage .cs-steps > .pin-step.in ~ .pin-step.in,
+html.pin-on .pin-stage .cs-walk > .pin-step.in ~ .pin-step.in,
+html.pin-on .pin-stage .cs-decisions > .pin-step.in ~ .pin-step.in,
+html.pin-on .pin-stage .cs-impact > .pin-step.in ~ .pin-step.in {
+  margin-top: var(--pin-gap, 20px);
+}
+html.pin-on .pin-track {
+  /* height set inline by JS = 100vh * (steps + 1) */
+}
+
+/* Progressive step reveal.
+   FALLBACK mode (touch/small): steps just fade in, occupy normal space,
+   staggered by nth-child delay. */
+html.js-motion:not(.pin-on) .pin-step {
+  opacity: 0; transform: translateY(28px);
+  transition: opacity 0.6s var(--hover-ease), transform 0.6s var(--hover-ease);
+}
+html.js-motion:not(.pin-on) .pin-step.in { opacity: 1; transform: translateY(0); }
+html:not(.pin-on) .pin-step:nth-child(1) { transition-delay: 0ms; }
+html:not(.pin-on) .pin-step:nth-child(2) { transition-delay: 100ms; }
+html:not(.pin-on) .pin-step:nth-child(3) { transition-delay: 200ms; }
+html:not(.pin-on) .pin-step:nth-child(4) { transition-delay: 300ms; }
+html:not(.pin-on) .pin-step:nth-child(5) { transition-delay: 400ms; }
+
+/* PINNED mode: un-revealed steps take NO space (nothing below peeks through).
+   Revealed steps expand + fade/slide in. Extras (quote, before/after) stay
+   hidden until every step has revealed. */
+html.pin-on .pin-step {
+  opacity: 0;
+  transform: translateY(24px);
+  max-height: 0;
+  padding-top: 0; padding-bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.5s var(--hover-ease),
+    transform 0.5s var(--hover-ease),
+    max-height 0.55s var(--hover-ease),
+    margin 0.4s var(--hover-ease),
+    padding 0.4s var(--hover-ease);
+}
+html.pin-on .pin-step.in {
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 80vh;
+  pointer-events: auto;
+}
+/* Extras inside a pinned section (quote card, before/after) — hidden until
+   the section marks itself complete via .steps-done. Collapsed = no top gap. */
+html.pin-on section[data-pin] .cs-quote,
+html.pin-on section[data-pin] .cs-beforeafter {
+  opacity: 0; transform: translateY(20px); max-height: 0; overflow: hidden;
+  margin-top: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important;
+  pointer-events: none;
+  transition: opacity 0.5s var(--hover-ease), transform 0.5s var(--hover-ease), max-height 0.55s var(--hover-ease), margin 0.4s var(--hover-ease), padding 0.4s var(--hover-ease);
+}
+/* Once complete, extras join the uniform spacing and regain full padding. */
+html.pin-on section[data-pin].steps-done .cs-quote,
+html.pin-on section[data-pin].steps-done .cs-beforeafter {
+  opacity: 1; transform: translateY(0); max-height: 50vh; pointer-events: auto;
+  margin-top: var(--pin-gap, 20px) !important;
+  padding-top: var(--tile-pad) !important; padding-bottom: var(--tile-pad) !important;
+}
+
+/* Progress dots. Default (walkthrough panel / fallback): inline row. */
+.pin-dots { display: flex; gap: 8px; justify-content: center; margin-top: 28px; }
+html:not(.pin-on) .pin-dots { display: none; }
+.pin-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: all 0.3s var(--hover-ease); }
+.pin-dot.active { background: var(--accent); transform: scale(1.4); }
+
+/* Pinned section dots: a horizontal row aligned to the right, on the same
+   line as the section title (opposite the heading). */
+html.pin-on .pin-stage > .pin-dots {
+  position: absolute; top: 104px; right: 24px;
+  flex-direction: row; gap: 10px; margin: 0;
+  align-items: center;
+}
+html.pin-on .pin-stage .pin-dot { width: 9px; height: 9px; }
+html.pin-on .pin-stage .pin-dot.active { transform: scale(1.5); box-shadow: 0 0 10px rgba(255,42,0,0.5); }
+
+/* Shared section wrapper */
+.cs-section { max-width: 1100px; margin: 0 auto; padding: 72px 24px; }
+.cs-section--narrow { max-width: 780px; }
+.cs-num {
+  font-size: var(--fs-tertiary); font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+}
+.cs-h2 {
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700;
+  letter-spacing: -0.025em; color: var(--text-primary); line-height: 1.15; margin-bottom: 24px;
+}
+.cs-lead { font-size: var(--fs-primary); color: var(--text-secondary); line-height: 1.8; margin-bottom: 16px; }
+
+/* ─── 1. Interactive Hook — before/after comparison ─────────────── */
+.cs-hook {
+  padding: 120px 24px 60px; max-width: 1200px; margin: 0 auto; text-align: center;
+  min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+}
+.cs-hook-label { margin-bottom: 24px; }
+.compare {
+  position: relative; width: 100%; max-width: 1100px; margin: 0 auto; border-radius: 20px; overflow: hidden;
+  /* Fill most of the viewport height so there's room to read both sides */
+  height: min(64vh, 620px);
+  user-select: none; cursor: ew-resize;
+  border: 1px solid var(--border); background: var(--bg-secondary);
+}
+/* Touch needs touch-action:none only where the drag handle is used. */
+@media (hover: none), (pointer: coarse) { .compare { touch-action: none; } }
+/* On desktop the reveal follows the cursor. Keep a resize cursor so it's
+   clear the split tracks the mouse; scrolling past still works normally. */
+.compare--hover { cursor: ew-resize; }
+.compare--hover::after {
+  content: 'Move your mouse across \2192';
+  position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 5;
+  font-size: var(--fs-tertiary); font-weight: 600; letter-spacing: 0.04em; color: #fff;
+  background: rgba(0,0,0,0.55); padding: 6px 14px; border-radius: 100px;
+  backdrop-filter: blur(8px); pointer-events: none; opacity: 1; transition: opacity 0.4s var(--hover-ease);
+}
+.compare--hover:hover::after { opacity: 0; }
+.compare-pane { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; }
+.compare-pane img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+.compare-after { z-index: 1; }
+.compare-before { z-index: 2; width: 50%; border-right: 2px solid var(--accent); }
+.compare-tag {
+  position: absolute; top: 14px; z-index: 3; font-size: var(--fs-tertiary); font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 100px;
+  color: #fff; backdrop-filter: blur(8px);
+}
+.compare-tag--before { left: 14px; background: rgba(0,0,0,0.6); }
+.compare-tag--after  { right: 14px; background: rgba(255,42,0,0.85); }
+.compare-handle {
+  position: absolute; top: 0; bottom: 0; left: 50%; z-index: 4; width: 40px;
+  transform: translateX(-50%); display: flex; align-items: center; justify-content: center; cursor: ew-resize;
+}
+.compare-handle::before { content: ''; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); }
+.compare-knob {
+  width: 40px; height: 40px; border-radius: 50%; background: #fff; border: 2px solid var(--accent);
+  display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0,0,0,0.25); position: relative; z-index: 1;
+}
+.compare-knob svg { width: 20px; height: 20px; stroke: var(--accent); }
+
+/* Static side-by-side fallback */
+.compare-static { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 900px; margin: 0 auto; }
+.compare-static figure { border-radius: 16px; overflow: hidden; border: 1px solid var(--border); }
+.compare-static img { width: 100%; display: block; }
+.compare-static figcaption { font-size: var(--fs-tertiary); color: var(--text-tertiary); padding: 10px 14px; background: var(--bg-secondary); text-align: left; }
+
+/* ─── 2. Title Block ────────────────────────────────────────────── */
+.cs-title-block { max-width: 900px; margin: 0 auto; padding: 32px 24px 24px; text-align: center; }
+.cs-title-block h1 { font-size: clamp(2rem, 5.5vw, 4rem); font-weight: 700; letter-spacing: -0.035em; line-height: 1.08; color: var(--text-primary); margin-bottom: 20px; }
+.cs-title-block h1 em { font-style: normal; color: var(--accent); }
+.cs-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 16px; }
+.cs-tag { font-size: var(--fs-tertiary); font-weight: 500; color: var(--text-secondary); padding: var(--chip-pad); border-radius: 100px; border: 1px solid var(--border); background: var(--surface); }
+.cs-client { font-size: var(--fs-secondary); color: var(--text-tertiary); margin-bottom: 8px; }
+.cs-client strong { color: var(--text-primary); font-weight: 600; }
+.cs-result-claim { font-size: clamp(1.1rem, 2.2vw, 1.4rem); font-weight: 600; color: var(--accent); max-width: 640px; margin: 0 auto; line-height: 1.4; }
+
+/* ─── 3. Hero Media ─────────────────────────────────────────────── */
+.cs-hero-media { max-width: 1100px; margin: 40px auto 0; padding: 0 24px; }
+.cs-hero-media img, .cs-hero-media video { width: 100%; border-radius: 20px; display: block; border: 1px solid var(--border); }
+.cs-hero-demo { text-align: center; margin-top: 16px; }
+
+/* ─── 4. Key Metrics Band ───────────────────────────────────────── */
+.cs-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 1100px; margin: 48px auto; padding: 0 24px; }
+.cs-metric { padding: var(--tile-pad); border-radius: 18px; text-align: center; }
+.cs-metric .m-num { font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; color: var(--accent); letter-spacing: -0.03em; line-height: 1; margin-bottom: 10px; }
+.cs-metric .m-lbl { font-size: var(--fs-secondary); color: var(--text-secondary); line-height: 1.4; }
+
+/* ─── 5. Case Snapshot (reusable table) ─────────────────────────── */
+.cs-snapshot { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; }
+.cs-snap-cell { background: var(--bg); padding: 22px; }
+.cs-snap-cell .k { font-size: var(--fs-tertiary); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.cs-snap-cell .v { font-size: var(--fs-secondary); color: var(--text-secondary); line-height: 1.55; }
+
+/* ─── 7. Problem (numbered) ─────────────────────────────────────── */
+.cs-steps { list-style: none; counter-reset: step; display: flex; flex-direction: column; gap: 16px; }
+.cs-steps li { position: relative; padding-left: 56px; counter-increment: step; }
+.cs-steps li::before {
+  content: counter(step); position: absolute; left: 0; top: 0;
+  width: 36px; height: 36px; border-radius: 50%; background: var(--accent-dim);
+  border: 1px solid rgba(255,42,0,0.25); color: var(--accent);
+  font-size: var(--fs-secondary); font-weight: 700; display: flex; align-items: center; justify-content: center;
+}
+.cs-step-title { font-size: var(--fs-primary); font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+.cs-step-body { font-size: var(--fs-secondary); color: var(--text-secondary); line-height: 1.65; }
+
+/* ─── Quote card ────────────────────────────────────────────────── */
+.cs-quote { padding: var(--tile-pad); border-radius: 18px; margin: 32px 0; }
+.cs-quote { position: relative; }
+.cs-quote blockquote { font-size: 1.2rem; font-weight: 500; font-style: italic; color: var(--text-primary); line-height: 1.5; padding-left: 28px; }
+/* Single decorative quote mark, absolutely placed so it never shifts text. */
+.cs-quote blockquote::before { content: '\201C'; color: var(--accent); font-size: 2rem; line-height: 1; position: absolute; left: var(--tile-pad); top: calc(var(--tile-pad) - 6px); }
+.cs-quote cite { display: block; margin-top: 14px; margin-left: 28px; font-size: var(--fs-secondary); color: var(--text-tertiary); font-style: normal; }
+
+/* ─── 8. The Shift ──────────────────────────────────────────────── */
+.cs-shift-insight {
+  font-size: clamp(1.2rem, 2.6vw, 1.6rem); font-weight: 600; color: var(--text-primary);
+  line-height: 1.4; padding: var(--tile-pad); border-left: 3px solid var(--accent);
+  background: var(--accent-dim); border-radius: 0 16px 16px 0; margin-bottom: 28px;
+}
+.cs-shift-insight .accent { color: var(--accent); }
+.cs-beforeafter { display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center; }
+.cs-ba-card { padding: 24px; border-radius: 16px; text-align: center; border: 1px solid var(--border); }
+.cs-ba-card.before { background: var(--bg-secondary); }
+.cs-ba-card.after { background: var(--accent-dim); border-color: rgba(255,42,0,0.25); }
+.cs-ba-card .ba-lbl { font-size: var(--fs-tertiary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); margin-bottom: 10px; }
+.cs-ba-card.after .ba-lbl { color: var(--accent); }
+.cs-ba-card .ba-val { font-size: var(--fs-primary); font-weight: 600; color: var(--text-primary); line-height: 1.4; }
+.cs-ba-arrow { color: var(--accent); display: flex; align-items: center; }
+.cs-ba-arrow svg { width: 28px; height: 28px; }
+
+/* ─── 10. Solution Walkthrough — STATIC FRAME, content swaps ─────── */
+.cs-walk-stage {
+  display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 32px; align-items: stretch;
+}
+/* Fixed media window — same size for every step; image swaps inside it. */
+.cs-walk-frame {
+  position: relative; border-radius: 16px; overflow: hidden;
+  border: 1px solid var(--border); background: var(--bg-secondary);
+  aspect-ratio: 16 / 10; min-height: 320px;
+}
+.cs-walk-slide {
+  position: absolute; inset: 0; margin: 0;
+  opacity: 0; transform: scale(1.02);
+  transition: opacity 0.5s var(--hover-ease), transform 0.6s var(--hover-ease);
+  pointer-events: none;
+}
+.cs-walk-slide[data-on] { opacity: 1; transform: scale(1); pointer-events: auto; }
+.cs-walk-slide img, .cs-walk-slide video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cs-walk-ph { width: 100%; height: 100%; background: var(--bg-secondary); }
+
+/* Copy panel — active step's text; others fade out in the same spot. */
+.cs-walk-panel { position: relative; display: flex; flex-direction: column; justify-content: center; min-height: 320px; }
+.cs-walk-copy {
+  position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center;
+  opacity: 0; transform: translateY(16px); pointer-events: none;
+  transition: opacity 0.45s var(--hover-ease), transform 0.5s var(--hover-ease);
+}
+.cs-walk-copy[data-on] { opacity: 1; transform: translateY(0); pointer-events: auto; position: relative; }
+.cs-walk-copy .idx { font-size: var(--fs-tertiary); font-weight: 700; color: var(--accent); letter-spacing: 0.08em; margin-bottom: 10px; }
+.cs-walk-copy h3 { font-size: 1.4rem; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; letter-spacing: -0.02em; line-height: 1.2; }
+.cs-walk-copy p { font-size: var(--fs-primary); color: var(--text-secondary); line-height: 1.7; }
+/* Walkthrough dots: top-right of the section, on the same line as the title. */
+.cs-walk-section { position: relative; }
+.cs-walk-dots {
+  position: absolute; top: 72px; right: 24px; margin: 0;
+  display: flex; flex-direction: row; gap: 10px; justify-content: flex-end;
+}
+html.pin-on .pin-stage.cs-walk-section .cs-walk-dots { top: 104px; right: 24px; }
+/* Ensure walk dots stay visible even when global .pin-on is set. */
+html:not(.pin-on) .cs-walk-dots { display: flex; }
+@media (max-width: 860px) { .cs-walk-dots { display: none; } }
+
+@media (max-width: 860px) {
+  .cs-walk-stage { grid-template-columns: 1fr; gap: 20px; }
+  .cs-walk-panel { min-height: 0; }
+  .cs-walk-copy { position: relative; opacity: 1; transform: none; }
+  .cs-walk-copy:not([data-on]) { display: none; }
+}
+
+/* ─── 11. Design Decisions ──────────────────────────────────────── */
+.cs-decisions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.cs-decision {
+  padding: var(--tile-pad); border-radius: 18px; background: var(--bg-secondary); border: 1px solid var(--border);
+  transition: transform 0.4s var(--hover-ease), box-shadow 0.4s var(--hover-ease), border-color 0.3s var(--hover-ease);
+  will-change: transform;
+}
+.cs-decision:hover { transform: var(--hover-lift); box-shadow: var(--hover-glow); border-color: rgba(255,42,0,0.3); }
+.cs-decision h3 { font-size: var(--fs-primary); font-weight: 700; color: var(--text-primary); margin-bottom: 10px; }
+.cs-decision p { font-size: var(--fs-secondary); color: var(--text-secondary); line-height: 1.65; margin-bottom: 12px; }
+.cs-decision .why-not { font-size: var(--fs-tertiary); color: var(--text-tertiary); border-top: 1px solid var(--border); padding-top: 14px; margin-top: 4px; line-height: 1.6; }
+.cs-decision .why-not strong { color: var(--accent); font-weight: 600; }
+
+/* ─── 12. Gallery ───────────────────────────────────────────────── */
+.cs-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.cs-gallery figure {
+  border-radius: 16px; overflow: hidden; border: 1px solid var(--border); background: var(--bg-secondary);
+  transition: transform 0.4s var(--hover-ease), box-shadow 0.4s var(--hover-ease), border-color 0.3s var(--hover-ease);
+  will-change: transform;
+}
+.cs-gallery figure:hover { transform: var(--hover-lift); box-shadow: var(--hover-glow); border-color: rgba(255,42,0,0.3); }
+.cs-gallery img, .cs-gallery video { width: 100%; display: block; }
+.cs-gallery figcaption { font-size: var(--fs-tertiary); color: var(--text-tertiary); padding: 12px 16px; line-height: 1.5; }
+.cs-gallery figure.span-2 { grid-column: span 2; }
+
+/* ─── 13. Impact, segmented ─────────────────────────────────────── */
+.cs-impact { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.cs-impact-card {
+  padding: var(--tile-pad); border-radius: 18px; background: var(--bg-secondary); border: 1px solid var(--border);
+  transition: transform 0.4s var(--hover-ease), box-shadow 0.4s var(--hover-ease), border-color 0.3s var(--hover-ease);
+  will-change: transform;
+}
+.cs-impact-card:hover { transform: var(--hover-lift); box-shadow: var(--hover-glow); border-color: rgba(255,42,0,0.3); }
+.cs-impact-card .seg { font-size: var(--fs-tertiary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 14px; }
+.cs-impact-card .big { font-size: 1.75rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.03em; line-height: 1; margin-bottom: 12px; }
+.cs-impact-card p { font-size: var(--fs-secondary); color: var(--text-secondary); line-height: 1.6; }
+
+/* ─── 14. Reflection & Handoff ──────────────────────────────────── */
+.cs-principle { padding: var(--tile-pad); border-radius: 20px; margin-bottom: 32px; }
+.cs-principle .plbl { font-size: var(--fs-tertiary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 14px; }
+.cs-principle p { font-size: clamp(1.05rem, 2.2vw, 1.35rem); font-weight: 500; color: var(--text-primary); line-height: 1.5; }
+.cs-future h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 14px; }
+.cs-future ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.cs-future li { position: relative; padding-left: 24px; font-size: var(--fs-secondary); color: var(--text-secondary); line-height: 1.6; }
+.cs-future li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+
+.cs-nextnav { border-top: 1px solid var(--border); margin-top: 40px; padding-top: 40px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.cs-nextnav .np-label { font-size: var(--fs-tertiary); color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.08em; }
+.cs-nextnav a { display: inline-flex; align-items: center; gap: 10px; font-size: 1.25rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.02em; transition: gap 0.2s, color 0.2s; }
+.cs-nextnav a:hover { color: var(--accent); gap: 16px; }
+.cs-nextnav a svg { width: 20px; height: 20px; }
+
+/* ─── Responsive ────────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .cs-metrics { grid-template-columns: 1fr; }
+  .cs-snapshot { grid-template-columns: repeat(2, 1fr); }
+  .cs-decisions { grid-template-columns: 1fr; }
+  .cs-impact { grid-template-columns: 1fr; }
+  .cs-beforeafter { grid-template-columns: 1fr; }
+  .cs-ba-arrow { transform: rotate(90deg); justify-content: center; }
+  .cs-gallery figure.span-2 { grid-column: span 1; }
+}
+@media (max-width: 600px) {
+  .cs-section { padding: 56px 16px; }
+  .cs-snapshot { grid-template-columns: 1fr; }
+  .compare-static { grid-template-columns: 1fr; }
+}

@@ -20,6 +20,14 @@ definitions.sqspcdn.com/
 # Vercel
 .vercel
 
+# Dev-only inline editor server + working artifacts (not needed for deploy)
+edit-server.js
+artifacts/
+
+# Temp scratch files
+_*.txt
+_*.js
+
 # OS
 .DS_Store
 Thumbs.db
