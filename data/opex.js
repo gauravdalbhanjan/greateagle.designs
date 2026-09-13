@@ -7,9 +7,9 @@ window.CASE_STUDY = {
     label: "Before / After",
     headline: "Old multi-tab legacy lookup versus a single-screen dashboard.",
     interactive: true,
-    before: { img: "../images/frame-1437253333.png", alt: "Old Cognos multi-tab lookup flow with manual ID lookup and tab-switching" },
-    after:  { img: "../images/frame-1437253330.png", alt: "New single-screen allocation dashboard" },
-    beforeLabel: "Cognos (before)",
+    before: { img: "../assets/opex-allocation/before.gif", alt: "Old Cognos multi-tab lookup flow with manual ID lookup and tab-switching" },
+    after:  { img: "../assets/opex-allocation/after.gif", alt: "New single-screen allocation dashboard" },
+    beforeLabel: "Old design",
     afterLabel: "New dashboard"
   },
 
@@ -68,10 +68,10 @@ window.CASE_STUDY = {
   walkthrough: {
     title: "A tour of the solution",
     steps: [
-      { title: "All metadata pre-computed and surfaced", body: "No manual lookup — everything needed appears up front.", media: { img: "../images/frame-1437253330.png", alt: "Metadata surfaced without lookup" } },
-      { title: "Natural-language labels", body: "Cryptic numeric IDs replaced with natural-language labels aiding accuracy and consistency.", media: { img: "../images/frame-1437253331.png", alt: "Natural language labels replacing IDs" } },
-      { title: "Exclusions surfaced proactively", body: "Exclusions appears color-coded, inline, during review, not after.", media: { img: "../images/frame-1437253332.png", alt: "Exclusions surfaced inline" } },
-      { title: "Owner & client per line item", body: "A built-in audit trail on every line.", media: { img: "../images/frame-1437253333.png", alt: "Owner and client shown per line with audit trail" } }
+      { title: "All metadata pre-computed and surfaced", body: "No manual lookup — everything needed appears up front.", media: { img: "../assets/opex-allocation/Metadata pre-computed and surfaced.jpg", alt: "Metadata surfaced without lookup" } },
+      { title: "Natural-language labels", body: "Cryptic numeric IDs replaced with natural-language labels aiding accuracy and consistency.", media: { img: "../assets/opex-allocation/Natural-language labels.png", alt: "Natural language labels replacing IDs" } },
+      { title: "Exclusions surfaced proactively", body: "Exclusions appears color-coded, inline, during review, not after.", media: { img: "../assets/opex-allocation/Exclusions surfaced proactively.png", alt: "Exclusions surfaced inline" } },
+      { title: "Owner & client per line item", body: "A built-in audit trail on every line.", media: { img: "../assets/opex-allocation/Owner client audit trail per line.png", alt: "Owner and client shown per line with audit trail" } }
     ]
   },
 
@@ -83,11 +83,11 @@ window.CASE_STUDY = {
   ],
 
   gallery: [
-    { img: "../images/budget-planner2.gif", caption: "Redesigned dashboard &mdash; single-screen review", wide: true },
-    { img: "../images/frame-1437253330.png", caption: "Metadata pre-computed and surfaced" },
-    { img: "../images/frame-1437253331.png", caption: "Natural-language labels" },
-    { img: "../images/frame-1437253332.png", caption: "Inline exclusion surfacing" },
-    { img: "../images/frame-1437253333.png", caption: "Owner / client audit trail per line" }
+    { img: "../assets/opex-allocation/after.gif", caption: "Redesigned dashboard &mdash; single-screen review", wide: true },
+    { img: "../assets/opex-allocation/Metadata pre-computed and surfaced.jpg", caption: "Metadata pre-computed and surfaced" },
+    { img: "../assets/opex-allocation/Natural-language labels.png", caption: "Natural-language labels" },
+    { img: "../assets/opex-allocation/Exclusions surfaced proactively.png", caption: "Exclusions surfaced proactively" },
+    { img: "../assets/opex-allocation/Owner client audit trail per line.png", caption: "Owner / client audit trail per line" }
   ],
 
   impact: [

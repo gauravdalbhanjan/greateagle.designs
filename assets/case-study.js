@@ -182,8 +182,8 @@
     return '<section class="cs-section cs-walk-section" data-walk data-steps="' + n + '">' +
       '<div class="pin-dots cs-walk-dots">' + dots + '</div>' +
       '<div class="cs-num">Solution Walkthrough</div><h2 class="cs-h2">' + rich(w.title || 'A tour of the solution') + '</h2>' +
-      '<div class="cs-walk-stage">' +
-        '<div class="cs-walk-frame">' + slides + '</div>' +
+      '<div class="cs-walk-stage' + (w.portrait ? ' cs-walk-stage--portrait' : '') + '">' +
+        '<div class="cs-walk-frame' + (w.portrait ? ' cs-walk-frame--portrait' : '') + '">' + slides + '</div>' +
         '<div class="cs-walk-panel">' + copies + '</div>' +
       '</div>' +
     '</section>';
@@ -474,9 +474,8 @@
     const handle = document.getElementById('cmpHandle');
     const isTouch = (window.GED && window.GED.isTouch);
 
-    // Map an absolute cursor X to the reveal %. `relTo` is the element whose
-    // width the X is measured against (the compare box for touch drag, or the
-    // full section for desktop hover).
+    // Vertical divider shutter: BEFORE sits on the left; the mouse X sets how
+    // much of it is revealed (left → right), wiping across to expose AFTER.
     function setPos(clientX, ease, relTo) {
       const rect = (relTo || cmp).getBoundingClientRect();
       let pct = ((clientX - rect.left) / rect.width) * 100;
@@ -488,8 +487,7 @@
     }
 
     if (!isTouch) {
-      // Desktop: reveal tracks the cursor across the WHOLE hook section, so you
-      // can move the mouse anywhere on screen — not just over the image box.
+      // Desktop: reveal tracks the cursor X across the WHOLE hook section.
       const zone = cmp.closest('.cs-hook') || cmp;
       cmp.classList.add('compare--hover');
       zone.addEventListener('mousemove', e => setPos(e.clientX, false, zone));
@@ -498,7 +496,7 @@
         setPos(rect.left + rect.width / 2, true, zone);
       });
     } else {
-      // Touch: draggable handle.
+      // Touch: draggable handle (horizontal).
       let dragging = false;
       const down = e => { dragging = true; setPos((e.touches ? e.touches[0] : e).clientX, false); };
       const move = e => { if (dragging) setPos((e.touches ? e.touches[0] : e).clientX, false); };
@@ -506,7 +504,6 @@
       cmp.addEventListener('touchstart', down, { passive: true });
       window.addEventListener('touchmove', move, { passive: true });
       window.addEventListener('touchend', up);
-      // also allow mouse-drag as a fallback on hybrid devices
       cmp.addEventListener('mousedown', down);
       window.addEventListener('mousemove', move);
       window.addEventListener('mouseup', up);

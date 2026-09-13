@@ -99,6 +99,7 @@ body {
   -webkit-font-smoothing: antialiased;
   transition: background 0.4s var(--ease), color 0.4s var(--ease);
   min-height: 100vh;
+  overflow-x: hidden;
   position: relative;
 }
 

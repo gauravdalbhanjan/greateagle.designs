@@ -5,12 +5,7 @@ window.CASE_STUDY = {
 
   hook: {
     label: "The moment we designed against",
-    headline: "\u201CWish I had that ingredient\u201D mid-cook &mdash; versus knowing [[what's cookable before you start]].",
-    interactive: true,
-    before: { img: "../images/chef2.gif", alt: "User realizes a missing ingredient midway through cooking" },
-    after:  { img: "../images/chef1.gif", alt: "App shows exactly what is cookable from the pantry before starting" },
-    beforeLabel: "Missing it midway",
-    afterLabel: "Known beforehand"
+    headline: "\u201CWish I had that ingredient\u201D mid-cook &mdash; versus knowing [[what's cookable before you start]]."
   },
 
   title: {
@@ -20,7 +15,7 @@ window.CASE_STUDY = {
     result: "From recipe search to pantry-based selection &mdash; a distraction-free cooking experience, physical device shipped"
   },
 
-  hero: { img: "../images/chef3.gif", alt: "Sous Chef countertop device", demo: "https://souschef-hvj5-j04xtbdi3-gauravdalbhanjans-projects.vercel.app" },
+  hero: { img: "../assets/sous-chef/hero-shot-product.jpg", alt: "Sous Chef countertop device — hero shot", demo: "https://souschef-hvj5-j04xtbdi3-gauravdalbhanjans-projects.vercel.app" },
 
   metrics: [
     { num: "85%", label: "Successful pantry management" },
@@ -67,10 +62,13 @@ window.CASE_STUDY = {
 
   walkthrough: {
     title: "How it works?",
+    portrait: true,
     steps: [
-      { title: "Scan receipts with the app", body: "The pantry auto-populates from scanned receipts.", media: { img: "../images/budget-planner2.gif", alt: "Scan receipts to populate pantry" } },
-      { title: "Select, schedule & plan ahead", body: "Meal choices are ranked by % of ingredients, kcal and time on hand.", media: { img: "../images/chef22.gif", alt: "Select and schedule meals ranked by ingredients on hand" } },
-      { title: "Select, follow instructions, enjoy", body: "Step-by-step guidance with voice assist — the phone and notification distraction stays away.", media: { img: "../images/che43.gif", alt: "Follow step-by-step guidance with voice assist" } }
+      { title: "Inventory that keeps itself current", body: "The pantry auto-populates from scanned receipts, so you always know what you actually have.", media: { img: "../assets/sous-chef/inventory-tab.jpg", alt: "Inventory tab showing the current pantry" } },
+      { title: "A menu ranked by what you can cook now", body: "Meal choices are ranked by % of ingredients on hand, kcal, and time — the decision is made visible.", media: { img: "../assets/sous-chef/menu-tab.jpg", alt: "Menu tab ranking meals by ingredients on hand" } },
+      { title: "How the algorithm prioritizes suggestions", body: "Suggestions weigh pantry match, nutrition, and timing so the best next meal surfaces first.", media: { img: "../assets/sous-chef/how-algorithm-prioritizes-suggestions.jpg", alt: "How the suggestion algorithm prioritizes meals" } },
+      { title: "Plan the day around a routine", body: "Breakfast, noon, evening — the routine tab plans meals ahead so cooking fits your day.", media: { img: "../assets/sous-chef/routine-tab.jpg", alt: "Routine tab planning meals across the day" } },
+      { title: "Cook around your events", body: "The events tab ties meals to what's coming up — parties, guests, or a busy week — so planning matches real life.", media: { img: "../assets/sous-chef/events-tab.jpg", alt: "Events tab tying meals to upcoming events" } }
     ]
   },
 
@@ -81,10 +79,11 @@ window.CASE_STUDY = {
   ],
 
   gallery: [
-    { img: "../images/chef3.gif", caption: "Countertop device in use", wide: true },
-    { img: "../images/chef1.gif", caption: "Pantry-based meal selection" },
-    { img: "../images/chef22.gif", caption: "Schedule & plan ahead" },
-    { img: "../images/che43.gif", caption: "Step-by-step cooking guidance" }
+    { img: "../assets/sous-chef/hero-shot-product.jpg", caption: "Countertop device — hero shot", wide: true },
+    { img: "../assets/sous-chef/physical-product-ui.jpg", caption: "Physical product UI" },
+    { img: "../assets/sous-chef/physical-product-ui-1.jpg", caption: "On-device interface" },
+    { img: "../assets/sous-chef/physical-product-ui-2.jpg", caption: "On-device interface, in use" },
+    { img: "../assets/sous-chef/physical-product-prototype-making.jpg", caption: "Prototyping the physical device" }
   ],
 
   impact: [

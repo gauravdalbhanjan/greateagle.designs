@@ -5,12 +5,7 @@ window.CASE_STUDY = {
 
   hook: {
     label: "Design Principle > UI Components",
-    headline: "Dozens of disparate communication needs, rebuilt per product — versus one unified comment panel.",
-    interactive: true,
-    before: { img: "../images/frame-1437253330.png", alt: "Fragmented bespoke comment UIs across products" },
-    after:  { img: "../images/frame-1437253331.png", alt: "Single unified comment panel" },
-    beforeLabel: "Fragmented",
-    afterLabel: "Unified"
+    headline: "Dozens of disparate communication needs, rebuilt per product — versus one unified comment panel."
   },
 
   title: {
@@ -20,7 +15,7 @@ window.CASE_STUDY = {
     result: "40% reduction in cost, time, and production pace by eliminating redundant component rebuilds"
   },
 
-  hero: { img: "../images/frame-1437253332.png", alt: "The unified comment panel in use" },
+  hero: { img: "../assets/comment-panel/opening-thumbnail-design-system 1.gif", alt: "The unified comment panel in use" },
 
   metrics: [
     { num: "40%", label: "Faster production across future initiatives" },
@@ -67,10 +62,10 @@ window.CASE_STUDY = {
   walkthrough: {
     title: "A tour of the panel",
     steps: [
-      { title: "Annotate on a row", body: "Attach a comment directly to any row, in context.", media: { img: "../images/frame-1437253330.png", alt: "Annotate on a row" } },
-      { title: "Access and view the annotation", body: "Open and read the annotation, with placeholder address.", media: { img: "../images/frame-1437253331.png", alt: "View annotation with placeholder address" } },
-      { title: "Upload files for quick turnaround", body: "Attach files inline to keep feedback loops fast.", media: { img: "../images/frame-1437253332.png", alt: "Upload files component" } },
-      { title: "Delete a comment made in-thread", body: "Remove a comment cleanly within the thread.", media: { img: "../images/frame-1437253333.png", alt: "Delete a comment in-thread" } }
+      { title: "Access the comment panel", body: "Open the panel in context from any row, without leaving the view.", media: { img: "../assets/comment-panel/how-to-access-comment-panel.gif", alt: "How to access the comment panel" } },
+      { title: "Annotate or comment", body: "Attach a comment directly where the conversation belongs.", media: { img: "../assets/comment-panel/how-to-annotate-or-comment.gif", alt: "How to annotate or comment" } },
+      { title: "Upload the relevant information asked", body: "Attach files inline to keep the feedback loop fast.", media: { img: "../assets/comment-panel/upload-relevant-information-asked.gif", alt: "Uploading relevant information" } },
+      { title: "Delete a comment in-thread", body: "Remove a comment cleanly within the thread.", media: { img: "../assets/comment-panel/how-to-delete-comment.gif", alt: "How to delete a comment" } }
     ]
   },
 
@@ -81,10 +76,10 @@ window.CASE_STUDY = {
   ],
 
   gallery: [
-    { img: "../images/frame-1437253330.png", caption: "Comment panel &mdash; base variant", wide: true },
-    { img: "../images/frame-1437253331.png", caption: "Annotation view with placeholder address" },
-    { img: "../images/frame-1437253332.png", caption: "File upload component" },
-    { img: "../images/frame-1437253333.png", caption: "Support component &mdash; other complex components consolidated here" }
+    { img: "../assets/comment-panel/opening-thumbnail-design-system 1.gif", caption: "Unified comment panel", wide: true },
+    { img: "../assets/comment-panel/how-to-access-comment-panel.gif", caption: "Accessing the panel in context" },
+    { img: "../assets/comment-panel/how-to-annotate-or-comment.gif", caption: "Annotating / commenting" },
+    { img: "../assets/comment-panel/upload-relevant-information-asked.gif", caption: "Uploading requested information" }
   ],
 
   impact: [

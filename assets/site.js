@@ -198,6 +198,12 @@
     }
 
     window.addEventListener('keydown', (e) => {
+      // Never hijack keys while typing in a field or editable element,
+      // and don't scroll the page while the search overlay is open.
+      const t = e.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+      if (document.documentElement.classList.contains('ged-lock')) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
       const vh = window.innerHeight;
       const map = { PageDown: 0.9, PageUp: -0.9, ' ': 0.9, ArrowDown: 0.12, ArrowUp: -0.12 };
       if (e.key === 'Home') { e.preventDefault(); glideTo(0); }

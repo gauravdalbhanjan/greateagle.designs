@@ -11,12 +11,12 @@
   <link rel="stylesheet" href="assets/site.css" />
   <script src="assets/site.js"></script>
   <style>
-    .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 120px 24px 80px; position: relative; overflow: hidden; }
+    .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; text-align: left; padding: 120px 48px 80px; max-width: 1160px; margin: 0 auto; position: relative; overflow: hidden; }
     .hero-title { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.12; color: var(--text-primary); max-width: 880px; margin-bottom: 24px; }
     .hero-title em { font-style: normal; color: var(--accent); }
     .hero-sub { font-size: var(--fs-primary); color: var(--text-secondary); max-width: 640px; line-height: 1.75; margin-bottom: 8px; }
     /* Rotating word in the hero headline */
-    .rotator { font-style: normal; color: var(--accent); display: inline-block; min-width: 4ch; transition: opacity 0.35s var(--ease), transform 0.35s var(--ease); }
+    .rotator { font-style: normal; color: var(--accent); display: inline-block; min-width: 4ch; transition: opacity 0.2s var(--ease), transform 0.2s var(--ease); }
     .rotator.swap { opacity: 0; transform: translateY(-8px); }
     .hero-stats { display: flex; margin-top: 64px; border-radius: 20px; overflow: hidden; }
     .stat { padding: 24px 32px; text-align: center; border-right: 1px solid var(--border); }
@@ -59,16 +59,73 @@
     .card-gif img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s var(--ease); }
     .case-card:hover .card-gif img { transform: scale(1.04); }
 
-    /* Work filter tags */
-    .work-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
-    .filter-tag { font-size: var(--fs-tertiary); font-weight: 600; letter-spacing: 0.04em; color: var(--text-secondary); padding: var(--chip-pad); border-radius: 100px; border: 1px solid var(--border); background: var(--surface); }
+    /* Selected Work — pill tab filter */
+    .work-filter-bar {
+      display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap;
+      background: var(--bg-secondary); border: 1px solid var(--border);
+      border-radius: 100px; padding: 6px; margin-bottom: 40px;
+    }
+    .work-filter {
+      background: none; border: 0; cursor: pointer; font-family: inherit;
+      font-size: 14px; font-weight: 600; color: var(--text-secondary);
+      padding: 9px 22px; border-radius: 100px; transition: color 0.2s, background 0.2s; white-space: nowrap;
+    }
+    .work-filter:hover { color: var(--text-primary); }
+    .work-filter.active { color: var(--text-primary); background: var(--surface-hover); box-shadow: inset 0 0 0 1px var(--border); }
+    [data-theme="dark"] .work-filter.active { background: rgba(255,255,255,0.08); }
+
+    /* Project cards — one below another, rich preview design.
+       Capped at 1000px so windows never exceed that width. */
+    .work-list { display: flex; flex-direction: column; gap: 28px; max-width: 800px; margin: 0 auto; }
+    .wp-card {
+      display: block; text-decoration: none; border-radius: 22px; overflow: hidden;
+      border: 1px solid var(--border); background: var(--bg-secondary);
+      box-shadow: 0 0 0 3px rgba(255,42,0,0.10);
+      transition: transform 0.4s var(--hover-ease), box-shadow 0.4s var(--hover-ease), border-color 0.3s;
+      animation: wpIn 0.5s var(--ease) both;
+    }
+    .wp-card:hover { transform: translateY(-4px); box-shadow: 0 0 0 3px rgba(255,42,0,0.35), var(--hover-glow); }
+    @keyframes wpIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+    /* 8px padding around the visual, 8px radius. Full GIF shown — no cropping;
+       image scales to the (max 1000px) card width at its natural aspect. */
+    .wp-media { width: 100%; padding: 8px; }
+    .wp-media-inner { width: 100%; overflow: hidden; border-radius: 8px; background: #0d0605; }
+    .wp-media img { width: 100%; height: auto; display: block; transition: transform 0.6s var(--ease); }
+    .wp-card:hover .wp-media img { transform: scale(1.02); }
+
+    /* Small-card row (BMW / Origami / Blog) — 3 equal columns */
+    .wp-small-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .wp-card--sm { display: flex; flex-direction: column; }
+    .wp-card--sm .wp-media-inner { aspect-ratio: 3 / 4; }
+    .wp-card--sm .wp-media img { height: 100%; object-fit: cover; object-position: center; }
+    .wp-card--sm .wp-body { padding: 4px 18px 20px; }
+    .wp-card--sm .wp-title { font-size: 1.15rem; }
+    /* Blog promo card — solid accent, centered */
+    .wp-card--blog { background: var(--accent); border-color: transparent; box-shadow: 0 0 0 3px rgba(255,42,0,0.18); }
+    .wp-blog-inner { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; padding: 40px 24px; }
+    .wp-blog-inner .wp-blog-emoji { font-size: 2rem; }
+    .wp-blog-inner .wp-blog-tag { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: #fff; background: rgba(255,255,255,0.18); padding: 5px 14px; border-radius: 100px; }
+    .wp-blog-inner h3 { color: #fff; font-size: 1.15rem; font-weight: 700; margin: 4px 0 0; }
+    .wp-blog-inner p { color: rgba(255,255,255,0.85); font-size: 14px; margin: 0; }
+    @media (max-width: 760px) { .wp-small-row { grid-template-columns: 1fr; } }
+    .wp-body { padding: 22px 26px 26px; }
+    .wp-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .wp-title { font-size: clamp(1.15rem, 2vw, 1.5rem); font-weight: 700; letter-spacing: -0.02em; color: var(--text-primary); line-height: 1.25; }
+    .wp-cats { font-size: 14px; color: var(--text-tertiary); font-weight: 500; white-space: nowrap; padding-top: 4px; }
+    .wp-results { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+    .wp-chip {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 14px; font-weight: 600; color: #fff; background: #8f2114;
+      padding: 9px 16px; border-radius: 100px; border: 1px solid rgba(255,120,90,0.25);
+    }
+    .wp-empty { color: var(--text-tertiary); font-size: 15px; padding: 40px 0; text-align: center; }
 
     /* What I Do — the full loop (pinned scrollytelling, one-by-one reveal) */
     .loop { position: relative; max-width: 1180px; margin: 0 auto; padding: 96px 24px; }
     .loop-wrap { display: grid; grid-template-columns: 0.9fr 2fr; gap: 48px; align-items: start; }
 
     /* Giant faded background word */
-    .loop-ghost { position: absolute; left: 0; bottom: 4%; font-size: clamp(9rem, 26vw, 22rem); font-weight: 700; letter-spacing: -0.04em; line-height: 0.8; color: var(--text-primary); opacity: 0.04; pointer-events: none; user-select: none; z-index: 0; white-space: nowrap; }
+    .loop-ghost { position: absolute; left: 50%; bottom: 4%; transform: translateX(-50%) scale(var(--ghost-scale, 0.55)); transform-origin: center bottom; font-size: clamp(9rem, 26vw, 22rem); font-weight: 700; letter-spacing: -0.04em; line-height: 0.8; color: var(--text-primary); opacity: 0.04; pointer-events: none; user-select: none; z-index: 0; white-space: nowrap; text-align: center; will-change: transform; transition: transform 0.15s linear; }
 
     /* Drifting ambient dots */
     .loop-dot { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: var(--text-primary); opacity: 0.28; z-index: 1; animation: loopDrift 9s ease-in-out infinite; }
@@ -97,7 +154,7 @@
 
     /* How I Work — pinned one-by-one reveal (mirrors the full loop) */
     .flow { position: relative; max-width: 1180px; margin: 0 auto; padding: 96px 24px; }
-    .flow-ghost { position: absolute; right: 0; bottom: 4%; font-size: clamp(9rem, 26vw, 22rem); font-weight: 700; letter-spacing: -0.04em; line-height: 0.8; color: var(--text-primary); opacity: 0.04; pointer-events: none; user-select: none; z-index: 0; white-space: nowrap; }
+    .flow-ghost { position: absolute; left: 50%; bottom: 4%; transform: translateX(-50%) scale(var(--ghost-scale, 0.55)); transform-origin: center bottom; font-size: clamp(9rem, 26vw, 22rem); font-weight: 700; letter-spacing: -0.04em; line-height: 0.8; color: var(--text-primary); opacity: 0.04; pointer-events: none; user-select: none; z-index: 0; white-space: nowrap; text-align: center; will-change: transform; transition: transform 0.15s linear; }
     .flow-dot { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: var(--text-primary); opacity: 0.28; z-index: 1; animation: loopDrift 9s ease-in-out infinite; }
     .flow-dot.accent { background: var(--accent); opacity: 0.55; box-shadow: 0 0 10px rgba(255,42,0,0.6); }
     .flow-wrap { display: grid; grid-template-columns: 0.9fr 2fr; gap: 48px; align-items: start; }
@@ -141,8 +198,35 @@
 
     /* About teaser */
     .about-strip { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 40px; align-items: center; max-width: 1100px; margin: 0 auto; padding: 96px 24px; }
-    .about-photo { aspect-ratio: 1; border-radius: 24px; background: var(--bg-secondary); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; }
-    .about-photo .mono { font-size: 4rem; font-weight: 700; color: var(--accent); letter-spacing: -0.04em; }
+    /* Outside-the-work stacked auto-cycling photo carousel */
+    .about-stack { position: relative; aspect-ratio: 4 / 5; border-radius: 20px; overflow: visible; }
+    .about-stack .as-img {
+      position: absolute; inset: 0; border-radius: 16px; overflow: hidden;
+      background: #0d0605; will-change: transform, opacity, filter;
+      transition: transform 0.9s var(--ease), opacity 0.9s var(--ease), filter 0.9s var(--ease);
+    }
+    .about-stack .as-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    /* Ambient glow border, colour set per-image via --glow */
+    .about-stack .as-img.top {
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.12),
+                  0 0 34px 2px var(--glow, rgba(255,42,0,0.5)),
+                  0 18px 50px rgba(0,0,0,0.5);
+    }
+    /* fading-out state: the top image dissolves before dropping to the back */
+    .about-stack .as-img.leaving { opacity: 0; transform: translateX(-6%) scale(0.98); }
+    /* Subtle glass prev/next arrows, sitting over the front image bottom */
+    .about-stack .as-nav {
+      position: absolute; bottom: 14px; z-index: 999; width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.22);
+      color: #fff; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      opacity: 0.55; transition: opacity 0.25s, background 0.25s, transform 0.25s;
+    }
+    .about-stack:hover .as-nav { opacity: 1; }
+    .about-stack .as-nav:hover { background: rgba(255,255,255,0.22); transform: scale(1.08); }
+    .about-stack .as-nav svg { width: 16px; height: 16px; }
+    .about-stack .as-prev { left: 14px; }
+    .about-stack .as-next { right: 14px; }
     .about-text h2 { font-size: clamp(1.5rem, 3vw, 2.25rem); font-weight: 700; letter-spacing: -0.025em; color: var(--text-primary); line-height: 1.2; margin-bottom: 20px; }
     .about-text p { font-size: var(--fs-primary); color: var(--text-secondary); line-height: 1.8; margin-bottom: 20px; }
     .about-worked { margin-bottom: 24px; }
@@ -172,8 +256,14 @@
     .tstm-cite { font-size: var(--fs-tertiary); font-style: italic; color: var(--text-tertiary); margin-top: auto; }
     @media (prefers-reduced-motion: reduce) { .tstm-track.ltr, .tstm-track.rtl { animation: none; flex-wrap: wrap; } }
 
-    /* Contact CTA */
-    .contact-cta { max-width: 800px; margin: 0 auto; padding: 96px 24px; text-align: center; }
+    /* Contact CTA — overflow visible so the 'the tenacity.' ghost shows fully */
+    .contact-cta { max-width: 800px; margin: 0 auto; padding: 120px 24px; text-align: center; position: relative; overflow: visible; }
+    .cta-ghost {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%) scale(var(--ghost-scale, 0.55));
+      transform-origin: center; font-size: clamp(9rem, 26vw, 22rem); font-weight: 700; letter-spacing: -0.04em;
+      line-height: 0.8; color: var(--text-primary); opacity: 0.05; pointer-events: none; user-select: none;
+      z-index: 0; white-space: nowrap; text-align: center; will-change: transform; transition: transform 0.15s linear;
+    }
     .contact-cta h2 { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 700; letter-spacing: -0.03em; color: var(--text-primary); line-height: 1.15; margin-bottom: 20px; }
     .contact-cta .close-line { font-size: var(--fs-primary); color: var(--text-secondary); line-height: 1.7; max-width: 560px; margin: 0 auto 36px; }
     .contact-email { font-size: clamp(1.2rem, 3vw, 1.8rem); font-weight: 600; color: var(--accent); letter-spacing: -0.02em; transition: opacity 0.2s; display: inline-block; margin-bottom: 8px; }
@@ -186,13 +276,15 @@
     .ci-val a { color: var(--text-secondary); transition: color 0.2s; }
     .ci-val a:hover { color: var(--accent); }
     @media (max-width: 700px) { .contact-info { grid-template-columns: 1fr 1fr; text-align: center; } .ci-item { align-items: center; } }
+    .footer-cols--4 .footer-col a, .footer-cols--4 .footer-col li { word-break: break-word; }
     /* Footer legal / copyright */
     .footer-legal { max-width: 900px; line-height: 1.7; }
     .footer-legal a { color: var(--accent); }
 
     /* Footer expanded */
-    footer { border-top: 1px solid var(--border); padding: 56px 24px 40px; max-width: 1100px; margin: 0 auto; }
+    footer { border-top: 1px solid var(--border); padding: 56px 24px 40px; max-width: 1200px; margin: 0 auto; }
     .footer-cols { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 32px; margin-bottom: 40px; }
+    .footer-cols.footer-cols--4 { grid-template-columns: repeat(4, 1fr); gap: 24px; align-items: start; }
     .footer-col h4 { font-size: var(--fs-tertiary); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 16px; }
     .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
     .footer-col a { font-size: var(--fs-secondary); color: var(--text-secondary); transition: color 0.2s; }
@@ -201,6 +293,8 @@
     .footer-brand .footer-logo span { color: var(--accent); }
     .footer-status { font-size: var(--fs-secondary); color: var(--text-secondary); display: flex; align-items: center; gap: 8px; }
     .footer-status .dot { width: 8px; height: 8px; border-radius: 50%; background: #21c063; box-shadow: 0 0 8px rgba(33,192,99,0.6); }
+    .footer-resume { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: var(--fs-secondary); font-weight: 600; color: var(--accent); border: 1px solid rgba(255,42,0,0.35); background: var(--accent-dim); padding: 7px 16px; border-radius: 100px; transition: background 0.2s, transform 0.2s; }
+    .footer-resume:hover { background: rgba(255,42,0,0.18); transform: translateY(-1px); }
     .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
     .footer-copy { font-size: var(--fs-tertiary); color: var(--text-tertiary); }
 
@@ -216,11 +310,240 @@
       
       .hero-stats { flex-wrap: wrap; }
       .stat { flex: 1 1 140px; }
-      .footer-cols { grid-template-columns: 1fr; gap: 28px; }
+      .footer-cols, .footer-cols.footer-cols--4 { grid-template-columns: 1fr 1fr; gap: 28px; }
     }
     @media (max-width: 600px) {
       .hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); }
       .stat { background: var(--bg); }
+    }
+
+    /* ═══════════════ NEW STICKY GLASS HEADER ═══════════════ */
+    .ged-header {
+      position: fixed; top: 16px; right: 24px; left: auto; z-index: 200;
+      height: 52px; border-radius: 100px; padding: 6px 6px 6px 8px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    /* Glass bubble around the logo */
+    .ged-logo-bubble {
+      width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.18), rgba(255,255,255,0.02) 60%), rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.35);
+    }
+    .ged-logo { width: 24px; height: 27px; object-fit: contain; }
+    .ged-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .ged-name { font-size: 16px; font-weight: 500; letter-spacing: -0.01em; color: var(--text-primary); white-space: nowrap; }
+    .ged-name span { color: var(--accent); }
+    .ged-search-btn {
+      background: var(--accent); color: #fff; border: 0; cursor: pointer;
+      font-size: 14px; font-weight: 600; padding: 9px 24px; border-radius: 100px;
+      box-shadow: 0 4px 18px rgba(255,42,0,0.35); transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .ged-search-btn:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 8px 26px rgba(255,42,0,0.45); }
+
+    /* Reusable hover tooltip */
+    .ged-tip { position: relative; }
+    .ged-tip::after {
+      content: attr(data-tip); position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+      white-space: nowrap; background: #111; color: #fff; font-size: 11px; font-weight: 500;
+      padding: 5px 9px; border-radius: 6px; opacity: 0; pointer-events: none;
+      transition: opacity 0.2s; z-index: 320;
+    }
+    .ged-tip:hover::after { opacity: 1; }
+    .ged-tip--left::after { left: auto; right: 0; transform: none; }
+
+    /* ═══════════════ OVERLAY ═══════════════ */
+    /* Lock the page WITHOUT losing scroll position: body is pinned in place
+       (JS sets body.top = -scrollY) so the page can't scroll and doesn't jump. */
+    html.ged-lock { overflow: hidden; }
+    body.ged-lock { position: fixed; left: 0; right: 0; width: 100%; overflow: hidden; touch-action: none; }
+    .ged-overlay { position: fixed; inset: 0; z-index: 300; display: none; overscroll-behavior: contain; }
+    .ged-overlay.open { display: block; }
+    .ged-backdrop {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      opacity: 0; transition: opacity 0.3s var(--ease);
+    }
+    .ged-overlay.open .ged-backdrop { opacity: 1; }
+    /* Panel fills the whole screen. Two-phase open, quick (<1s total):
+       phase 1 = scaleX (horizontal extend from the search pill),
+       phase 2 = scaleY (vertical extend to reveal content). */
+    /* Panel morph: the glass bar grows WIDTH first, then HEIGHT.
+       Using width/height (not scale) keeps the search row crisp/readable. */
+    /* Panel keeps the SAME margins as the compact search pill
+       (top:16px, right:24px) on all sides — never flush to the edges. */
+    /* ONE glass surface (like the search pill). Header row is fixed; only
+       the body scrolls. Same 16/24px padding as the compact pill. */
+    .ged-panel {
+      position: fixed; top: 16px; right: 24px; left: auto;
+      width: 360px; height: auto; max-height: 52px; max-width: calc(100vw - 48px);
+      border-radius: 26px; padding: 6px 6px 6px 8px; overflow: hidden;
+      display: flex; flex-direction: column;
+      opacity: 0; transition: opacity 0.15s linear;
+    }
+    /* phase 1: extend to full WIDTH (bar stays short), keeping side margins */
+    .ged-overlay.open .ged-panel {
+      opacity: 1; width: calc(100vw - 48px); max-height: 52px;
+      transition: width 0.6s cubic-bezier(0.22,1,0.36,1), opacity 0.12s linear;
+    }
+    /* phase 2 (.expand): grow to fit content (hug), capped at the viewport */
+    .ged-overlay.open .ged-panel.expand {
+      max-height: calc(100vh - 32px);
+      transition: max-height 0.6s cubic-bezier(0.22,1,0.36,1);
+    }
+    .ged-panel .ged-panel-body { opacity: 0; transition: opacity 0.4s var(--ease); }
+    .ged-panel.expand .ged-panel-body { opacity: 1; }
+    /* Fixed header row (does NOT scroll) — no own background (single glass) */
+    .ged-panel-top {
+      display: flex; align-items: center; gap: 12px; flex-shrink: 0; height: 40px;
+    }
+    .ged-brand--panel { flex-shrink: 0; }
+
+    /* Search field — solid red border idle, rainbow when AI-on */
+    .ged-search-wrap {
+      position: relative; flex: 1; display: flex; align-items: center; min-width: 0;
+      height: 38px; border-radius: 100px; background: rgba(255,255,255,0.05);
+      border: 1px solid var(--accent); padding: 0;
+    }
+    .ged-search-wrap::before {
+      content: ''; position: absolute; inset: -1px; border-radius: 100px; padding: 1px;
+      background: linear-gradient(90deg, #ff2a00, #ffb300, #38d200, #00c6ff, #b400ff, #ff2a00);
+      background-size: 300% 100%;
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      animation: gedWave 5s linear infinite; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+    }
+    /* AI ON → the field border lights up rainbow */
+    .ged-search-wrap.ai-on { border-color: transparent; }
+    .ged-search-wrap.ai-on::before { opacity: 1; animation: gedWave 2.6s linear infinite; }
+    @keyframes gedWave { from { background-position: 0% 50%; } to { background-position: 300% 50%; } }
+    .ged-search-input {
+      flex: 1; background: transparent; color: var(--text-primary); border: 0; outline: none;
+      font-size: 14px; font-weight: 500; font-family: inherit; padding: 0 84px 0 18px; height: 100%; min-width: 0;
+    }
+    .ged-search-input::placeholder { color: rgba(255,255,255,0.5); }
+    [data-theme="light"] .ged-search-input::placeholder { color: rgba(0,0,0,0.4); }
+    /* Zap: colored (rainbow) by default; greys out when AI is ON. Never rotates. */
+    .ged-zap {
+      position: absolute; right: 46px; width: 28px; height: 28px; border-radius: 50%;
+      border: 0; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      background: conic-gradient(from 0deg, #ff2a00, #ffb300, #38d200, #00c6ff, #b400ff, #ff2a00);
+      color: #fff; transition: background 0.3s, color 0.3s, filter 0.3s;
+    }
+    .ged-zap svg { width: 15px; height: 15px; }
+    .ged-zap:hover { filter: brightness(1.1); }
+    .ged-search-wrap.ai-on .ged-zap { background: rgba(150,150,150,0.35); color: var(--text-secondary); }
+    .ged-zap::after {
+      content: attr(data-tip); position: absolute; top: calc(100% + 8px); right: 0; white-space: nowrap;
+      background: #111; color: #fff; font-size: 11px; font-weight: 500; padding: 5px 9px; border-radius: 6px;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 5;
+    }
+    .ged-zap:hover::after { opacity: 1; }
+    .ged-close-x {
+      position: absolute; right: 4px; width: 30px; height: 30px; border-radius: 50%;
+      background: var(--accent); color: #fff; border: 0; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+    }
+    .ged-close-x:hover { background: var(--accent-hover); }
+    .ged-close-x svg { width: 15px; height: 15px; transition: transform 0.3s var(--ease); }
+    .ged-close-x:hover svg { transform: rotate(90deg); }
+
+    /* Nav — sticky column on the right; right edge aligns with the header
+       buttons. Lives in the scrolling body and stays pinned while cards move. */
+    .ged-sidenav {
+      position: sticky; top: 0; width: 90px;
+      display: flex; flex-direction: column; align-items: flex-end; gap: 10px; text-align: right;
+    }
+    .ged-nav-item {
+      background: none; border: 1px solid transparent; cursor: pointer; font-family: inherit;
+      font-size: 16px; font-weight: 500; color: var(--text-secondary);
+      padding: 6px 18px; border-radius: 100px; transition: all 0.2s; white-space: nowrap;
+    }
+    .ged-nav-item:hover { color: var(--text-primary); }
+    .ged-nav-item.active { color: var(--text-primary); border-color: var(--border); background: var(--surface); }
+    /* Body is the ONLY scroll container — the page behind must not scroll.
+       Explicit max-height (viewport - top/bottom margin - header row) so the
+       scroll region is always bounded regardless of flex height quirks. */
+    .ged-panel-body {
+      position: relative; flex: 1 1 auto; min-height: 0;
+      display: block; padding: 16px 0 8px 0;
+      overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; -ms-overflow-style: none;
+    }
+    .ged-panel-body::-webkit-scrollbar { display: none; width: 0; height: 0; background: transparent; }
+    /* Nav: sticky column on the RIGHT (below the X); content padded away so
+       cards never overlap it. Placed FIRST in the body so float works. */
+    .ged-sidenav { float: right; position: sticky; top: 0; z-index: 6; width: 100px;
+      display: flex; flex-direction: column; align-items: flex-end; gap: 10px; text-align: right; }
+    .ged-content { min-width: 0; margin-right: 116px; }
+
+    /* Result content */
+    .ged-view-label { font-size: 14px; color: var(--text-tertiary); margin: 0 0 16px; }
+    .ged-view-label em { color: var(--text-secondary); }
+    .ged-cols { display: grid; grid-template-columns: 452px 452px; gap: 24px; align-items: start; justify-content: start; }
+    .ged-col { display: flex; flex-direction: column; gap: 16px; }
+    .ged-heading { font-size: 15px; font-weight: 400; color: var(--text-tertiary); margin: 0 0 4px; }
+    .ged-card {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 16px; padding: 16px;
+      transition: transform 0.3s var(--hover-ease), box-shadow 0.3s var(--hover-ease), border-color 0.3s;
+      text-decoration: none; display: block;
+    }
+    [data-theme="light"] .ged-card { background: var(--bg-secondary); }
+    a.ged-card:hover { transform: translateY(-3px); box-shadow: var(--hover-glow); border-color: rgba(255,42,0,0.3); }
+    .ged-card h4 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px; letter-spacing: -0.01em; }
+    .ged-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.5; margin: 0 0 14px; }
+    .ged-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .ged-chip { font-size: 13px; font-weight: 600; color: #fff; background: #7d1f14; padding: 6px 13px; border-radius: 100px; }
+    .ged-line { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #fff; background: #7d1f14; border-radius: 100px; padding: 8px 15px; text-decoration: none; margin: 0 8px 8px 0; transition: transform 0.2s, background 0.2s; }
+    .ged-line:hover { background: #9a2619; transform: translateY(-1px); }
+    .ged-line svg { width: 15px; height: 15px; }
+    .ged-contact-title { font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 700; letter-spacing: -0.03em; color: var(--text-primary); margin: 0 0 20px; }
+    .ged-contact-title span { color: var(--accent); }
+    .ged-empty { color: var(--text-tertiary); font-size: 14px; padding: 20px 0; }
+    /* AI answer card */
+    .ged-answer { position: relative; border-radius: 16px; padding: 18px 20px; margin-bottom: 20px;
+      border: 1px solid transparent;
+      background-image: linear-gradient(rgba(255,255,255,0.04), rgba(255,255,255,0.04)), linear-gradient(90deg, #ff2a00, #ffb300, #38d200, #00c6ff, #b400ff, #ff2a00);
+      background-origin: border-box; background-clip: padding-box, border-box; }
+    [data-theme="light"] .ged-answer { background-image: linear-gradient(var(--bg-secondary), var(--bg-secondary)), linear-gradient(90deg, #ff2a00, #ffb300, #38d200, #00c6ff, #b400ff, #ff2a00); }
+    .ged-answer-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+    .ged-answer-badge { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; background: var(--accent); padding: 4px 10px; border-radius: 100px; }
+    .ged-answer-q { font-size: 13px; color: var(--text-tertiary); font-style: italic; }
+    .ged-answer h4 { font-size: 17px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px; letter-spacing: -0.01em; }
+    .ged-answer p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin: 0; }
+
+    /* ═══════════════ SCROLL-PINNED "DESIGNING FOR ___" ═══════════════ */
+    .work-intro { position: relative; height: 340vh; max-width: none; padding: 0; margin: 0; }
+    .work-intro-pin {
+      position: sticky; top: 0; height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 0 24px; gap: 6px;
+    }
+    .work-intro-top { font-size: clamp(1.1rem, 2vw, 1.5rem); font-weight: 700; letter-spacing: -0.01em; color: var(--text-primary); }
+    .work-intro-bottom { font-size: clamp(1.1rem, 2vw, 1.5rem); font-weight: 700; letter-spacing: -0.01em; color: var(--text-primary); margin-top: 6px; }
+    .work-swap {
+      display: block; color: var(--accent); font-weight: 800; line-height: 0.95;
+      font-size: clamp(4rem, 15vw, 11rem); letter-spacing: -0.04em;
+      transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+    }
+    .work-swap.swap { opacity: 0; transform: translateY(-14px); }
+    @media (prefers-reduced-motion: reduce) { .work-intro { height: auto; } .work-intro-pin { position: static; height: auto; padding: 96px 24px; } }
+
+    /* Content + nav share the row on wide screens; below ~1080 the fixed
+       two-column grid would overflow, so make columns fluid. */
+    @media (max-width: 1080px) {
+      .ged-cols { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+    }
+    @media (max-width: 760px) {
+      .ged-name { display: none; }
+      .ged-panel { padding: 12px 14px 20px; }
+      .ged-panel-top { gap: 8px; }
+      .ged-nav-item { font-size: 14px; padding: 4px 12px; }
+      .ged-sidenav { float: none; position: static; flex-direction: row; width: auto; margin: 0 0 12px auto; justify-content: flex-end; }
+      .ged-content { margin-right: 0; }
+      .ged-cols { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -228,29 +551,48 @@
 
 <svg id="lg-filter-svg" xmlns="http://www.w3.org/2000/svg"><defs id="lg-defs"></defs></svg>
 
-<!-- NAV -->
-<nav class="glass liquid-glass">
-  <a href="index.html" class="nav-logo">Gaurav <span>Dalbhanjan</span></a>
-  <ul class="nav-links">
-    <li><a href="#work" class="active">Work</a></li>
-    <li><a href="home/about.html">About</a></li>
-    <li><a href="home/blog.html">Blog</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-  <div class="nav-actions">
-    <a href="https://www.linkedin.com/in/gaurav-dalbhanjan/" target="_blank" rel="noopener noreferrer" class="icon-btn" aria-label="LinkedIn" title="LinkedIn">
-      <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21H19v-5.4c0-1.29-.02-2.95-1.8-2.95-1.8 0-2.08 1.4-2.08 2.85V21H9z"/></svg>
-    </a>
-    <a href="https://github.com/gauravdalbhanjan" target="_blank" rel="noopener noreferrer" class="icon-btn" aria-label="GitHub" title="GitHub">
-      <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.5 2.87 8.32 6.84 9.67.5.1.68-.22.68-.48l-.01-1.7c-2.78.62-3.37-1.37-3.37-1.37-.46-1.18-1.11-1.5-1.11-1.5-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.9 1.57 2.34 1.12 2.91.86.09-.66.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9l-.01 2.82c0 .27.18.59.69.48A10.02 10.02 0 0 0 22 12.26C22 6.58 17.52 2 12 2z"/></svg>
-    </a>
-    <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode">
-      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-    </button>
-    <a href="mailto:gaurav.dalbhanjan@gmail.com?subject=Let's%20talk" class="btn btn-primary btn-sm">Let's talk</a>
+<!-- HEADER (compact glass pill, top-right) -->
+<header class="ged-header glass liquid-glass" id="gedHeader">
+  <a href="index.html" class="ged-logo-bubble ged-tip" data-tip="Home" aria-label="Home">
+    <img src="assets/logo/greateagledesigns.png" alt="" class="ged-logo" />
+  </a>
+  <button class="icon-btn ged-header-theme ged-tip" data-tip="Switch mode" id="themeToggle" aria-label="Switch mode">
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+  </button>
+  <button class="ged-search-btn ged-tip" data-tip="Got questions?" id="gedSearchOpen" aria-label="Open search">Search</button>
+</header>
+
+<!-- SEARCH / NAV OVERLAY -->
+<div class="ged-overlay" id="gedOverlay" aria-hidden="true">
+  <div class="ged-backdrop" id="gedBackdrop"></div>
+  <div class="ged-panel glass" role="dialog" aria-modal="true" aria-label="Search and navigation">
+    <div class="ged-panel-top">
+      <a href="index.html" class="ged-brand ged-brand--panel ged-tip" data-tip="Home" aria-label="Home">
+        <span class="ged-logo-bubble"><img src="assets/logo/greateagledesigns.png" alt="" class="ged-logo" /></span>
+        <span class="ged-name">Gaurav <span>Dalbhanjan</span></span>
+      </a>
+      <div class="ged-search-wrap" id="gedSearchWrap">
+        <input type="text" class="ged-search-input" id="gedSearchInput" placeholder="Search" autocomplete="off" spellcheck="false" />
+        <button class="ged-zap" id="gedZap" aria-label="AI-powered search" data-tip="AI-powered search">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        </button>
+        <button class="ged-close-x ged-tip ged-tip--left" data-tip="Close" id="gedClose" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="ged-panel-body">
+      <nav class="ged-sidenav" id="gedSideNav">
+        <button class="ged-nav-item" data-view="work">Work</button>
+        <button class="ged-nav-item" data-view="about">About</button>
+        <button class="ged-nav-item" data-view="blog">Blog</button>
+        <button class="ged-nav-item" data-view="contact">Contact</button>
+      </nav>
+      <div class="ged-content" id="gedContent"><!-- rendered by JS --></div>
+    </div>
   </div>
-</nav>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -267,125 +609,42 @@
   </div>
 </section>
 
-<!-- WORK -->
+<!-- WORK — scroll-pinned "Designing for ___" heading -->
+<section id="workIntro" class="work-intro">
+  <div class="work-intro-pin">
+    <div class="work-intro-top">Designing for</div>
+    <div class="work-swap" id="workSwap">Customers!</div>
+    <div class="work-intro-bottom">not just aesthetics</div>
+  </div>
+</section>
+
 <section id="work">
-  <div class="section-header reveal">
+  <div class="section-header reveal" style="margin-bottom:28px;">
     <div class="section-eyebrow">Selected Work</div>
-    <h2 class="section-title">Designing for impact,<br>not just aesthetics</h2>
   </div>
-  <div class="work-filters reveal">
-    <span class="filter-tag">Systems Thinking</span>
-    <span class="filter-tag">Enterprise</span>
-    <span class="filter-tag">Product Design</span>
-    <span class="filter-tag">Industrial Design</span>
-    <span class="filter-tag">Research</span>
+  <div class="work-filter-bar reveal" id="workFilterBar" role="tablist" aria-label="Filter projects">
+    <button class="work-filter active" data-filter="all" role="tab">All</button>
+    <button class="work-filter" data-filter="fintech" role="tab">FinTech</button>
+    <button class="work-filter" data-filter="enterprise" role="tab">Enterprise</button>
+    <button class="work-filter" data-filter="dashboard" role="tab">Dashboard</button>
+    <button class="work-filter" data-filter="product" role="tab">Product Design</button>
+    <button class="work-filter" data-filter="industrial" role="tab">Industrial Design</button>
+    <button class="work-filter" data-filter="endtoend" role="tab">End to end</button>
   </div>
-  <div class="work-grid">
-    <a href="home/opex-allocation.html" class="case-card case-card--wide reveal">
-      <div class="card-gif"><img src="images/budget-planner2.gif" alt="OPEX Allocation Dashboard" loading="lazy" /></div>
-      <div class="card-inner card-inner--dark">
-        <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
-        <div class="card-body">
-          <span class="card-tag">Case Study · Amazon</span>
-          <div class="card-title">OPEX Allocation Tool Redesign</div>
-          <div class="card-desc">A verification-first dashboard that surfaces all decision-critical context on a single screen.</div>
-          <div class="card-result">&#9889; 94% faster — 9.7 hrs to 33 min</div>
-        </div>
-      </div>
-    </a>
-    <a href="home/sous-chef-device.html" class="case-card case-card--tall reveal reveal-delay-1">
-      <div class="card-gif" style="height:240px"><img src="images/chef1.gif" alt="Sous Chef" loading="lazy" /></div>
-      <div class="card-inner card-inner--accent">
-        <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
-        <div class="card-body">
-          <span class="card-tag">Product · Industrial Design</span>
-          <div class="card-title">Sous Chef — Countertop Cooking Companion</div>
-          <div class="card-desc">Track, plan, learn and manage your cooking and health goals step by step.</div>
-        </div>
-      </div>
-    </a>
-    <a href="home/executive-metrics.html" class="case-card case-card--half reveal reveal-delay-2">
-      <div class="card-gif" style="height:190px"><img src="assets/thumbnails/opening-thumbnail-dashboard.gif" alt="Executive Product Metrics Dashboard" loading="lazy" /></div>
-      <div class="card-inner card-inner--dark">
-        <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
-        <div class="card-body">
-          <span class="card-tag">Dashboard Design · Amazon</span>
-          <div class="card-title">Executive Product Metrics Dashboard</div>
-          <div class="card-result">1 month reporting → 2 second live view</div>
-        </div>
-      </div>
-    </a>
-    <a href="home/design-system-comment-panel.html" class="case-card case-card--half reveal reveal-delay-3">
-      <div class="card-gif" style="height:190px"><img src="assets/thumbnails/opening-thumbnail-design-system.gif" alt="Unified Comment Panel" loading="lazy" /></div>
-      <div class="card-inner card-inner--dark">
-        <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
-        <div class="card-body">
-          <span class="card-tag">Design System · Amazon</span>
-          <div class="card-title">Unified Comment Panel</div>
-          <div class="card-desc">Treating comments as shared infrastructure across the product suite.</div>
-          <div class="card-result">40% faster production · 72+ hrs saved</div>
-        </div>
-      </div>
-    </a>
-    <a href="home/bmw-workspace.html" class="case-card case-card--third reveal">
-      <div class="card-gif" style="height:160px"><img src="assets/thumbnails/opening-thumbnail-bmw.gif" alt="BMW Workspace Redesign" loading="lazy" /></div>
-      <div class="card-inner card-inner--dark">
-        <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
-        <div class="card-body"><span class="card-tag">Spatial Design · BMW</span><div class="card-title">BMW Workspace Redesign</div></div>
-      </div>
-    </a>
-    <a href="home/origami-chair.html" class="case-card case-card--third reveal reveal-delay-1">
-      <div class="card-gif" style="height:160px"><img src="assets/thumbnails/origami-chair-opening.gif" alt="Sustainable Origami Chair" loading="lazy" /></div>
-      <div class="card-inner card-inner--dark">
-        <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
-        <div class="card-body"><span class="card-tag">Industrial Design</span><div class="card-title">Sustainable Origami Chair</div><div class="card-result">65% less carbon footprint</div></div>
-      </div>
-    </a>
-    <a href="home/blog.html" class="case-card case-card--third reveal reveal-delay-2">
-      <div class="card-inner card-inner--accent" style="min-height: 280px; justify-content: center; align-items: center; text-align: center;">
-        <div class="card-body" style="align-items:center;">
-          <div style="font-size: 2.5rem; margin-bottom: 8px;">&#9997;</div>
-          <span class="card-tag">Blog</span>
-          <div class="card-title" style="color:#fff;">Read my thoughts</div>
-          <div class="card-desc" style="color:rgba(255,255,255,0.8); font-size: var(--fs-tertiary);">Design perspectives &amp; process notes</div>
-        </div>
-      </div>
-    </a>
-  </div>
+  <div class="work-list" id="workList"><!-- rendered by JS --></div>
 </section>
 
 <!-- COMPANIES / LOGO STRIP -->
 <div class="companies reveal">
   <div class="companies-label">Companies &amp; clients I've worked with</div>
   <div class="logo-marquee">
-    <div class="logo-track">
-      <!-- set A -->
-      <div class="logo-chip"><img src="assets/companies-logos/amazon.png" alt="Amazon" loading="lazy" /></div>
-      <div class="logo-chip"><img src="assets/companies-logos/bmw.png" alt="BMW Group" loading="lazy" /></div>
-      <div class="logo-chip"><img src="assets/companies-logos/atmospark.png" alt="AtmoSpark Technologies" loading="lazy" /></div>
-      <div class="logo-chip"><img src="assets/companies-logos/parkinson.png" alt="Parkinson Consulting" loading="lazy" /></div>
-      <div class="logo-chip"><img src="assets/companies-logos/daikin.png" alt="Daikin" loading="lazy" /></div>
-      <div class="logo-chip"><img src="assets/companies-logos/munters.png" alt="Munters" loading="lazy" /></div>
-      <div class="logo-chip"><img src="assets/companies-logos/usarmy.png" alt="US Army" loading="lazy" /></div>
-      <div class="logo-chip"><img src="assets/companies-logos/ibm.png" alt="IBM" loading="lazy" /></div>
-      <div class="logo-chip"><img src="assets/companies-logos/scad.png" alt="SCAD" loading="lazy" /></div>
-      <!-- set B (duplicate for seamless loop) -->
-      <div class="logo-chip"><img src="assets/companies-logos/amazon.png" alt="" aria-hidden="true" loading="lazy" /></div>
-      <div class="logo-chip"><img src="assets/companies-logos/bmw.png" alt="" aria-hidden="true" loading="lazy" /></div>
-      <div class="logo-chip"><img src="assets/companies-logos/atmospark.png" alt="" aria-hidden="true" loading="lazy" /></div>
-      <div class="logo-chip"><img src="assets/companies-logos/parkinson.png" alt="" aria-hidden="true" loading="lazy" /></div>
-      <div class="logo-chip"><img src="assets/companies-logos/daikin.png" alt="" aria-hidden="true" loading="lazy" /></div>
-      <div class="logo-chip"><img src="assets/companies-logos/munters.png" alt="" aria-hidden="true" loading="lazy" /></div>
-      <div class="logo-chip"><img src="assets/companies-logos/usarmy.png" alt="" aria-hidden="true" loading="lazy" /></div>
-      <div class="logo-chip"><img src="assets/companies-logos/ibm.png" alt="" aria-hidden="true" loading="lazy" /></div>
-      <div class="logo-chip"><img src="assets/companies-logos/scad.png" alt="" aria-hidden="true" loading="lazy" /></div>
-    </div>
+    <div class="logo-track" id="logoTrack"><!-- filled from assets/companies-logos/logos.json --></div>
   </div>
 </div>
 
 <!-- WHAT I DO — THE FULL LOOP (pinned, one-by-one reveal) -->
 <section id="what-i-do" class="loop">
-  <div class="loop-ghost" aria-hidden="true">the loop.</div>
+  <div class="loop-ghost" aria-hidden="true">the way.</div>
   <span class="loop-dot" style="top:14%;left:38%;animation-delay:0s"></span>
   <span class="loop-dot accent" style="top:22%;right:6%;animation-delay:1.4s"></span>
   <span class="loop-dot" style="top:46%;left:32%;animation-delay:2.6s"></span>
@@ -396,8 +655,8 @@
   <div class="loop-wrap">
     <aside class="loop-aside">
       <div class="lbl">What I Do</div>
-      <h2>the full loop<span class="dot">.</span></h2>
-      <p>Research, design, and the craft to ship it. One set of hands, no handoffs — from the first user interview to the thing people actually trust.</p>
+      <h2>the craftmanship<span class="dot">.</span></h2>
+      <p>Research, product design, and the craft to ship it. One mind, one effort, from the first user interview to the thing people actually trust and enjoy.</p>
     </aside>
 
     <div class="loop-list" id="loopList">
@@ -423,7 +682,7 @@
       </div>
       <div class="loop-row">
         <div class="idx">05</div>
-        <div class="rc"><div class="rt">Prototyping &amp; Frontend</div></div>
+        <div class="rc"><div class="rt">Prototyping &amp; Coding</div></div>
         <div class="rm">interaction · motion · shipping</div>
       </div>
       <div class="loop-row">
@@ -479,7 +738,7 @@
 
 <!-- HOW I WORK — pinned one-by-one reveal -->
 <section id="process" class="flow">
-  <div class="flow-ghost" aria-hidden="true">the work.</div>
+  <div class="flow-ghost" aria-hidden="true">the empathy.</div>
   <span class="flow-dot" style="top:16%;left:10%;animation-delay:0.5s"></span>
   <span class="flow-dot accent" style="top:28%;left:40%;animation-delay:1.8s"></span>
   <span class="flow-dot" style="top:52%;left:6%;animation-delay:2.9s"></span>
@@ -489,8 +748,8 @@
   <div class="flow-wrap">
     <aside class="flow-aside">
       <div class="lbl">How I Work</div>
-      <h2>the way in<span style="color:var(--accent)">.</span></h2>
-      <p>Every project runs the same loop — understand the mess before touching it, design against real constraints, prove it in something you can use, then ship it and watch what breaks.</p>
+      <h2>the ear to hear<span style="color:var(--accent)">.</span></h2>
+      <p>Every project runs the same effort — understand the pain users feel, not say. Re-evaluate and design against real constraints, prove it in something users can benefit from, then ship it and wait to hear again.</p>
     </aside>
 
     <div class="flow-list" id="flowList">
@@ -561,27 +820,6 @@
     updateActive();
   })();
 </script>
-
-<!-- ABOUT TEASER -->
-<div class="about-strip">
-  <div class="about-photo reveal"><span class="mono">GD</span></div>
-  <div class="about-text reveal reveal-delay-1">
-    <h2>Outside the work</h2>
-    <p>Outside of work, I write and compose music, play multiple instruments, cook, read, and split time between archery and chess — pursuits that, oddly enough, all come back to the same instinct: noticing structure, timing, and constraint, then making something coherent out of them. I think that's the same instinct I bring to design.</p>
-    <div class="about-worked">
-      <span class="aw-label">Places I've worked</span>
-      <div class="aw-chips">
-        <span class="aw-chip">Amazon</span>
-        <span class="aw-chip">BMW Group</span>
-        <span class="aw-chip">AtmoSpark Technologies</span>
-        <span class="aw-chip">Parkinson Consulting</span>
-        <span class="aw-chip">UNC Charlotte</span>
-        <span class="aw-chip">Worthy Endeavors</span>
-      </div>
-    </div>
-    <a href="home/about.html" class="btn btn-ghost">More About Me →</a>
-  </div>
-</div>
 
 <!-- TESTIMONIALS — two opposing conveyor strips -->
 <section id="testimonials" style="max-width:none;padding-left:0;padding-right:0;overflow:hidden;">
@@ -707,46 +945,42 @@
   </div>
 </section>
 
+<!-- ABOUT TEASER — Beyond the Resume -->
+<div class="about-strip">
+  <div class="about-stack reveal" id="aboutStack" aria-label="Photos from outside work">
+    <button class="as-nav as-prev ged-tip" id="asPrev" aria-label="Previous photo" data-tip="Previous">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button class="as-nav as-next ged-tip" id="asNext" aria-label="Next photo" data-tip="Next">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+  <div class="about-text reveal reveal-delay-1">
+    <h2>Beyond the Resume - WYSIWYG!</h2>
+    <p>I read, write, compose music, play instruments, cook, and split my time between learning, exploring science exhibitions, and questioning how things work.</p>
+    <p>Whether tracking the arc of a sunrise, the cadence of a song, or the balance of a recipe, it all comes back to the same instinct noticing pattern, timing, and constraint, then making sense out of them. That is the exact instinct I bring to design.</p>
+    <a href="home/about.html" class="btn btn-ghost">More About Me →</a>
+  </div>
+</div>
+
 <!-- CONTACT / CTA -->
 <section id="contact" class="contact-cta">
-  <div class="reveal">
-    <div class="section-eyebrow" style="justify-content:center;">Contact</div>
+  <div class="cta-ghost" aria-hidden="true">the tenacity.</div>
+  <div class="reveal" style="position:relative;z-index:1;">
     <h2>Let's build something<br>that feels obvious.</h2>
-    <p class="close-line">If you're solving something messy, complicated, or unclear — let's talk about it.</p>
-    <div style="margin-top:8px;">
-      <a href="mailto:gaurav.dalbhanjan@gmail.com?subject=Let's%20talk" class="btn btn-primary">Send me an email
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-    </div>
-  </div>
-
-  <!-- Simple contact-info block -->
-  <div class="contact-info reveal">
-    <div class="ci-item">
-      <span class="ci-label">Address</span>
-      <span class="ci-val">905 Dexter Ave N, Seattle, WA 98109</span>
-    </div>
-    <div class="ci-item">
-      <span class="ci-label">Hours</span>
-      <span class="ci-val">Monday–Friday<br>8am–6pm</span>
-    </div>
-    <div class="ci-item">
-      <span class="ci-label">Email</span>
-      <span class="ci-val"><a href="mailto:gaurav.dalbhanjan@gmail.com?subject=Let's%20talk">gaurav.dalbhanjan@gmail.com</a></span>
-    </div>
-    <div class="ci-item">
-      <span class="ci-label">Phone</span>
-      <span class="ci-val"><a href="tel:+17373289917">737-328-9917</a></span>
-    </div>
+    <p class="close-line">If you're solving something messy, complicated, or unclear — Bring me in and I will find a way out!</p>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-cols">
+  <div class="footer-cols footer-cols--4">
     <div class="footer-col footer-brand">
       <div class="footer-logo">Gaurav <span>Dalbhanjan</span></div>
-      <div class="footer-status"><span class="dot"></span> Open to work · Seattle, WA</div>
+      <div class="footer-status"><span class="dot"></span> Open to work</div>
+      <a href="assets/Gaurav_Dalbhanjan_Resume_CreativeDesigner.pdf" target="_blank" rel="noopener noreferrer" class="footer-resume">Resume
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+      </a>
     </div>
     <div class="footer-col">
       <h4>Explore</h4>
@@ -757,10 +991,18 @@
       </ul>
     </div>
     <div class="footer-col">
+      <h4>Address</h4>
+      <ul>
+        <li>905 Dexter Ave N,<br>Seattle, WA</li>
+        <li id="footerTime"></li>
+      </ul>
+    </div>
+    <div class="footer-col">
       <h4>Connect</h4>
       <ul>
+        <li><a href="https://mail.google.com/mail/?view=cm&fs=1&to=gaurav.dalbhanjan@gmail.com&su=Let's%20talk" target="_blank" rel="noopener noreferrer">gaurav.dalbhanjan@gmail.com</a></li>
+        <li><a href="tel:+17373289917">+1 737-328-9917</a></li>
         <li><a href="https://www.linkedin.com/in/gaurav-dalbhanjan/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
-        <li><a href="https://github.com/gauravdalbhanjan" target="_blank" rel="noopener noreferrer">GitHub</a></li>
       </ul>
     </div>
   </div>
@@ -802,7 +1044,7 @@
   (function () {
     var el = document.getElementById('heroRotator');
     if (!el) return;
-    var words = ['Researches', 'Designs', 'Builds', 'Codes', 'Ships', 'Manufactures', 'Visualizes', 'Engineers'];
+    var words = ['Listens', 'Observes', 'Researches', 'Learns', 'Designs', 'Visualizes', 'Codes', 'Engineers', 'Repeats'];
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { return; }
     var i = 0;
     setInterval(function () {
@@ -811,10 +1053,525 @@
         i = (i + 1) % words.length;
         el.textContent = words[i];
         el.classList.remove('swap');
-      }, 350);
-    }, 2000);
+      }, 200);
+    }, 1000);
   })();
 </script>
+
+<!-- Search dataset + query engine -->
+<script src="assets/search-data.js"></script>
+
+<script>
+  /* ══ Selected Work — tab filter + stacked project cards ═══════════ */
+  (function () {
+    var list = document.getElementById('workList');
+    var bar = document.getElementById('workFilterBar');
+    if (!list || !bar) return;
+
+    // Real projects. `filters` = which tabs each belongs to.
+    var PROJECTS = [
+      {
+        href: 'home/opex-allocation.html', img: 'images/budget-planner2.gif',
+        title: 'From chasing data across tabs to making decisions faster',
+        cats: ['Saas', 'Product', 'FinTech'],
+        chips: ['\u26A1 94% faster', '\u26A1 9.7 hrs to 33 min review time'],
+        filters: ['fintech', 'enterprise', 'dashboard', 'product', 'endtoend']
+      },
+      {
+        href: 'home/sous-chef-device.html', img: 'images/chef1.gif',
+        title: 'Sous Chef — a countertop companion that builds cooking confidence',
+        cats: ['Product', 'Industrial Design'],
+        chips: ['\uD83D\uDCAA 72% higher user confidence', '\u26A1 Eliminated 5x frictions'],
+        filters: ['product', 'industrial', 'endtoend']
+      },
+      {
+        href: 'home/executive-metrics.html', img: 'assets/thumbnails/opening-thumbnail-dashboard.gif',
+        title: 'Executive Product Metrics Dashboard',
+        cats: ['Dashboard', 'Enterprise'],
+        chips: ['\u26A1 1 month reporting \u2192 2s live view'],
+        filters: ['dashboard', 'enterprise', 'product']
+      },
+      {
+        href: 'home/design-system-comment-panel.html', img: 'assets/comment-panel/opening-thumbnail-design-system%201.gif',
+        title: 'Unified Comment Panel — comments as shared infrastructure',
+        cats: ['Design System', 'Enterprise'],
+        chips: ['\u26A1 40% faster production', '\u23F1\uFE0F 72+ hrs saved'],
+        filters: ['enterprise', 'product', 'endtoend']
+      },
+      {
+        href: 'home/bmw-workspace.html', img: 'assets/thumbnails/opening-thumbnail-bmw.gif',
+        title: 'BMW Workspace Redesign',
+        cats: ['Spatial', 'Industrial Design'],
+        chips: [],
+        filters: ['industrial', 'product'], small: true
+      },
+      {
+        href: 'home/origami-chair.html', img: 'assets/thumbnails/origami-chair-opening.gif',
+        title: 'Your curiosity uncluttered',
+        cats: ['Industrial Design', 'Sustainability'],
+        chips: ['\uD83C\uDF31 65% less carbon footprint'],
+        filters: ['industrial', 'endtoend'], small: true
+      },
+      {
+        href: 'home/blog.html', blog: true,
+        title: 'Read my thoughts',
+        desc: 'Design perspectives & process notes',
+        filters: ['all'], small: true
+      }
+    ];
+
+    function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    /* Big rich card (one below another) */
+    function bigCard(p, i) {
+      var chips = (p.chips || []).map(function (c) { return '<span class="wp-chip">' + esc(c) + '</span>'; }).join('');
+      return '<a class="wp-card" href="' + p.href + '" style="animation-delay:' + (i * 70) + 'ms">' +
+        '<div class="wp-media"><div class="wp-media-inner"><img src="' + p.img + '" alt="' + esc(p.title) + '" loading="lazy" /></div></div>' +
+        '<div class="wp-body"><div class="wp-head">' +
+        '<div class="wp-title">' + esc(p.title) + '</div>' +
+        '<div class="wp-cats">' + (p.cats || []).map(esc).join(' \u00b7 ') + '</div></div>' +
+        (chips ? '<div class="wp-results">' + chips + '</div>' : '') +
+        '</div></a>';
+    }
+    /* Small card (3-up row: BMW / Origami / Blog) */
+    function smallCard(p, i) {
+      if (p.blog) {
+        return '<a class="wp-card wp-card--sm wp-card--blog" href="' + p.href + '" style="animation-delay:' + (i * 70) + 'ms">' +
+          '<div class="wp-blog-inner"><div class="wp-blog-emoji">\u270D\uFE0F</div>' +
+          '<span class="wp-blog-tag">BLOG</span>' +
+          '<h3>' + esc(p.title) + '</h3><p>' + esc(p.desc || '') + '</p></div></a>';
+      }
+      var chips = (p.chips || []).map(function (c) { return '<span class="wp-chip">' + esc(c) + '</span>'; }).join('');
+      return '<a class="wp-card wp-card--sm" href="' + p.href + '" style="animation-delay:' + (i * 70) + 'ms">' +
+        '<div class="wp-media"><div class="wp-media-inner"><img src="' + p.img + '" alt="' + esc(p.title) + '" loading="lazy" /></div></div>' +
+        '<div class="wp-body">' +
+        '<div class="wp-title">' + esc(p.title) + '</div>' +
+        '<div class="wp-cats">' + (p.cats || []).map(esc).join(' \u00b7 ') + '</div>' +
+        (chips ? '<div class="wp-results">' + chips + '</div>' : '') +
+        '</div></a>';
+    }
+    function render(filter) {
+      var items = PROJECTS.filter(function (p) { return filter === 'all' || (p.filters && p.filters.indexOf(filter) !== -1) || (p.blog && filter === 'all'); });
+      if (!items.length) { list.innerHTML = '<div class="wp-empty">No projects in this category yet.</div>'; return; }
+      var big = items.filter(function (p) { return !p.small; });
+      var small = items.filter(function (p) { return p.small; });
+      var html = big.map(bigCard).join('');
+      if (small.length) html += '<div class="wp-small-row">' + small.map(smallCard).join('') + '</div>';
+      list.innerHTML = html;
+    }
+
+    bar.addEventListener('click', function (e) {
+      var btn = e.target.closest('.work-filter');
+      if (!btn) return;
+      Array.prototype.forEach.call(bar.querySelectorAll('.work-filter'), function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      render(btn.getAttribute('data-filter'));
+    });
+    render('all');
+  })();
+</script>
+
+<script>
+  /* ══ Scroll-pinned "Designing for ___" word swap ══════════════ */
+  (function () {
+    var section = document.getElementById('workIntro');
+    var swap = document.getElementById('workSwap');
+    if (!section || !swap) return;
+    var words = ['Customers!', 'Director!', 'Ease!', 'Value!', 'Impact!', 'Grandma!', 'Love!'];
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { swap.textContent = words[words.length - 1]; return; }
+    var current = 0;
+    swap.textContent = words[0];
+    var ticking = false;
+    function update() {
+      ticking = false;
+      var rect = section.getBoundingClientRect();
+      var scrollable = section.offsetHeight - window.innerHeight;
+      // progress 0→1 across the pinned scroll distance
+      var progress = Math.min(1, Math.max(0, -rect.top / scrollable));
+      var idx = Math.min(words.length - 1, Math.floor(progress * words.length));
+      if (idx !== current) {
+        current = idx;
+        swap.classList.add('swap');
+        setTimeout(function () { swap.textContent = words[idx]; swap.classList.remove('swap'); }, 180);
+      }
+    }
+    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    update();
+  })();
+
+  /* ══ Search / nav overlay ═════════════════════════════════════ */
+  (function () {
+    var overlay = document.getElementById('gedOverlay');
+    if (!overlay) return;
+    var openBtn = document.getElementById('gedSearchOpen');
+    var closeBtn = document.getElementById('gedClose');
+    var backdrop = document.getElementById('gedBackdrop');
+    var input = document.getElementById('gedSearchInput');
+    var wrap = document.getElementById('gedSearchWrap');
+    var zap = document.getElementById('gedZap');
+    var content = document.getElementById('gedContent');
+    var sideNav = document.getElementById('gedSideNav');
+    var panel = overlay.querySelector('.ged-panel');
+    var navItems = Array.prototype.slice.call(sideNav.querySelectorAll('.ged-nav-item'));
+    var aiOn = false;
+    var currentView = 'work';
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+    /* Cryptic scramble → settle: each character rolls through random
+       glyphs before locking into its final value (like a slot/counter,
+       but for letters too). Operates on [data-scramble] text nodes. */
+    var GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#%&*';
+    function scrambleAll(root) {
+      if (reduceMotion) return;
+      var els = root.querySelectorAll('[data-scramble]');
+      Array.prototype.forEach.call(els, function (el, idx) {
+        var finalText = el.getAttribute('data-scramble');
+        var len = finalText.length;
+        var frame = 0;
+        var settleStart = Math.floor(idx * 0.4);       // tiny stagger
+        // whole scramble finishes in ~0.5s: ~16 frames @ 30ms
+        var revealFrames = 12;
+        var perFrame = Math.max(1, Math.ceil(len / revealFrames));
+        var totalFrames = settleStart + Math.ceil(len / perFrame) + 2;
+        var timer = setInterval(function () {
+          var locked = (frame - settleStart) * perFrame;
+          var out = '';
+          for (var i = 0; i < len; i++) {
+            var ch = finalText[i];
+            if (ch === ' ' || ch === '\u00a0') { out += ch; continue; }
+            if (i < locked) { out += ch; }
+            else { out += GLYPHS[Math.floor(Math.random() * GLYPHS.length)]; }
+          }
+          el.textContent = out;
+          frame++;
+          if (frame >= totalFrames) { el.textContent = finalText; clearInterval(timer); }
+        }, 30);
+      });
+    }
+
+    /* SVG icons for contact "lines" */
+    var ICONS = {
+      mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
+      phone: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11 11 0 0 0 3.5.56 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11 11 0 0 0 .56 3.5 1 1 0 0 1-.25 1z"/></svg>',
+      linkedin: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21H19v-5.4c0-1.29-.02-2.95-1.8-2.95-1.8 0-2.08 1.4-2.08 2.85V21H9z"/></svg>',
+      github: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.5 2.87 8.32 6.84 9.67.5.1.68-.22.68-.48v-1.7c-2.78.62-3.37-1.37-3.37-1.37-.46-1.18-1.11-1.5-1.11-1.5-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.9 1.57 2.34 1.12 2.91.86.09-.66.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9v2.82c0 .27.18.59.69.48A10.02 10.02 0 0 0 22 12.26C22 6.58 17.52 2 12 2z"/></svg>'
+    };
+
+    function sc(text) {
+      // returns attrs+content so scrambleAll() can roll it in
+      var t = esc(text);
+      return ' data-scramble="' + t + '">' + t;
+    }
+    function chipRow(chips) {
+      if (!chips || !chips.length) return '';
+      return '<div class="ged-chips">' + chips.map(function (c) { return '<span class="ged-chip"' + sc(c) + '</span>'; }).join('') + '</div>';
+    }
+    function projectCard(r) {
+      var tag = r.href ? 'a' : 'div', href = r.href ? ' href="' + r.href + '"' : '';
+      return '<' + tag + ' class="ged-card"' + href + '><h4' + sc(r.title) + '</h4>' +
+        (r.desc ? '<p' + sc(r.desc) + '</p>' : '') + chipRow(r.chips) + '</' + tag + '>';
+    }
+
+    /* Split a list of records into two balanced columns. */
+    function twoCols(records, heading) {
+      var left = [], right = [];
+      records.forEach(function (r, i) { (i % 2 === 0 ? left : right).push(r); });
+      function col(arr) {
+        return '<div class="ged-col">' + (heading ? '<div class="ged-heading">' + heading + '</div>' : '') +
+          arr.map(projectCard).join('') + '</div>';
+      }
+      return '<div class="ged-cols">' + col(left) + col(right) + '</div>';
+    }
+
+    function renderWork(records) {
+      var recs = records || GEDSearch.all('work');
+      if (!recs.length) return '<div class="ged-empty">No projects match that.</div>';
+      return twoCols(recs, 'Projects');
+    }
+    function renderAbout(records) {
+      var recs = records || GEDSearch.all('about');
+      if (!recs.length) return '<div class="ged-empty">Nothing here matches that.</div>';
+      return '<div class="ged-view-label">About Gaurav</div>' + twoCols(recs, '');
+    }
+    function renderBlog(records) {
+      var recs = records || GEDSearch.all('blog');
+      if (!recs.length) return '<div class="ged-empty">No posts match that.</div>';
+      return '<div class="ged-view-label">Blog — <em>Design perspectives, research notes, and the occasional deep dive.</em></div>' +
+        '<div class="ged-cols"><div class="ged-col">' + recs.map(projectCard).join('') + '</div><div class="ged-col"></div></div>';
+    }
+    function renderContact(records) {
+      var recs = records || GEDSearch.all('contact');
+      var lines = recs.filter(function (r) { return r.kind === 'line'; });
+      var infos = recs.filter(function (r) { return r.kind === 'info'; });
+      var linesHtml = lines.map(function (r) {
+        var ext = /^https?:/.test(r.href) ? ' target="_blank" rel="noopener noreferrer"' : '';
+        return '<a class="ged-line" href="' + r.href + '"' + ext + '>' + (ICONS[r.icon] || '') + esc(r.title) + '</a>';
+      }).join('');
+      var infoHtml = infos.map(function (r) {
+        return '<div class="ged-card"><h4>' + esc(r.title) + '</h4><p style="margin:0">' + esc(r.desc) + '</p></div>';
+      }).join('');
+      var gmail = "https://mail.google.com/mail/?view=cm&fs=1&to=gaurav.dalbhanjan@gmail.com&su=Let's%20talk";
+      return '<h3 class="ged-contact-title">Let\'s Create <span>Possibilities!</span></h3>' +
+        '<div class="ged-cols">' +
+          '<div class="ged-col">' +
+            '<div class="ged-card"><h4>Lines</h4>' +
+            '<div style="display:flex;flex-wrap:wrap;margin-top:6px">' + linesHtml + '</div></div>' +
+            '<div class="ged-card"><h4>Contact</h4>' +
+              '<p style="margin:0 0 12px">Open to work &middot; Seattle, WA &middot; Mon\u2013Fri, 8am\u20136pm PT.</p>' +
+              '<div style="display:flex;flex-wrap:wrap">' +
+                '<a class="ged-line" href="' + gmail + '" target="_blank" rel="noopener noreferrer">' + ICONS.mail + 'Email me</a>' +
+                '<a class="ged-line" href="tel:+17373289917">' + ICONS.phone + 'Call</a>' +
+              '</div></div>' +
+          '</div>' +
+          '<div class="ged-col">' + infoHtml + '</div>' +
+        '</div>';
+    }
+
+    var RENDER = { work: renderWork, about: renderAbout, blog: renderBlog, contact: renderContact };
+
+    function setView(view, records) {
+      currentView = view;
+      navItems.forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-view') === view); });
+      content.innerHTML = RENDER[view](records || null);
+      content.scrollTop = 0;
+      scrambleAll(content);
+    }
+
+    function answerCard(ans, q) {
+      var chips = (ans.chips || []).map(function (c) { return '<span class="ged-chip">' + esc(c) + '</span>'; }).join('');
+      return '<div class="ged-answer">' +
+        '<div class="ged-answer-head"><span class="ged-answer-badge">\u26A1 AI answer</span>' +
+          '<span class="ged-answer-q">' + esc(q) + '</span></div>' +
+        '<h4>' + esc(ans.title) + '</h4><p>' + esc(ans.answer) + '</p>' +
+        (chips ? '<div class="ged-chips" style="margin-top:12px">' + chips + '</div>' : '') +
+      '</div>';
+    }
+    function runSearch() {
+      var q = input.value.trim();
+      if (!q) { setView(currentView); return; }
+      var res = GEDSearch.query(q);
+      if (aiOn) {
+        var ans = GEDSearch.answer ? GEDSearch.answer(q) : null;
+        var view = res.isEmpty ? 'work' : res.best;
+        var cards = res.isEmpty ? '' : RENDER[view](res.grouped[view]);
+        if (!ans && res.isEmpty) {
+          content.innerHTML = '<div class="ged-empty">I couldn\u2019t find that. Try asking about projects, skills, impact, experience, or how to get in touch.</div>';
+          return;
+        }
+        currentView = view;
+        navItems.forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-view') === view); });
+        content.innerHTML = (ans ? answerCard(ans, q) : '') + cards;
+        content.scrollTop = 0;
+        scrambleAll(content);
+        return;
+      }
+      if (res.isEmpty) { setView(currentView, []); content.innerHTML = '<div class="ged-empty">No results for "' + esc(q) + '". Try: projects, dashboard, about, contact, blog…</div>'; return; }
+      setView(res.best, res.grouped[res.best]);
+    }
+
+    var savedScrollY = 0;
+    function open(view) {
+      overlay.classList.add('open');            // phase 1: horizontal extend
+      overlay.setAttribute('aria-hidden', 'false');
+      // Lock the page WITHOUT losing scroll position: pin body at current offset
+      savedScrollY = window.scrollY || window.pageYOffset || 0;
+      document.body.style.top = (-savedScrollY) + 'px';
+      document.documentElement.classList.add('ged-lock');
+      document.body.classList.add('ged-lock');
+      panel.classList.remove('expand');
+      var delay = reduceMotion ? 0 : 600;       // wait for horizontal (width) extend
+      setTimeout(function () {
+        panel.classList.add('expand');          // phase 2: vertical (height) extend
+        setView(view || 'work');                // render + fast scramble as it reveals
+      }, delay);
+      setTimeout(function () { input.focus(); }, delay + 160);
+    }
+    function close() {
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden', 'true');
+      panel.classList.remove('expand');
+      document.documentElement.classList.remove('ged-lock');
+      document.body.classList.remove('ged-lock');
+      document.body.style.top = '';
+      window.scrollTo(0, savedScrollY);         // restore exact scroll position
+      input.value = '';
+      setAI(false);
+    }
+    function setAI(on) {
+      aiOn = on;
+      wrap.classList.toggle('ai-on', on);
+      zap.setAttribute('data-tip', on ? 'AI search on — ask a question' : 'AI-powered search');
+    }
+
+    openBtn.addEventListener('click', function () { open('work'); });
+    closeBtn.addEventListener('click', close);
+    backdrop.addEventListener('click', close);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && overlay.classList.contains('open')) close(); });
+    zap.addEventListener('click', function () { setAI(!aiOn); input.focus(); if (input.value.trim()) runSearch(); });
+    navItems.forEach(function (b) { b.addEventListener('click', function () { input.value = ''; setView(b.getAttribute('data-view')); }); });
+
+    var deb;
+    input.addEventListener('input', function () { clearTimeout(deb); deb = setTimeout(runSearch, 160); });
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { clearTimeout(deb); runSearch(); } });
+
+  })();
+</script>
+
+<script>
+  /* Footer local time (Seattle / Pacific) */
+  (function () {
+    var el = document.getElementById('footerTime');
+    if (!el) return;
+    function tick() {
+      try {
+        el.textContent = new Date().toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour: 'numeric', minute: '2-digit', second: '2-digit', timeZoneName: 'short' });
+      } catch (e) {
+        el.textContent = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+      }
+    }
+    tick(); setInterval(tick, 1000);
+  })();
+
+  /* Ghost words ("the way." / "the empathy.") grow as you scroll up to them.
+     Small when the section is below the viewport, larger as it centres. */
+  (function () {
+    var ghosts = Array.prototype.slice.call(document.querySelectorAll('.loop-ghost, .flow-ghost, .cta-ghost'));
+    if (!ghosts.length) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var MIN = 0.55, MAX = 1.15;
+    var ticking = false;
+    function update() {
+      ticking = false;
+      var vh = window.innerHeight;
+      ghosts.forEach(function (g) {
+        var sec = g.closest('section') || g.parentNode;
+        var r = sec.getBoundingClientRect();
+        // progress 0 (section just entering from bottom) -> 1 (fully scrolled up past)
+        var p = (vh - r.top) / (vh + r.height);
+        p = Math.max(0, Math.min(1, p));
+        g.style.setProperty('--ghost-scale', (MIN + (MAX - MIN) * p).toFixed(3));
+      });
+    }
+    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  })();
+
+  /* Company logo conveyor — built from assets/companies-logos/logos.json so
+     adding/removing/renaming a logo in that folder (then running
+     update-logos.ps1) updates the strip automatically. Falls back gracefully
+     if the manifest can't be fetched (e.g. opened via file://). */
+  (function () {
+    var track = document.getElementById('logoTrack');
+    if (!track) return;
+    var DIR = 'assets/companies-logos/';
+    var NAMES = { amazon: 'Amazon', bmw: 'BMW Group', atmospark: 'AtmoSpark Technologies',
+      parkinson: 'Parkinson Consulting', daikin: 'Daikin', munters: 'Munters',
+      usarmy: 'US Army', ibm: 'IBM', scad: 'SCAD' };
+    function label(file) {
+      var base = file.replace(/\.[^.]+$/, '').toLowerCase();
+      return NAMES[base] || base.replace(/[-_]+/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+    }
+    function build(files) {
+      if (!files || !files.length) return;
+      function chip(file, dup) {
+        var alt = dup ? '' : label(file);
+        var hidden = dup ? ' aria-hidden="true"' : '';
+        return '<div class="logo-chip"><img src="' + DIR + encodeURIComponent(file) +
+          '" alt="' + alt + '"' + hidden + ' loading="lazy" /></div>';
+      }
+      // two identical sets for the seamless -50% marquee loop
+      track.innerHTML = files.map(function (f) { return chip(f, false); }).join('') +
+                        files.map(function (f) { return chip(f, true); }).join('');
+    }
+    fetch(DIR + 'logos.json', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(build)
+      .catch(function () {
+        // fallback list if the manifest isn't reachable
+        build(['amazon.png','bmw.png','atmospark.png','parkinson.png','daikin.png','munters.png','usarmy.png','ibm.png','scad.png']);
+      });
+  })();
+
+  /* Outside-the-work stacked photo carousel:
+     the top image fades out and drops to the BACK of the stack every 2s,
+     so the front photo feels like it's peeling off a deck and re-stacking.
+     Blurred thumbnails peek out on the left; each image has its own glow. */
+  (function () {
+    var stack = document.getElementById('aboutStack');
+    if (!stack) return;
+    var DIR = 'assets/outside of work/';
+    var GLOWS = [
+      'rgba(255,42,0,0.55)','rgba(255,150,0,0.5)','rgba(56,210,0,0.45)',
+      'rgba(0,198,255,0.5)','rgba(180,0,255,0.5)','rgba(255,0,120,0.5)',
+      'rgba(0,220,180,0.5)','rgba(255,210,0,0.5)'
+    ];
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var VISIBLE = 4;
+
+    function init(FILES) {
+      if (!FILES || !FILES.length) return;
+      var order = FILES.map(function (_, i) { return i; });
+      var els = FILES.map(function (f, i) {
+        var d = document.createElement('div');
+        d.className = 'as-img';
+        d.style.setProperty('--glow', GLOWS[i % GLOWS.length]);
+        var img = document.createElement('img');
+        img.src = DIR + encodeURIComponent(f); img.alt = ''; img.loading = 'lazy';
+        d.appendChild(img);
+        stack.appendChild(d);
+        return d;
+      });
+      function layout() {
+        order.forEach(function (fileIdx, depth) {
+          var el = els[fileIdx];
+          el.classList.remove('leaving');
+          el.classList.toggle('top', depth === 0);
+          var d = Math.min(depth, VISIBLE);
+          var x = -d * 22, y = d * 10, s = 1 - d * 0.05;
+          el.style.transform = 'translate(' + x + 'px,' + y + 'px) scale(' + s + ')';
+          el.style.filter = depth === 0 ? 'none' : 'blur(' + (d * 1.4) + 'px)';
+          el.style.opacity = depth <= VISIBLE ? (1 - d * 0.12) : 0;
+          el.style.zIndex = String(FILES.length - depth);
+          el.style.pointerEvents = depth === 0 ? 'auto' : 'none';
+        });
+      }
+      layout();
+      if (FILES.length < 2) return;
+      function advance() {
+        var frontEl = els[order[0]];
+        frontEl.classList.add('leaving');
+        setTimeout(function () { order.push(order.shift()); layout(); }, 620);
+      }
+      function retreat() { order.unshift(order.pop()); layout(); }
+      var timer = null;
+      function start() { if (!reduce && !timer) timer = setInterval(advance, 2000); }
+      function stop() { if (timer) { clearInterval(timer); timer = null; } }
+      start();
+      var prev = document.getElementById('asPrev');
+      var next = document.getElementById('asNext');
+      function manual(fn) { stop(); fn(); setTimeout(start, 4000); }
+      if (next) next.addEventListener('click', function (e) { e.preventDefault(); manual(advance); });
+      if (prev) prev.addEventListener('click', function (e) { e.preventDefault(); manual(retreat); });
+      stack.addEventListener('mouseenter', stop);
+      stack.addEventListener('mouseleave', start);
+    }
+
+    // Manifest-driven: add images to the folder + run update-logos.ps1's sibling
+    // step (or regenerate images.json) and they show up here automatically.
+    fetch(DIR + 'images.json', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(init)
+      .catch(function () {
+        init(['20230106_155801.jpg','20230110_202835.jpg','20230117_190251.jpg',
+          '20230216_192737.jpg','20230601_171857.jpg','20231122_220649.jpg',
+          'IMG_0153.jpg','IMG-20220904-WA0035.jpg','IMG-20230728-WA0027.jpg']);
+      });
+  })();
+</script>
+
 <script src="assets/edit-mode.js"></script>
 
 </body>

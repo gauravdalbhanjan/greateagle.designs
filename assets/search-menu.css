@@ -1,0 +1,195 @@
+/* ══════════════════════════════════════════════════════════════
+   GREAT EAGLE DESIGNS — Shared sticky search header + overlay menu
+   Used on the landing page and every case-study page.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ─── Sticky glass header pill (top-right) ─────────────────────── */
+.ged-header {
+  position: fixed; top: 16px; right: 24px; left: auto; z-index: 200;
+  height: 52px; border-radius: 100px; padding: 6px 6px 6px 8px;
+  display: flex; align-items: center; gap: 8px;
+}
+.ged-logo-bubble {
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.18), rgba(255,255,255,0.02) 60%), rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.35);
+}
+.ged-logo { width: 24px; height: 27px; object-fit: contain; }
+.ged-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.ged-name { font-size: 16px; font-weight: 500; letter-spacing: -0.01em; color: var(--text-primary); white-space: nowrap; }
+.ged-name span { color: var(--accent); }
+.ged-search-btn {
+  background: var(--accent); color: #fff; border: 0; cursor: pointer;
+  font-size: 14px; font-weight: 600; padding: 9px 24px; border-radius: 100px;
+  box-shadow: 0 4px 18px rgba(255,42,0,0.35); transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+.ged-search-btn:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 8px 26px rgba(255,42,0,0.45); }
+
+/* Reusable hover tooltip */
+.ged-tip { position: relative; }
+.ged-tip::after {
+  content: attr(data-tip); position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+  white-space: nowrap; background: #111; color: #fff; font-size: 11px; font-weight: 500;
+  padding: 5px 9px; border-radius: 6px; opacity: 0; pointer-events: none;
+  transition: opacity 0.2s; z-index: 320;
+}
+.ged-tip:hover::after { opacity: 1; }
+.ged-tip--left::after { left: auto; right: 0; transform: none; }
+
+/* ─── Overlay ──────────────────────────────────────────────────── */
+/* Lock the page WITHOUT losing scroll position: body is pinned in place
+   (JS sets body.top = -scrollY) so the page can't scroll and doesn't jump. */
+html.ged-lock { overflow: hidden; }
+body.ged-lock { position: fixed; left: 0; right: 0; width: 100%; overflow: hidden; touch-action: none; }
+.ged-overlay { position: fixed; inset: 0; z-index: 300; display: none; overscroll-behavior: contain; }
+.ged-overlay.open { display: block; }
+.ged-backdrop {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  opacity: 0; transition: opacity 0.3s var(--ease);
+}
+.ged-overlay.open .ged-backdrop { opacity: 1; }
+/* Panel morph: the glass bar grows WIDTH first, then HEIGHT. Same margins
+   as the compact pill (top:16px right:24px). ONE glass surface. */
+.ged-panel {
+  position: fixed; top: 16px; right: 24px; left: auto;
+  width: 360px; height: auto; max-height: 52px; max-width: calc(100vw - 48px);
+  border-radius: 26px; padding: 6px 6px 6px 8px; overflow: hidden;
+  display: flex; flex-direction: column;
+  opacity: 0; transition: opacity 0.15s linear;
+}
+/* phase 1: extend to full WIDTH (bar stays short) */
+.ged-overlay.open .ged-panel {
+  opacity: 1; width: calc(100vw - 48px); max-height: 52px;
+  transition: width 0.6s cubic-bezier(0.22,1,0.36,1), opacity 0.12s linear;
+}
+/* phase 2 (.expand): grow to fit content (hug), capped at the viewport */
+.ged-overlay.open .ged-panel.expand {
+  max-height: calc(100vh - 32px);
+  transition: max-height 0.6s cubic-bezier(0.22,1,0.36,1);
+}
+.ged-panel .ged-panel-body { opacity: 0; transition: opacity 0.4s var(--ease); }
+.ged-panel.expand .ged-panel-body { opacity: 1; }
+.ged-panel-top { display: flex; align-items: center; gap: 12px; flex-shrink: 0; height: 40px; }
+.ged-brand--panel { flex-shrink: 0; }
+
+/* Search field — solid red border idle, rainbow when AI-on */
+.ged-search-wrap {
+  position: relative; flex: 1; display: flex; align-items: center; min-width: 0;
+  height: 38px; border-radius: 100px; background: rgba(255,255,255,0.05);
+  border: 1px solid var(--accent); padding: 0;
+}
+.ged-search-wrap::before {
+  content: ''; position: absolute; inset: -1px; border-radius: 100px; padding: 1px;
+  background: linear-gradient(90deg, #ff2a00, #ffb300, #38d200, #00c6ff, #b400ff, #ff2a00);
+  background-size: 300% 100%;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: gedWave 5s linear infinite; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+}
+.ged-search-wrap.ai-on { border-color: transparent; }
+.ged-search-wrap.ai-on::before { opacity: 1; animation: gedWave 2.6s linear infinite; }
+@keyframes gedWave { from { background-position: 0% 50%; } to { background-position: 300% 50%; } }
+.ged-search-input {
+  flex: 1; background: transparent; color: var(--text-primary); border: 0; outline: none;
+  font-size: 14px; font-weight: 500; font-family: inherit; padding: 0 84px 0 18px; height: 100%; min-width: 0;
+}
+.ged-search-input::placeholder { color: rgba(255,255,255,0.5); }
+[data-theme="light"] .ged-search-input::placeholder { color: rgba(0,0,0,0.4); }
+/* Zap: rainbow by default; greys out when AI is ON. Never rotates. */
+.ged-zap {
+  position: absolute; right: 46px; width: 28px; height: 28px; border-radius: 50%;
+  border: 0; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  background: conic-gradient(from 0deg, #ff2a00, #ffb300, #38d200, #00c6ff, #b400ff, #ff2a00);
+  color: #fff; transition: background 0.3s, color 0.3s, filter 0.3s;
+}
+.ged-zap svg { width: 15px; height: 15px; }
+.ged-zap:hover { filter: brightness(1.1); }
+.ged-search-wrap.ai-on .ged-zap { background: rgba(150,150,150,0.35); color: var(--text-secondary); }
+.ged-zap::after {
+  content: attr(data-tip); position: absolute; top: calc(100% + 8px); right: 0; white-space: nowrap;
+  background: #111; color: #fff; font-size: 11px; font-weight: 500; padding: 5px 9px; border-radius: 6px;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 5;
+}
+.ged-zap:hover::after { opacity: 1; }
+.ged-close-x {
+  position: absolute; right: 4px; width: 30px; height: 30px; border-radius: 50%;
+  background: var(--accent); color: #fff; border: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+}
+.ged-close-x:hover { background: var(--accent-hover); }
+.ged-close-x svg { width: 15px; height: 15px; transition: transform 0.3s var(--ease); }
+.ged-close-x:hover svg { transform: rotate(90deg); }
+
+/* Body scrolls; cards keep clear of the fixed right-hand nav via padding-right */
+.ged-panel-body {
+  position: relative; flex: 1 1 auto; min-height: 0;
+  display: block; padding: 16px 0 8px 0;
+  overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; -ms-overflow-style: none;
+}
+.ged-panel-body::-webkit-scrollbar { display: none; width: 0; height: 0; background: transparent; }
+/* Nav: sticky column floated to the RIGHT edge, aligned under the X/theme
+   buttons (same right margin). Cards get right margin so they never overlap. */
+.ged-sidenav { float: right; position: sticky; top: 0; z-index: 6; width: 100px;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 10px; text-align: right; }
+.ged-nav-item {
+  background: none; border: 1px solid transparent; cursor: pointer; font-family: inherit;
+  font-size: 16px; font-weight: 500; color: var(--text-secondary);
+  padding: 6px 18px; border-radius: 100px; transition: all 0.2s; white-space: nowrap;
+}
+.ged-nav-item:hover { color: var(--text-primary); }
+.ged-nav-item.active { color: var(--text-primary); border-color: var(--border); background: var(--surface); }
+.ged-content { min-width: 0; margin-right: 116px; }
+
+/* Result content */
+.ged-view-label { font-size: 14px; color: var(--text-tertiary); margin: 0 0 16px; }
+.ged-view-label em { color: var(--text-secondary); }
+.ged-cols { display: grid; grid-template-columns: 452px 452px; gap: 24px; align-items: start; justify-content: start; }
+.ged-col { display: flex; flex-direction: column; gap: 16px; }
+.ged-heading { font-size: 15px; font-weight: 400; color: var(--text-tertiary); margin: 0 0 4px; }
+.ged-card {
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 16px; padding: 16px;
+  transition: transform 0.3s var(--hover-ease), box-shadow 0.3s var(--hover-ease), border-color 0.3s;
+  text-decoration: none; display: block;
+}
+[data-theme="light"] .ged-card { background: var(--bg-secondary); }
+a.ged-card:hover { transform: translateY(-3px); box-shadow: var(--hover-glow); border-color: rgba(255,42,0,0.3); }
+.ged-card h4 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px; letter-spacing: -0.01em; }
+.ged-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.5; margin: 0 0 14px; }
+.ged-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.ged-chip { font-size: 13px; font-weight: 600; color: #fff; background: #7d1f14; padding: 6px 13px; border-radius: 100px; }
+.ged-line { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #fff; background: #7d1f14; border-radius: 100px; padding: 8px 15px; text-decoration: none; margin: 0 8px 8px 0; transition: transform 0.2s, background 0.2s; }
+.ged-line:hover { background: #9a2619; transform: translateY(-1px); }
+.ged-line svg { width: 15px; height: 15px; }
+.ged-contact-title { font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 700; letter-spacing: -0.03em; color: var(--text-primary); margin: 0 0 20px; }
+.ged-contact-title span { color: var(--accent); }
+.ged-empty { color: var(--text-tertiary); font-size: 14px; padding: 20px 0; }
+
+/* AI answer card — spectrum-edged, sits atop the matched results */
+.ged-answer {
+  position: relative; border-radius: 16px; padding: 18px 20px; margin-bottom: 20px;
+  background: rgba(255,255,255,0.03); border: 1px solid transparent;
+  background-image: linear-gradient(var(--bg-secondary), var(--bg-secondary)),
+    linear-gradient(90deg, #ff2a00, #ffb300, #38d200, #00c6ff, #b400ff, #ff2a00);
+  background-origin: border-box; background-clip: padding-box, border-box;
+}
+[data-theme="dark"] .ged-answer { background-image: linear-gradient(rgba(255,255,255,0.04), rgba(255,255,255,0.04)), linear-gradient(90deg, #ff2a00, #ffb300, #38d200, #00c6ff, #b400ff, #ff2a00); }
+.ged-answer-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+.ged-answer-badge { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; background: var(--accent); padding: 4px 10px; border-radius: 100px; }
+.ged-answer-q { font-size: 13px; color: var(--text-tertiary); font-style: italic; }
+.ged-answer h4 { font-size: 17px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px; letter-spacing: -0.01em; }
+.ged-answer p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin: 0; }
+
+@media (max-width: 760px) {
+  .ged-name { display: none; }
+  .ged-panel { padding: 12px 14px 20px; }
+  .ged-panel-top { gap: 8px; }
+  .ged-nav-item { font-size: 14px; padding: 4px 12px; }
+  .ged-sidenav { float: none; position: static; flex-direction: row; width: auto; margin: 0 0 12px auto; justify-content: flex-end; }
+  .ged-content { margin-right: 0; }
+  .ged-cols { grid-template-columns: 1fr; }
+}

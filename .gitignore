@@ -24,6 +24,10 @@ definitions.sqspcdn.com/
 edit-server.js
 artifacts/
 
+# Personal certificate PDFs — kept private (knowledge is baked into search-data.js,
+# so the AI search still answers about them without publishing the files)
+assets/Certificates/
+
 # Temp scratch files
 _*.txt
 _*.js

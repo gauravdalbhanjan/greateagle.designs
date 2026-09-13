@@ -9,7 +9,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="../assets/search-menu.css" />
   <script src="../assets/site.js"></script>
+  <style>/* GED-HIDE-LEGACY-NAV */ body > nav.glass { display:none !important; }</style>
 </head>
 <body>
 <svg id="lg-filter-svg" xmlns="http://www.w3.org/2000/svg"><defs id="lg-defs"></defs></svg>
@@ -50,7 +52,13 @@
       <span class="case-tag">Color Psychology</span>
     </div>
 
-    <img src="../images/frame-1437253330.png" alt="Executive metrics dashboard" class="reveal" />
+    <img src="../assets/product-metrics-dashboard/opening-thumbnail-dashboard.gif" alt="Executive metrics dashboard" class="reveal" />
+
+    <div style="text-align:center;margin:24px 0 8px;" class="reveal">
+      <a href="https://gauravdalbhanjan.github.io/dashboard/" target="_blank" rel="noopener noreferrer" class="btn btn-primary">View live demo
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+      </a>
+    </div>
 
     <div class="stat-cards reveal">
       <div class="stat-card"><div class="num">1 month</div><div class="lbl">Manual cycle before</div></div>
@@ -74,6 +82,22 @@
 
     <h2 class="reveal">The Approach</h2>
     <p class="reveal">We identified the key metrics, set thresholds with color coding, and designed the data flow. The result was a single source of truth: an automated dashboard with live updates and drill-down capability for faster, effective, data-driven decision-making.</p>
+
+    <h3 class="reveal" style="margin-top:32px;">Inspired by a cockpit</h3>
+    <p class="reveal">The layout borrows from a pilot's cockpit — the most decision-critical instruments always in view, secondary detail a glance away.</p>
+    <img src="../assets/product-metrics-dashboard/inspiration-of-a-cockpit.jpg" alt="Cockpit inspiration for the dashboard layout" class="reveal" />
+
+    <h3 class="reveal" style="margin-top:32px;">From sketches to system</h3>
+    <p class="reveal">Early ideation sketches worked out the information hierarchy before any pixels.</p>
+    <img src="../assets/product-metrics-dashboard/ideation-sketches.jpg" alt="Ideation sketches for the dashboard" class="reveal" />
+
+    <h3 class="reveal" style="margin-top:32px;">Color-coded, auto-populated data</h3>
+    <p class="reveal">Thresholds drive color and priority automatically, so status reads at a glance without manual formatting.</p>
+    <img src="../assets/product-metrics-dashboard/how-auto-population-color-code-works.gif" alt="How auto-population and color coding works" class="reveal" />
+
+    <h3 class="reveal" style="margin-top:32px;">Drill down to detail</h3>
+    <p class="reveal">Any metric expands into its underlying detail — the two-second answer to "why?".</p>
+    <img src="../assets/product-metrics-dashboard/metrics-drill-down.gif" alt="Drilling down into a metric" class="reveal" />
 
     <h2 class="reveal">The Result</h2>
     <ul class="reveal">
@@ -100,5 +124,8 @@
   <div class="footer-copy">© 2026 greateagledesigns.com</div>
 </footer>
 <script src="../assets/edit-mode.js"></script>
+<script>window.GED_BASE='../';</script>
+<script src="../assets/search-data.js"></script>
+<script src="../assets/search-menu.js"></script>
 </body>
 </html>
