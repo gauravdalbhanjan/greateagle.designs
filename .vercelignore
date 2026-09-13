@@ -1,0 +1,12 @@
+# Keep personal certificate PDFs off the public site.
+# Their knowledge is baked into assets/search-data.js, so the AI search
+# still answers about them without publishing the files themselves.
+assets/Certificates/
+
+# Dev-only / working files
+edit-server.js
+artifacts/
+_*.txt
+_*.js
+.git/
+node_modules/
