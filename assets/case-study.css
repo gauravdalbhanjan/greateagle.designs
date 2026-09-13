@@ -406,3 +406,52 @@ html:not(.pin-on) .cs-walk-dots { display: flex; }
   .cs-snapshot { grid-template-columns: 1fr; }
   .compare-static { grid-template-columns: 1fr; }
 }
+
+/* ─── TOUCH STEP NAVIGATION (phone / tablet) ─────────────────────────
+   JS adds .cs-touch-steps to step sections on finger devices and shows
+   ONE step at a time. Users swipe left/right or tap the glass arrows;
+   the dots track the active step (same as the desktop pinned engines). */
+
+/* Pin sections: hide every step, reveal only the active one. Overrides
+   the js-motion fallback stacking so nothing peeks through below. */
+.cs-touch-steps .pin-step {
+  opacity: 0; transform: translateY(24px);
+  max-height: 0; overflow: hidden; margin: 0; padding-top: 0; padding-bottom: 0;
+  pointer-events: none;
+  transition: opacity 0.4s var(--hover-ease), transform 0.4s var(--hover-ease);
+}
+.cs-touch-steps .pin-step.touch-on {
+  opacity: 1; transform: translateY(0);
+  max-height: none; overflow: visible; pointer-events: auto;
+}
+
+/* Keep progress dots visible on touch for both section types. */
+.cs-touch-steps .pin-dots,
+.cs-touch-steps.cs-walk-section .cs-walk-dots {
+  display: flex !important;
+  position: static; justify-content: center; margin: 20px 0 0;
+}
+
+/* Swipe nav — carousel-style glass arrows below the step content. */
+.cs-swipe-nav {
+  display: flex; align-items: center; justify-content: center; gap: 18px;
+  margin-top: 22px;
+}
+.cs-swipe-btn {
+  width: 40px; height: 40px; flex: 0 0 40px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.12); border: 1px solid var(--border);
+  color: var(--text-primary); cursor: pointer;
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  transition: background 0.2s var(--hover-ease), opacity 0.2s var(--hover-ease), transform 0.2s var(--hover-ease);
+}
+.cs-swipe-btn:hover { background: rgba(255,255,255,0.2); }
+.cs-swipe-btn:active { transform: scale(0.92); }
+.cs-swipe-btn svg { width: 20px; height: 20px; }
+.cs-swipe-btn:disabled { opacity: 0.35; cursor: default; }
+.cs-swipe-count {
+  font-size: var(--fs-tertiary); color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums; letter-spacing: 0.04em; min-width: 54px; text-align: center;
+}
+[data-theme="light"] .cs-swipe-btn { background: rgba(0,0,0,0.06); }
+[data-theme="light"] .cs-swipe-btn:hover { background: rgba(0,0,0,0.12); }

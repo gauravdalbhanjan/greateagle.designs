@@ -503,11 +503,10 @@
     .ged-contact-title span { color: var(--accent); }
     .ged-empty { color: var(--text-tertiary); font-size: 14px; padding: 20px 0; }
     /* AI answer card */
-    .ged-answer { position: relative; border-radius: 16px; padding: 18px 20px; margin-bottom: 20px;
-      border: 1px solid transparent;
-      background-image: linear-gradient(rgba(255,255,255,0.04), rgba(255,255,255,0.04)), linear-gradient(90deg, #ff2a00, #ffb300, #38d200, #00c6ff, #b400ff, #ff2a00);
-      background-origin: border-box; background-clip: padding-box, border-box; }
-    [data-theme="light"] .ged-answer { background-image: linear-gradient(var(--bg-secondary), var(--bg-secondary)), linear-gradient(90deg, #ff2a00, #ffb300, #38d200, #00c6ff, #b400ff, #ff2a00); }
+    .ged-answer { position: relative; border-radius: 16px; padding: 20px 22px; margin: 24px 0 24px;
+      border: 1.5px solid transparent;
+      background: linear-gradient(rgba(255,255,255,0.04), rgba(255,255,255,0.04)) padding-box, linear-gradient(90deg, #ff2a00, #ffb300, #38d200, #00c6ff, #b400ff, #ff2a00) border-box; }
+    [data-theme="light"] .ged-answer { background: linear-gradient(var(--bg-secondary), var(--bg-secondary)) padding-box, linear-gradient(90deg, #ff2a00, #ffb300, #38d200, #00c6ff, #b400ff, #ff2a00) border-box; }
     .ged-answer-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
     .ged-answer-badge { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; background: var(--accent); padding: 4px 10px; border-radius: 100px; }
     .ged-answer-q { font-size: 13px; color: var(--text-tertiary); font-style: italic; }

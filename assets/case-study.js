@@ -281,6 +281,7 @@
     initReveal();
     initPinning();
     initWalk();
+    initTouchSteps();
   }
 
   /* ─── SOLUTION WALKTHROUGH ENGINE (static frame, swap on scroll) ──
@@ -462,6 +463,99 @@
       onScroll();
     });
     onScroll();
+  }
+
+  /* ─── TOUCH STEP NAVIGATION (phone / tablet) ──────────────────────
+     On finger devices the pinned scroll engines don't run, so the
+     step sections would just stack. Instead, show ONE step at a time
+     and let the user swipe left/right (or tap the arrows) to move
+     through them — the dots track the active step, same as desktop. */
+  function initTouchSteps() {
+    const isTouch = window.GED && window.GED.isTouch;
+    if (!isTouch) return;
+
+    // Walkthrough sections: swap slide+copy; pin sections: reveal steps.
+    const walks = Array.from(document.querySelectorAll('section[data-walk]'));
+    const pinSecs = Array.from(document.querySelectorAll('section[data-pin]'));
+
+    function makeArrows(host) {
+      const nav = document.createElement('div');
+      nav.className = 'cs-swipe-nav';
+      nav.innerHTML =
+        '<button class="cs-swipe-btn cs-swipe-prev" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>' +
+        '<span class="cs-swipe-count"></span>' +
+        '<button class="cs-swipe-btn cs-swipe-next" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>';
+      host.appendChild(nav);
+      return {
+        prev: nav.querySelector('.cs-swipe-prev'),
+        next: nav.querySelector('.cs-swipe-next'),
+        count: nav.querySelector('.cs-swipe-count')
+      };
+    }
+
+    function bindSwipe(el, onLeft, onRight) {
+      let x0 = null, y0 = null;
+      el.addEventListener('touchstart', e => { const t = e.touches[0]; x0 = t.clientX; y0 = t.clientY; }, { passive: true });
+      el.addEventListener('touchend', e => {
+        if (x0 === null) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - x0, dy = t.clientY - y0;
+        if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) { dx < 0 ? onLeft() : onRight(); }
+        x0 = y0 = null;
+      }, { passive: true });
+    }
+
+    // ---- Walkthrough (data-walk): one slide+copy visible, swipe to change
+    walks.forEach(section => {
+      const slides = Array.from(section.querySelectorAll('.cs-walk-slide'));
+      const copies = Array.from(section.querySelectorAll('.cs-walk-copy'));
+      const dots = Array.from(section.querySelectorAll('.cs-walk-dots .pin-dot'));
+      const n = slides.length;
+      if (n < 2) return;
+      section.classList.add('cs-touch-steps');
+      let idx = 0;
+      const arrows = makeArrows(section.querySelector('.cs-walk-stage') || section);
+      const set = i => {
+        idx = Math.max(0, Math.min(n - 1, i));
+        slides.forEach((s, k) => s.toggleAttribute('data-on', k === idx));
+        copies.forEach((c, k) => c.toggleAttribute('data-on', k === idx));
+        dots.forEach((d, k) => d.classList.toggle('active', k === idx));
+        arrows.count.textContent = (idx + 1) + ' / ' + n;
+        arrows.prev.disabled = idx === 0; arrows.next.disabled = idx === n - 1;
+      };
+      arrows.prev.addEventListener('click', () => set(idx - 1));
+      arrows.next.addEventListener('click', () => set(idx + 1));
+      bindSwipe(section, () => set(idx + 1), () => set(idx - 1));
+      set(0);
+    });
+
+    // ---- Pin sections (data-pin): reveal one step at a time, swipe to advance
+    pinSecs.forEach(section => {
+      const steps = Array.from(section.querySelectorAll('.pin-step'));
+      const dotsWrap = section.querySelector('.pin-dots');
+      const n = steps.length;
+      if (n < 2) return;
+      section.classList.add('cs-touch-steps');
+      // build dots if the section doesn't already have them
+      let dots = dotsWrap ? Array.from(dotsWrap.querySelectorAll('.pin-dot')) : [];
+      if (dotsWrap && dots.length !== n) {
+        dotsWrap.innerHTML = steps.map((_, i) => '<span class="pin-dot"></span>').join('');
+        dots = Array.from(dotsWrap.querySelectorAll('.pin-dot'));
+      }
+      let idx = 0;
+      const arrows = makeArrows(section);
+      const set = i => {
+        idx = Math.max(0, Math.min(n - 1, i));
+        steps.forEach((s, k) => s.classList.toggle('touch-on', k === idx));
+        dots.forEach((d, k) => d.classList.toggle('active', k === idx));
+        arrows.count.textContent = (idx + 1) + ' / ' + n;
+        arrows.prev.disabled = idx === 0; arrows.next.disabled = idx === n - 1;
+      };
+      arrows.prev.addEventListener('click', () => set(idx - 1));
+      arrows.next.addEventListener('click', () => set(idx + 1));
+      bindSwipe(section, () => set(idx + 1), () => set(idx - 1));
+      set(0);
+    });
   }
 
   /* Before/after compare — mouse-position driven on desktop, draggable on touch.
