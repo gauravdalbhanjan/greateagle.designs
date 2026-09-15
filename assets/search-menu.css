@@ -58,19 +58,26 @@ body.ged-lock { position: fixed; left: 0; right: 0; width: 100%; overflow: hidde
   width: 360px; height: auto; max-height: 52px; max-width: calc(100vw - 48px);
   border-radius: 26px; padding: 6px 6px 6px 8px; overflow: hidden;
   display: flex; flex-direction: column;
-  opacity: 0; transition: opacity 0.15s linear;
+  opacity: 0; transition: opacity 0.25s ease;
 }
-/* phase 1: extend to full WIDTH (bar stays short) */
+/* One continuous authored morph: width grows first, then height begins around
+   the halfway mark and finishes together — a single fluid motion, no JS-timed
+   stop between phases. */
+/* Width and height each animate on their OWN continuous transition (no
+   intermediate keyframe stops that would cause a mid-way hold). Width flows
+   the whole way; height starts ~30% in (JS adds .expand). Soft, light
+   ease-out — glass/bubble fluid, no spring/weight. */
 .ged-overlay.open .ged-panel {
   opacity: 1; width: calc(100vw - 48px); max-height: 52px;
-  transition: width 0.6s cubic-bezier(0.22,1,0.36,1), opacity 0.12s linear;
+  transition: width 0.85s cubic-bezier(0.22, 0.7, 0.2, 1), opacity 0.3s ease;
 }
-/* phase 2 (.expand): grow to fit content (hug), capped at the viewport */
 .ged-overlay.open .ged-panel.expand {
   max-height: calc(100vh - 32px);
-  transition: max-height 0.6s cubic-bezier(0.22,1,0.36,1);
+  transition:
+    width 0.85s cubic-bezier(0.22, 0.7, 0.2, 1),
+    max-height 0.7s cubic-bezier(0.22, 0.7, 0.2, 1);
 }
-.ged-panel .ged-panel-body { opacity: 0; transition: opacity 0.4s var(--ease); }
+.ged-panel .ged-panel-body { opacity: 0; transition: opacity 0.5s ease; }
 .ged-panel.expand .ged-panel-body { opacity: 1; }
 .ged-panel-top { display: flex; align-items: center; gap: 12px; flex-shrink: 0; height: 40px; }
 .ged-brand--panel { flex-shrink: 0; }
@@ -82,16 +89,20 @@ body.ged-lock { position: fixed; left: 0; right: 0; width: 100%; overflow: hidde
   border: 1px solid var(--accent); padding: 0;
 }
 .ged-search-wrap::before {
-  content: ''; position: absolute; inset: -1px; border-radius: 100px; padding: 1px;
-  background: linear-gradient(90deg, #ff2a00, #ffb300, #38d200, #00c6ff, #b400ff, #ff2a00);
-  background-size: 300% 100%;
+  content: ''; position: absolute; inset: -1px; border-radius: 100px; padding: 1.4px;
+  /* Same clockwise rotating conic ring as the AI answer card. */
+  background: conic-gradient(from var(--ged-ang), #ff4400, #c034d0, #9bff20, #ef1c00, #ff4400);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor; mask-composite: exclude;
-  animation: gedWave 5s linear infinite; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0; transition: opacity 0.3s; pointer-events: none;
 }
 .ged-search-wrap.ai-on { border-color: transparent; }
-.ged-search-wrap.ai-on::before { opacity: 1; animation: gedWave 2.6s linear infinite; }
-@keyframes gedWave { from { background-position: 0% 50%; } to { background-position: 300% 50%; } }
+.ged-search-wrap.ai-on::before { opacity: 1; animation: gedAnswerSpin 4s linear infinite; }
+@supports not (background: conic-gradient(from var(--ged-ang), red, blue)) {
+  .ged-search-wrap.ai-on::before { animation: gedAnswerSpinFallback 4s linear infinite; }
+}
 .ged-search-input {
   flex: 1; background: transparent; color: var(--text-primary); border: 0; outline: none;
   font-size: 14px; font-weight: 500; font-family: inherit; padding: 0 84px 0 18px; height: 100%; min-width: 0;
@@ -100,14 +111,28 @@ body.ged-lock { position: fixed; left: 0; right: 0; width: 100%; overflow: hidde
 [data-theme="light"] .ged-search-input::placeholder { color: rgba(0,0,0,0.4); }
 /* Zap: rainbow by default; greys out when AI is ON. Never rotates. */
 .ged-zap {
-  position: absolute; right: 46px; width: 28px; height: 28px; border-radius: 50%;
+  position: absolute; right: 46px; width: 30px; height: 30px; border-radius: 50%;
   border: 0; cursor: pointer; display: flex; align-items: center; justify-content: center;
-  background: conic-gradient(from 0deg, #ff2a00, #ffb300, #38d200, #00c6ff, #b400ff, #ff2a00);
-  color: #fff; transition: background 0.3s, color 0.3s, filter 0.3s;
+  background: transparent; isolation: isolate;   /* overflow visible so the tooltip shows */
+  color: #fff; transition: color 0.3s, filter 0.3s;
 }
-.ged-zap svg { width: 15px; height: 15px; }
+/* Living Siri-style spectrum: a spinning conic wave on a layer below the icon.
+   Self-clipped to a circle (clip-path) so we DON'T need overflow:hidden on the
+   button — which would also clip the tooltip. */
+.ged-zap::before {
+  content: ""; position: absolute; inset: -70%; z-index: -1;
+  border-radius: 50%; clip-path: circle(15px at center);
+  background: linear-gradient(90deg, #ff4400, #c034d0, #9bff20, #ef1c00, #ff4400, #c034d0, #9bff20, #ef1c00, #ff4400);
+  background-size: 250% 100%;
+  animation: gedAiSpin 6s linear infinite, gedAiDrift 4s linear infinite;
+}
+/* Rotate the layer + drift the spectrum right-to-left underneath it. */
+@keyframes gedAiSpin { to { transform: rotate(360deg); } }
+@keyframes gedAiDrift { 0% { background-position: 250% 0; } 100% { background-position: 0% 0; } }
+.ged-zap svg { width: 15px; height: 15px; position: relative; z-index: 1; }
 .ged-zap:hover { filter: brightness(1.1); }
 .ged-search-wrap.ai-on .ged-zap { background: rgba(150,150,150,0.35); color: var(--text-secondary); }
+.ged-search-wrap.ai-on .ged-zap::before { opacity: 0; }
 .ged-zap::after {
   content: attr(data-tip); position: absolute; top: calc(100% + 8px); right: 0; white-space: nowrap;
   background: #111; color: #fff; font-size: 11px; font-weight: 500; padding: 5px 9px; border-radius: 6px;
@@ -169,17 +194,40 @@ a.ged-card:hover { transform: translateY(-3px); box-shadow: var(--hover-glow); b
 .ged-contact-title span { color: var(--accent); }
 .ged-empty { color: var(--text-tertiary); font-size: 14px; padding: 20px 0; }
 
-/* AI answer card — spectrum-edged, sits atop the matched results */
+/* AI answer card — Siri-style border whose colour rotates CLOCKWISE around
+   the perimeter. A conic gradient on a ::before layer spins; a mask keeps
+   only the border-thickness ring visible. */
+@property --ged-ang { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
 .ged-answer {
+  --ged-bw: 1.6px;                     /* border thickness */
   position: relative; border-radius: 16px; padding: 20px 22px;
   margin: 24px 0 24px;                 /* 24px gap from tabs above + results below */
-  border: 1.5px solid transparent;
-  background: linear-gradient(var(--bg-secondary), var(--bg-secondary)) padding-box,
-    linear-gradient(90deg, #ff2a00, #ffb300, #38d200, #00c6ff, #b400ff, #ff2a00) border-box;
+  background: var(--bg-secondary);
+  border: var(--ged-bw) solid transparent;   /* space for the ring */
 }
-[data-theme="dark"] .ged-answer {
-  background: linear-gradient(rgba(255,255,255,0.04), rgba(255,255,255,0.04)) padding-box,
-    linear-gradient(90deg, #ff2a00, #ffb300, #38d200, #00c6ff, #b400ff, #ff2a00) border-box;
+[data-theme="dark"] .ged-answer { background: rgba(255,255,255,0.04); }
+.ged-answer::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  border-radius: inherit; padding: var(--ged-bw);
+  background: conic-gradient(from var(--ged-ang), #ff4400, #c034d0, #9bff20, #ef1c00, #ff4400);
+  /* Show only the ring: fill minus the padding-box interior. */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: gedAnswerSpin 4s linear infinite;   /* clockwise */
+}
+@keyframes gedAnswerSpin { to { --ged-ang: 360deg; } }
+/* Keep the card content above the ring layer. */
+.ged-answer > * { position: relative; z-index: 1; }
+/* Fallback for browsers without @property (no smooth angle anim): rotate the
+   whole ::before layer instead, same clockwise effect. */
+@supports not (background: conic-gradient(from var(--ged-ang), red, blue)) {
+  .ged-answer::before { animation: gedAnswerSpinFallback 4s linear infinite; }
+  @keyframes gedAnswerSpinFallback { to { transform: rotate(360deg); } }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ged-answer::before, .ged-zap::before, .ged-search-wrap.ai-on::before { animation: none !important; }
 }
 .ged-answer-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
 .ged-answer-badge { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; background: var(--accent); padding: 4px 10px; border-radius: 100px; }

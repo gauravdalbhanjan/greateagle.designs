@@ -79,11 +79,15 @@ window.CASE_STUDY = {
   ],
 
   gallery: [
-    { img: "../assets/sous-chef/hero-shot-product.jpg", caption: "Countertop device — hero shot", wide: true },
+    { img: "../assets/sous-chef/sous-chef-sketches-and-mood-board.jpg", caption: "Sketches & mood board", wide: true },
+    { img: "../assets/sous-chef/sous-chef-storyboard.jpg", caption: "Storyboard" },
+    { img: "../assets/sous-chef/sous-chef-orthographic-projection-view.jpg", caption: "Orthographic projection view" },
+    { img: "../assets/sous-chef/sous-chef-3D-model_and-technical-drawing.jpg", caption: "3D model & technical drawing" },
+    { img: "../assets/sous-chef/physical-product-prototype-making.jpg", caption: "Prototyping the physical device" },
+    { img: "../assets/sous-chef/sous-chef-physical-product-prototype-heroshot.jpg", caption: "Physical prototype — hero shot", wide: true },
     { img: "../assets/sous-chef/physical-product-ui.jpg", caption: "Physical product UI" },
     { img: "../assets/sous-chef/physical-product-ui-1.jpg", caption: "On-device interface" },
-    { img: "../assets/sous-chef/physical-product-ui-2.jpg", caption: "On-device interface, in use" },
-    { img: "../assets/sous-chef/physical-product-prototype-making.jpg", caption: "Prototyping the physical device" }
+    { img: "../assets/sous-chef/physical-product-ui-2.jpg", caption: "On-device interface, in use" }
   ],
 
   impact: [

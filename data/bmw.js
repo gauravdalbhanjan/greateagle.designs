@@ -3,13 +3,15 @@ window.CASE_STUDY = {
   __file: "bmw.js",
   name: "BMW Workspace Redesign",
 
-  /* 1. Interactive Hook.
-     NEED FROM USER: actual before-state photos/renders of the old ITRC office
-     to build a real image before/after comparison. Until then this runs as a
-     text-only contrast headline (no interactive slider, no invented imagery). */
+  /* 1. Interactive Hook — the old ITRC interior (before) vs the redesign (after). */
   hook: {
     label: "Case Study > Spatial Design",
-    headline: "A dark, \u201Cshop-like,\u201D distracting office employees avoided \u2014 versus a workspace built to pull them back in."
+    headline: "A dark, \u201Cshop-like,\u201D distracting office employees avoided \u2014 versus a workspace built to pull them back in.",
+    interactive: true,
+    before: { img: "../assets/BMW/previous-interior-seating-area.png", alt: "The old ITRC office interior \u2014 seating area" },
+    after:  { img: "../assets/BMW/bmw-opening-image.jpg", alt: "The redesigned BMW workspace" },
+    beforeLabel: "Old interior",
+    afterLabel: "Redesigned"
   },
 
   /* 2. Title Block */
@@ -19,8 +21,8 @@ window.CASE_STUDY = {
     client: "BMW"
   },
 
-  /* 3. Hero Media */
-  hero: { img: "../assets/BMW/bmw-opening-image.jpg", alt: "The redesigned BMW workspace, currently being built" },
+  /* 3. Hero Media — opens with the animated thumbnail. */
+  hero: { img: "../assets/BMW/opening-thumbnail-bmw.gif", alt: "BMW workspace redesign" },
 
   /* 4. Key Metrics Band.
      NEED FROM USER: quantifiable results (return-to-office rate, satisfaction
@@ -119,7 +121,7 @@ window.CASE_STUDY = {
       { title: "Swing-style window seating", body: "Biophilic, ergonomic seating that pulls people toward natural light.", media: { img: "../assets/BMW/bmw-scaled-model-spatial-prototype3.jpg", alt: "Swing-style window seating with natural light" } },
       { title: "BMW-iconic cafeteria elements", body: "A brand-integrated social and casual space.", media: { img: "../assets/BMW/bmw-scaled-model-spatial-prototype4.jpg", alt: "BMW-iconic cafeteria elements" } },
       { title: "Custom modular furniture", body: "Adaptable to varied work modes across the day.", media: { img: "../assets/BMW/bmw-scaled-model-spatial-prototype1.jpg", alt: "Custom modular furniture" } },
-      { title: "Strategic wayfinding & spatial design", body: "Encourages spontaneous conversation and idea-sharing by design, not by accident.", media: { img: "../assets/BMW/bmw-scaled-model-spatial-prototype5.jpg", alt: "Strategic wayfinding and spatial design" } }
+      { title: "Strategic wayfinding & spatial design", body: "Encourages spontaneous conversation and idea-sharing by design, not by accident.", media: { img: "../assets/BMW/strategic-way-finding-spatial-design.jpg", alt: "Strategic wayfinding and spatial design" } }
     ]
   },
 
@@ -146,6 +148,15 @@ window.CASE_STUDY = {
   galleryTitle: "Ideation, floorplans &amp; scaled models",
   gallery: [
     {
+      group: "Before &mdash; the old ITRC office",
+      items: [
+        { img: "../assets/BMW/previous-interior-meeting-area.png", caption: "Old meeting area" },
+        { img: "../assets/BMW/previous-interior-seating-area.png", caption: "Old seating area" },
+        { img: "../assets/BMW/previous-interior-pathway.png", caption: "Old pathway / circulation" },
+        { img: "../assets/BMW/previous-interior-call-room.png", caption: "Old call room" }
+      ]
+    },
+    {
       group: "Ideation &amp; Sketches",
       items: [
         { img: "../assets/BMW/bmw-brainstorming-sketches.jpg", caption: "Early brainstorming sketches" },
@@ -166,12 +177,7 @@ window.CASE_STUDY = {
     {
       group: "Scaled Spatial Prototypes",
       items: [
-        { img: "../assets/BMW/bmw-scaled-model-spatial-prototyping-process.jpg", caption: "The prototyping process" },
-        { img: "../assets/BMW/bmw-scaled-model-spatial-prototype1.jpg", caption: "Overview" },
-        { img: "../assets/BMW/bmw-scaled-model-spatial-prototype2.jpg", caption: "Collaboration zone" },
-        { img: "../assets/BMW/bmw-scaled-model-spatial-prototype3.jpg", caption: "Seating & light" },
-        { img: "../assets/BMW/bmw-scaled-model-spatial-prototype4.jpg", caption: "Cafeteria detail" },
-        { img: "../assets/BMW/bmw-scaled-model-spatial-prototype5.jpg", caption: "Full massing" }
+        { img: "../assets/BMW/bmw-scaled-model-spatial-prototyping-process.jpg", caption: "The prototyping process \u2014 validating flow and sightlines at human scale" }
       ]
     },
     {

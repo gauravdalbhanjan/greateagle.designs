@@ -101,5 +101,5 @@ window.CASE_STUDY = {
     ]
   },
 
-  next: { label: "OPEX Allocation Tool Redesign", href: "opex-allocation.html" }
+  next: { label: "BMW Workspace Redesign", href: "bmw-workspace.html" }
 };

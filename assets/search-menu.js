@@ -235,9 +235,10 @@
     document.documentElement.classList.add('ged-lock');
     document.body.classList.add('ged-lock');
     panel.classList.remove('expand');
-    var delay = reduceMotion ? 0 : 600;
+    // Start the height (+body) early so the two overlap into one continuous flow.
+    var delay = reduceMotion ? 0 : 120;
     setTimeout(function () { panel.classList.add('expand'); setView(view || 'work'); }, delay);
-    setTimeout(function () { input.focus(); }, delay + 160);
+    setTimeout(function () { input.focus(); }, (reduceMotion ? 0 : 900) + 60);
   }
   function close() {
     overlay.classList.remove('open');
@@ -266,12 +267,19 @@
   input.addEventListener('input', function () { clearTimeout(deb); deb = setTimeout(runSearch, 160); });
   input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { clearTimeout(deb); runSearch(); } });
 
-  /* Theme toggle (the injected header owns #themeToggle). */
-  var themeBtn = document.getElementById('themeToggle');
-  if (themeBtn) themeBtn.addEventListener('click', function () {
+  /* Theme toggle. On case-study pages there are TWO #themeToggle elements —
+     the hidden legacy <nav> button and this injected header button — so a
+     global getElementById would resolve to the hidden one and the visible
+     toggle would do nothing. Query WITHIN the injected header (and fall back
+     to any others) so the real, visible button is always wired. */
+  function toggleTheme() {
     var htmlEl = document.documentElement;
     var next = htmlEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     htmlEl.setAttribute('data-theme', next);
     try { localStorage.setItem('theme', next); } catch (e) {}
-  });
+    if (typeof buildLiquidGlass === 'function') { try { buildLiquidGlass(); } catch (e) {} }
+    if (window.GED && typeof window.GED.buildLiquidGlass === 'function') { try { window.GED.buildLiquidGlass(); } catch (e) {} }
+  }
+  var headerThemeBtn = header.querySelector('#themeToggle, .ged-header-theme');
+  if (headerThemeBtn) headerThemeBtn.addEventListener('click', toggleTheme);
 })();

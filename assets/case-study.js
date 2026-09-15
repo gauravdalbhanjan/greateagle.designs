@@ -99,6 +99,26 @@
     '</div>';
   };
 
+  /* 3.5 Scroll-driven 3D product story mount (Sous Chef only).
+     Emits a container that assets/sous-chef-3d.js hydrates into a pinned
+     WebGL story (phone Act 1 → handoff → device 7-beat). The heavy lifting
+     lives in that module; here we only render the mount + skeleton + the
+     reduced-motion / no-JS fallback image so the page is meaningful before
+     (or without) the 3D engine. */
+  S.story3d = d => {
+    if (!d.story3d) return '';
+    const s = d.story3d;
+    const fallback = s.fallback || (d.hero && d.hero.img) || '';
+    return '<section id="souschef-3d-mount" class="cs-3d"' +
+      ' data-phone="' + esc(s.phone || '') + '"' +
+      ' data-device="' + esc(s.device || '') + '"' +
+      ' data-device-full="' + esc(s.deviceFull || '') + '">' +
+      '<div class="cs-3d-fallback">' +
+        (fallback ? '<img src="' + esc(fallback) + '" alt="' + esc((d.hero && d.hero.alt) || 'Sous Chef device') + '" />' : '') +
+      '</div>' +
+    '</section>';
+  };
+
   /* 4. Key Metrics Band */
   S.metrics = d => {
     if (!d.metrics || !d.metrics.length) return '';
@@ -350,20 +370,27 @@
     if (!d.gallery || !d.gallery.length) return '';
     const grouped = d.gallery[0] && d.gallery[0].group && d.gallery[0].items;
     const title = d.galleryTitle || 'Final screens &amp; artifacts';
-    let body;
+
     if (grouped) {
-      body = d.gallery.map(grp =>
+      // Each group is a simple masonry-style collage grid with its sub-header.
+      const groups = d.gallery.map(grp =>
         '<div class="cs-gallery-group">' +
           '<h3 class="cs-gallery-subhead">' + rich(grp.group) + '</h3>' +
-          galleryGrid(grp.items || []) +
+          '<div class="cs-collage">' + (grp.items || []).map(g =>
+            '<figure' + (g.wide ? ' class="span-2"' : '') + '>' + mediaTag(g) +
+              (g.caption ? '<figcaption>' + rich(g.caption) + '</figcaption>' : '') + '</figure>'
+          ).join('') + '</div>' +
         '</div>'
       ).join('');
-    } else {
-      body = galleryGrid(d.gallery);
+      return '<section class="cs-section reveal">' +
+        '<div class="cs-num">Gallery</div><h2 class="cs-h2">' + rich(title) + '</h2>' +
+        groups +
+      '</section>';
     }
+
     return '<section class="cs-section reveal">' +
       '<div class="cs-num">Gallery</div><h2 class="cs-h2">' + rich(title) + '</h2>' +
-      body +
+      galleryGrid(d.gallery) +
     '</section>';
   };
 
@@ -411,7 +438,7 @@
 
     // Section render order + their nav keys (some produce no nav entry).
     const order = [
-      ['hook', S.hook], ['title', S.title], ['hero', S.hero], ['metrics', S.metrics],
+      ['hook', S.hook], ['title', S.title], ['hero', S.hero], ['story3d', S.story3d], ['metrics', S.metrics],
       ['snapshot', S.snapshot], ['context', S.context], ['problem', S.problem],
       ['shift', S.shift], ['process', S.process], ['gradient', S.gradient],
       ['walkthrough', S.walkthrough],
@@ -693,9 +720,10 @@
           p.maxIdx = idx;
           if (p.maxIdx >= n - 1) p.section.classList.add('steps-done');
         }
-        // Active dot follows current scroll position (can move back for context),
-        // but revealed steps never un-reveal.
-        p.dots.forEach((d, i) => d.classList.toggle('active', i <= idx));
+        // One active dot = the current step (matches every other dot engine
+        // on the site — walkthrough, gradient, touch). Revealed steps stay
+        // revealed, but only the dot for the current step is lit.
+        p.dots.forEach((d, i) => d.classList.toggle('active', i === idx));
 
         // Scroll-driven photo deck: map the step-progress across all cards.
         if (p.deckCards && p.deckCards.length) {

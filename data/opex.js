@@ -87,7 +87,8 @@ window.CASE_STUDY = {
     { img: "../assets/opex-allocation/Metadata pre-computed and surfaced.jpg", caption: "Metadata pre-computed and surfaced" },
     { img: "../assets/opex-allocation/Natural-language labels.png", caption: "Natural-language labels" },
     { img: "../assets/opex-allocation/Exclusions surfaced proactively.png", caption: "Exclusions surfaced proactively" },
-    { img: "../assets/opex-allocation/Owner client audit trail per line.png", caption: "Owner / client audit trail per line" }
+    { img: "../assets/opex-allocation/Owner client audit trail per line.png", caption: "Owner / client audit trail per line" },
+    { img: "../assets/opex-allocation/allocation-deliverable.jpg", caption: "The allocation deliverable handed to engineering", wide: true }
   ],
 
   impact: [

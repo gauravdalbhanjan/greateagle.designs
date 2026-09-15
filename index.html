@@ -110,18 +110,46 @@
     /* Small-card row (BMW / Origami / Blog) — 3 equal columns */
     .wp-small-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
     .wp-card--sm { display: flex; flex-direction: column; }
-    .wp-card--sm .wp-media-inner { aspect-ratio: 3 / 4; }
-    .wp-card--sm .wp-media img { height: 100%; object-fit: cover; object-position: center; }
+    /* Image cards (BMW / Comment Panel / Origami): show the full GIF, no crop.
+       The window height follows the image's natural aspect at the card width. */
+    .wp-card--sm .wp-media-inner { aspect-ratio: auto; }
+    .wp-card--sm .wp-media img { width: 100%; height: auto; object-fit: contain; display: block; }
     .wp-card--sm .wp-body { padding: 4px 18px 20px; }
     .wp-card--sm .wp-title { font-size: 1.15rem; }
     /* Blog promo card — solid accent, centered */
     .wp-card--blog { background: var(--accent); border-color: transparent; box-shadow: 0 0 0 3px rgba(255,42,0,0.18); }
-    .wp-blog-inner { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; padding: 40px 24px; }
+    /* Promo cards (About / Blog) stretch to match the image card (Origami)
+       height in the same row — the grid stretches items by default, and the
+       centered inner fills the card. */
+    .wp-blog-inner { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; padding: 26px 22px; }
     .wp-blog-inner .wp-blog-emoji { font-size: 2rem; }
     .wp-blog-inner .wp-blog-tag { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: #fff; background: rgba(255,255,255,0.18); padding: 5px 14px; border-radius: 100px; }
     .wp-blog-inner h3 { color: #fff; font-size: 1.15rem; font-weight: 700; margin: 4px 0 0; }
     .wp-blog-inner p { color: rgba(255,255,255,0.85); font-size: 14px; margin: 0; }
-    @media (max-width: 760px) { .wp-small-row { grid-template-columns: 1fr; } }
+    /* About promo card — glass surface with an accent-tinted wash (distinct
+       from the solid-accent Blog card, but same centered inner layout). */
+    .wp-card--about { background: var(--bg-secondary); border-color: var(--border); position: relative; overflow: hidden; }
+    .wp-card--about::before { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 90% at 50% 0%, rgba(255,42,0,0.16) 0%, transparent 60%); pointer-events: none; }
+    .wp-card--about .wp-blog-inner { position: relative; }
+    /* Wave the hand: a quick wiggle every 3s, resting between. */
+    .wp-card--about .wp-blog-emoji {
+      font-size: 2rem; display: inline-block; transform-origin: 70% 80%;
+      animation: wpWave 3s ease-in-out infinite;
+    }
+    @keyframes wpWave {
+      0%, 84%, 100% { transform: rotate(0deg); }
+      86% { transform: rotate(14deg); }
+      88% { transform: rotate(-8deg); }
+      90% { transform: rotate(14deg); }
+      92% { transform: rotate(-4deg); }
+      94% { transform: rotate(10deg); }
+      96% { transform: rotate(0deg); }
+    }
+    @media (prefers-reduced-motion: reduce) { .wp-card--about .wp-blog-emoji { animation: none; } }
+    .wp-card--about .wp-blog-tag { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: var(--accent); background: var(--accent-dim, rgba(255,42,0,0.12)); border: 1px solid rgba(255,42,0,0.25); padding: 5px 14px; border-radius: 100px; }
+    .wp-card--about h3 { color: var(--text-primary); font-size: 1.15rem; font-weight: 700; margin: 4px 0 0; }
+    .wp-card--about p { color: var(--text-secondary); font-size: 14px; margin: 0; }
+    @media (max-width: 760px) { .wp-small-row { grid-template-columns: 1fr !important; } }
     .wp-body { padding: 22px 26px 26px; }
     .wp-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
     .wp-title { font-size: clamp(1.15rem, 2vw, 1.5rem); font-weight: 700; letter-spacing: -0.02em; color: var(--text-primary); line-height: 1.25; }
@@ -303,7 +331,8 @@
     .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
     .footer-col a { font-size: var(--fs-secondary); color: var(--text-secondary); transition: color 0.2s; }
     .footer-col a:hover { color: var(--accent); }
-    .footer-brand .footer-logo { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .footer-brand .footer-logo { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; color: var(--text-primary); text-decoration: none; display: inline-block; transition: opacity 0.2s; }
+    .footer-brand a.footer-logo:hover { opacity: 0.75; }
     .footer-brand .footer-logo span { color: var(--accent); }
     .footer-status { font-size: var(--fs-secondary); color: var(--text-secondary); display: flex; align-items: center; gap: 8px; }
     .footer-status .dot { width: 8px; height: 8px; border-radius: 50%; background: #21c063; box-shadow: 0 0 8px rgba(33,192,99,0.6); }
@@ -318,7 +347,13 @@
       .loop-aside, .flow-aside { position: static; top: auto; }
       .loop-aside p, .flow-aside p { max-width: none; }
       .loop-row .rm, .flow-row .rm { display: none; }
-      .loop-ghost, .flow-ghost { display: none; }
+      /* Keep the ghost words visible on mobile (they were hidden before).
+         Constrain size so the label reads as background text without
+         overflowing, and let it show fully. */
+      .loop-ghost, .flow-ghost, .cta-ghost {
+        display: block; font-size: clamp(3.2rem, 20vw, 7rem);
+        white-space: nowrap; opacity: 0.05; overflow: visible;
+      }
       .about-strip { grid-template-columns: 1fr; }
       .tstm-grid { grid-template-columns: 1fr; }
       
@@ -394,19 +429,29 @@
       width: 360px; height: auto; max-height: 52px; max-width: calc(100vw - 48px);
       border-radius: 26px; padding: 6px 6px 6px 8px; overflow: hidden;
       display: flex; flex-direction: column;
-      opacity: 0; transition: opacity 0.15s linear;
+      opacity: 0; transition: opacity 0.25s ease;
     }
-    /* phase 1: extend to full WIDTH (bar stays short), keeping side margins */
+    /* One continuous authored motion: width grows first, then height begins
+       around the halfway mark and finishes together — no JS-timed stop, so it
+       flows as a single fluid morph. */
+    /* Width and height each animate on their OWN continuous transition (no
+       intermediate keyframe stops that would cause a mid-way hold). Width
+       flows the whole way; height starts ~30% in via its delay. Soft, light
+       ease-out — glass/bubble fluid, no spring/weight. */
     .ged-overlay.open .ged-panel {
-      opacity: 1; width: calc(100vw - 48px); max-height: 52px;
-      transition: width 0.6s cubic-bezier(0.22,1,0.36,1), opacity 0.12s linear;
+      opacity: 1;
+      width: calc(100vw - 48px);
+      max-height: 52px;
+      transition: width 0.85s cubic-bezier(0.22, 0.7, 0.2, 1), opacity 0.3s ease;
     }
-    /* phase 2 (.expand): grow to fit content (hug), capped at the viewport */
     .ged-overlay.open .ged-panel.expand {
       max-height: calc(100vh - 32px);
-      transition: max-height 0.6s cubic-bezier(0.22,1,0.36,1);
+      transition:
+        width 0.85s cubic-bezier(0.22, 0.7, 0.2, 1),
+        max-height 0.7s cubic-bezier(0.22, 0.7, 0.2, 1);
     }
-    .ged-panel .ged-panel-body { opacity: 0; transition: opacity 0.4s var(--ease); }
+    /* Body content cross-fades in over the second half (as height opens). */
+    .ged-panel .ged-panel-body { opacity: 0; transition: opacity 0.5s ease; }
     .ged-panel.expand .ged-panel-body { opacity: 1; }
     /* Fixed header row (does NOT scroll) — no own background (single glass) */
     .ged-panel-top {
@@ -421,17 +466,20 @@
       border: 1px solid var(--accent); padding: 0;
     }
     .ged-search-wrap::before {
-      content: ''; position: absolute; inset: -1px; border-radius: 100px; padding: 1px;
-      background: linear-gradient(90deg, #ff2a00, #ffb300, #38d200, #00c6ff, #b400ff, #ff2a00);
-      background-size: 300% 100%;
+      content: ''; position: absolute; inset: -1px; border-radius: 100px; padding: 1.4px;
+      background: conic-gradient(from var(--ged-ang), #ff4400, #c034d0, #9bff20, #ef1c00, #ff4400);
       -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor; mask-composite: exclude;
-      animation: gedWave 5s linear infinite; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      opacity: 0; transition: opacity 0.3s; pointer-events: none;
     }
-    /* AI ON → the field border lights up rainbow */
+    /* AI ON → the field border becomes a clockwise rotating conic ring */
     .ged-search-wrap.ai-on { border-color: transparent; }
-    .ged-search-wrap.ai-on::before { opacity: 1; animation: gedWave 2.6s linear infinite; }
-    @keyframes gedWave { from { background-position: 0% 50%; } to { background-position: 300% 50%; } }
+    .ged-search-wrap.ai-on::before { opacity: 1; animation: gedAnswerSpin 4s linear infinite; }
+    @supports not (background: conic-gradient(from var(--ged-ang), red, blue)) {
+      .ged-search-wrap.ai-on::before { animation: gedAnswerSpinFallback 4s linear infinite; }
+    }
     .ged-search-input {
       flex: 1; background: transparent; color: var(--text-primary); border: 0; outline: none;
       font-size: 14px; font-weight: 500; font-family: inherit; padding: 0 84px 0 18px; height: 100%; min-width: 0;
@@ -440,14 +488,24 @@
     [data-theme="light"] .ged-search-input::placeholder { color: rgba(0,0,0,0.4); }
     /* Zap: colored (rainbow) by default; greys out when AI is ON. Never rotates. */
     .ged-zap {
-      position: absolute; right: 46px; width: 28px; height: 28px; border-radius: 50%;
+      position: absolute; right: 46px; width: 30px; height: 30px; border-radius: 50%;
       border: 0; cursor: pointer; display: flex; align-items: center; justify-content: center;
-      background: conic-gradient(from 0deg, #ff2a00, #ffb300, #38d200, #00c6ff, #b400ff, #ff2a00);
-      color: #fff; transition: background 0.3s, color 0.3s, filter 0.3s;
+      background: transparent; isolation: isolate;
+      color: #fff; transition: color 0.3s, filter 0.3s;
     }
-    .ged-zap svg { width: 15px; height: 15px; }
+    .ged-zap::before {
+      content: ""; position: absolute; inset: -70%; z-index: -1;
+      border-radius: 50%; clip-path: circle(15px at center);
+      background: linear-gradient(90deg, #ff4400, #c034d0, #9bff20, #ef1c00, #ff4400, #c034d0, #9bff20, #ef1c00, #ff4400);
+      background-size: 250% 100%;
+      animation: gedAiSpin 6s linear infinite, gedAiDrift 4s linear infinite;
+    }
+    @keyframes gedAiSpin { to { transform: rotate(360deg); } }
+    @keyframes gedAiDrift { 0% { background-position: 250% 0; } 100% { background-position: 0% 0; } }
+    .ged-zap svg { width: 15px; height: 15px; position: relative; z-index: 1; }
     .ged-zap:hover { filter: brightness(1.1); }
     .ged-search-wrap.ai-on .ged-zap { background: rgba(150,150,150,0.35); color: var(--text-secondary); }
+    .ged-search-wrap.ai-on .ged-zap::before { opacity: 0; }
     .ged-zap::after {
       content: attr(data-tip); position: absolute; top: calc(100% + 8px); right: 0; white-space: nowrap;
       background: #111; color: #fff; font-size: 11px; font-weight: 500; padding: 5px 9px; border-radius: 6px;
@@ -517,10 +575,23 @@
     .ged-contact-title span { color: var(--accent); }
     .ged-empty { color: var(--text-tertiary); font-size: 14px; padding: 20px 0; }
     /* AI answer card */
-    .ged-answer { position: relative; border-radius: 16px; padding: 20px 22px; margin: 24px 0 24px;
-      border: 1.5px solid transparent;
-      background: linear-gradient(rgba(255,255,255,0.04), rgba(255,255,255,0.04)) padding-box, linear-gradient(90deg, #ff2a00, #ffb300, #38d200, #00c6ff, #b400ff, #ff2a00) border-box; }
-    [data-theme="light"] .ged-answer { background: linear-gradient(var(--bg-secondary), var(--bg-secondary)) padding-box, linear-gradient(90deg, #ff2a00, #ffb300, #38d200, #00c6ff, #b400ff, #ff2a00) border-box; }
+    @property --ged-ang { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+    .ged-answer { --ged-bw: 1.6px; position: relative; border-radius: 16px; padding: 20px 22px; margin: 24px 0 24px;
+      background: rgba(255,255,255,0.04); border: var(--ged-bw) solid transparent; }
+    [data-theme="light"] .ged-answer { background: var(--bg-secondary); }
+    .ged-answer::before {
+      content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      border-radius: inherit; padding: var(--ged-bw);
+      background: conic-gradient(from var(--ged-ang), #ff4400, #c034d0, #9bff20, #ef1c00, #ff4400);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;
+      animation: gedAnswerSpin 4s linear infinite; }
+    @keyframes gedAnswerSpin { to { --ged-ang: 360deg; } }
+    .ged-answer > * { position: relative; z-index: 1; }
+    @supports not (background: conic-gradient(from var(--ged-ang), red, blue)) {
+      .ged-answer::before { animation: gedAnswerSpinFallback 4s linear infinite; }
+      @keyframes gedAnswerSpinFallback { to { transform: rotate(360deg); } } }
+    @media (prefers-reduced-motion: reduce) { .ged-answer::before, .ged-zap::before, .ged-search-wrap.ai-on::before { animation: none !important; } }
     .ged-answer-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
     .ged-answer-badge { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; background: var(--accent); padding: 4px 10px; border-radius: 100px; }
     .ged-answer-q { font-size: 13px; color: var(--text-tertiary); font-style: italic; }
@@ -536,6 +607,7 @@
     }
     .work-intro-top { font-size: clamp(1.1rem, 2vw, 1.5rem); font-weight: 700; letter-spacing: -0.01em; color: var(--text-primary); }
     .work-intro-bottom { font-size: clamp(1.1rem, 2vw, 1.5rem); font-weight: 700; letter-spacing: -0.01em; color: var(--text-primary); margin-top: 6px; }
+    /* Rotating label — clean vertical fade/slide, centered (no horizontal drift). */
     .work-swap {
       display: block; color: var(--accent); font-weight: 800; line-height: 0.95;
       font-size: clamp(4rem, 15vw, 11rem); letter-spacing: -0.04em;
@@ -989,7 +1061,7 @@
 <footer>
   <div class="footer-cols footer-cols--4">
     <div class="footer-col footer-brand">
-      <div class="footer-logo">Gaurav <span>Dalbhanjan</span></div>
+      <a class="footer-logo" href="index.html" aria-label="Home">Gaurav <span>Dalbhanjan</span></a>
       <div class="footer-status"><span class="dot"></span> Open to work</div>
       <a href="assets/Gaurav_Dalbhanjan_Resume_CreativeDesigner.pdf" target="_blank" rel="noopener noreferrer" class="footer-resume">Resume
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
@@ -1097,6 +1169,21 @@
         chips: ['\uD83D\uDCAA 72% higher user confidence', '\u26A1 Eliminated 5x frictions'],
         filters: ['product', 'industrial', 'endtoend']
       },
+      /* BMW + Comment Panel — small cards, grouped together right after Sous Chef. */
+      {
+        href: 'home/bmw-workspace.html', img: 'assets/thumbnails/opening-thumbnail-bmw.gif',
+        title: 'BMW Workspace Redesign',
+        cats: ['Spatial', 'Industrial Design'],
+        chips: [],
+        filters: ['industrial', 'product'], small: true
+      },
+      {
+        href: 'home/design-system-comment-panel.html', img: 'assets/comment-panel/opening-thumbnail-design-system%201.gif',
+        title: 'Unified Comment Panel',
+        cats: ['Design System', 'Enterprise'],
+        chips: ['\u26A1 40% faster production'],
+        filters: ['enterprise', 'product', 'endtoend'], small: true
+      },
       {
         href: 'home/executive-metrics.html', img: 'assets/thumbnails/opening-thumbnail-dashboard.gif',
         title: 'Executive Product Metrics Dashboard',
@@ -1104,19 +1191,12 @@
         chips: ['\u26A1 1 month reporting \u2192 2s live view'],
         filters: ['dashboard', 'enterprise', 'product']
       },
+      /* About card takes the old BMW small-card slot, alongside Origami + Blog. */
       {
-        href: 'home/design-system-comment-panel.html', img: 'assets/comment-panel/opening-thumbnail-design-system%201.gif',
-        title: 'Unified Comment Panel — comments as shared infrastructure',
-        cats: ['Design System', 'Enterprise'],
-        chips: ['\u26A1 40% faster production', '\u23F1\uFE0F 72+ hrs saved'],
-        filters: ['enterprise', 'product', 'endtoend']
-      },
-      {
-        href: 'home/bmw-workspace.html', img: 'assets/thumbnails/opening-thumbnail-bmw.gif',
-        title: 'BMW Workspace Redesign',
-        cats: ['Spatial', 'Industrial Design'],
-        chips: [],
-        filters: ['industrial', 'product'], small: true
+        href: 'home/about.html', about: true,
+        title: 'The person behind the work',
+        desc: 'Beyond the r\u00e9sum\u00e9 \u2014 how I think & what drives me',
+        filters: ['all'], small: true
       },
       {
         href: 'home/origami-chair.html', img: 'assets/thumbnails/origami-chair-opening.gif',
@@ -1153,6 +1233,12 @@
           '<span class="wp-blog-tag">BLOG</span>' +
           '<h3>' + esc(p.title) + '</h3><p>' + esc(p.desc || '') + '</p></div></a>';
       }
+      if (p.about) {
+        return '<a class="wp-card wp-card--sm wp-card--about" href="' + p.href + '" style="animation-delay:' + (i * 70) + 'ms">' +
+          '<div class="wp-blog-inner"><div class="wp-blog-emoji">\uD83D\uDC4B</div>' +
+          '<span class="wp-blog-tag">ABOUT</span>' +
+          '<h3>' + esc(p.title) + '</h3><p>' + esc(p.desc || '') + '</p></div></a>';
+      }
       var chips = (p.chips || []).map(function (c) { return '<span class="wp-chip">' + esc(c) + '</span>'; }).join('');
       return '<a class="wp-card wp-card--sm" href="' + p.href + '" style="animation-delay:' + (i * 70) + 'ms">' +
         '<div class="wp-media"><div class="wp-media-inner"><img src="' + p.img + '" alt="' + esc(p.title) + '" loading="lazy" /></div></div>' +
@@ -1165,10 +1251,27 @@
     function render(filter) {
       var items = PROJECTS.filter(function (p) { return filter === 'all' || (p.filters && p.filters.indexOf(filter) !== -1) || (p.blog && filter === 'all'); });
       if (!items.length) { list.innerHTML = '<div class="wp-empty">No projects in this category yet.</div>'; return; }
-      var big = items.filter(function (p) { return !p.small; });
-      var small = items.filter(function (p) { return p.small; });
-      var html = big.map(bigCard).join('');
-      if (small.length) html += '<div class="wp-small-row">' + small.map(smallCard).join('') + '</div>';
+      // Walk items IN ORDER: big cards render stacked; runs of consecutive
+      // small cards batch into their own row wherever they occur (so BMW +
+      // Comment Panel form a row after Sous Chef, and About + Origami + Blog
+      // form a row after Executive Metrics).
+      var html = '';
+      var run = [];
+      var idx = 0;
+      function flushSmall() {
+        if (!run.length) return;
+        // Grid columns match the number of cards in this row (max 3), so a
+        // 2-card row (BMW + Comment Panel) fills its width evenly.
+        var cols = Math.min(run.length, 3);
+        html += '<div class="wp-small-row" style="grid-template-columns:repeat(' + cols + ',1fr)">' +
+          run.map(function (p) { return smallCard(p, idx++); }).join('') + '</div>';
+        run = [];
+      }
+      items.forEach(function (p) {
+        if (p.small) { run.push(p); }
+        else { flushSmall(); html += bigCard(p, idx++); }
+      });
+      flushSmall();
       list.innerHTML = html;
     }
 
@@ -1199,7 +1302,6 @@
       ticking = false;
       var rect = section.getBoundingClientRect();
       var scrollable = section.offsetHeight - window.innerHeight;
-      // progress 0→1 across the pinned scroll distance
       var progress = Math.min(1, Math.max(0, -rect.top / scrollable));
       var idx = Math.min(words.length - 1, Math.floor(progress * words.length));
       if (idx !== current) {
@@ -1394,12 +1496,13 @@
       document.documentElement.classList.add('ged-lock');
       document.body.classList.add('ged-lock');
       panel.classList.remove('expand');
-      var delay = reduceMotion ? 0 : 600;       // wait for horizontal (width) extend
+      // Start the height (+body) early so the two overlap into one continuous flow.
+      var delay = reduceMotion ? 0 : 120;
       setTimeout(function () {
-        panel.classList.add('expand');          // phase 2: vertical (height) extend
+        panel.classList.add('expand');          // height opens + body reveals
         setView(view || 'work');                // render + fast scramble as it reveals
       }, delay);
-      setTimeout(function () { input.focus(); }, delay + 160);
+      setTimeout(function () { input.focus(); }, (reduceMotion ? 0 : 900) + 60);
     }
     function close() {
       overlay.classList.remove('open');
