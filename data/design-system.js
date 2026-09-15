@@ -79,7 +79,11 @@ window.CASE_STUDY = {
     { img: "../assets/comment-panel/opening-thumbnail-design-system 1.gif", caption: "Unified comment panel", wide: true },
     { img: "../assets/comment-panel/how-to-access-comment-panel.gif", caption: "Accessing the panel in context" },
     { img: "../assets/comment-panel/how-to-annotate-or-comment.gif", caption: "Annotating / commenting" },
-    { img: "../assets/comment-panel/upload-relevant-information-asked.gif", caption: "Uploading requested information" }
+    { img: "../assets/comment-panel/upload-relevant-information-asked.gif", caption: "Uploading requested information" },
+    { img: "../assets/comment-panel/comment-panel-component-design-guidelines-deliverable.jpg", caption: "Component design guidelines — the comment panel spec handed to developers", wide: true },
+    { img: "../assets/comment-panel/comment-panel-tokens-design-guidelines-deliverable.jpg", caption: "Design-token guidelines for variable-driven theming" },
+    { img: "../assets/comment-panel/upload-area-component-design-guidelines-deliverable.jpg", caption: "Upload-area component guidelines" },
+    { img: "../assets/comment-panel/support-component-design-guidelines-deliverable.jpg", caption: "Support component guidelines" }
   ],
 
   impact: [

@@ -455,3 +455,245 @@ html:not(.pin-on) .cs-walk-dots { display: flex; }
 }
 [data-theme="light"] .cs-swipe-btn { background: rgba(0,0,0,0.06); }
 [data-theme="light"] .cs-swipe-btn:hover { background: rgba(0,0,0,0.12); }
+
+/* ─── Grouped gallery sub-categories (asset-heavy case studies) ───────
+   Renderer emits .cs-gallery-group blocks, each with a sub-header and its
+   own grid, so a large gallery reads as organized sub-sections. */
+.cs-gallery-group { margin-top: 40px; }
+.cs-gallery-group:first-child { margin-top: 8px; }
+.cs-gallery-subhead {
+  font-size: var(--fs-tertiary); font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--accent); margin: 0 0 16px;
+}
+/* Gallery figures get the site-wide hover lift + orange-tinted shadow. */
+.cs-gallery figure {
+  border-radius: 14px; overflow: hidden; background: var(--bg-secondary);
+  transition: transform 0.35s var(--hover-ease), box-shadow 0.35s var(--hover-ease);
+}
+.cs-gallery figure:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 0 3px rgba(255, 42, 0, 0.28), var(--hover-glow);
+}
+
+/* ─── Research-note sticky cards (Problem section research board) ─────
+   A genuine research artifact shown as-is: sticky-note-style quote cards
+   in a masonry-ish grid, gently rotated for a pinned-to-the-board feel. */
+.cs-notes {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 18px; margin-top: 28px;
+}
+.cs-note {
+  position: relative;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 20px 18px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  transform: rotate(calc((var(--n) * 1) * 0.6deg - 1deg));
+  transition: transform 0.3s var(--hover-ease), box-shadow 0.3s var(--hover-ease);
+}
+.cs-note:nth-child(even) { transform: rotate(calc(1deg - (var(--n) * 0.5deg))); }
+.cs-note:hover { transform: rotate(0deg) translateY(-3px); box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2); z-index: 2; }
+.cs-note p { font-size: var(--fs-primary); color: var(--text-primary); line-height: 1.55; margin: 0; }
+/* A pin dot at the top of each note. */
+.cs-note::before {
+  content: ""; position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.35);
+}
+.cs-note { padding-top: 26px; }
+/* A strength worth preserving reads green rather than problem-toned. */
+.cs-note--keep { border-color: rgba(56, 200, 0, 0.4); }
+.cs-note--keep::before { background: #38c800; }
+.cs-note-flag {
+  display: inline-block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: #2fa000; margin-bottom: 6px;
+}
+@media (max-width: 600px) {
+  .cs-notes { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cs-note { transform: none !important; }
+}
+
+/* ─── Process split: step copy (left) + scroll-driven photo deck (right) ──
+   Mirrors the About "outside of work" stacked-card window. The deck is a
+   fixed-ratio window; JS (initPinning) stacks the cards, blurs the passed
+   ones, and glows each with its own accent as you scroll the pinned steps. */
+.cs-process-grid {
+  display: grid; grid-template-columns: 1fr 0.9fr; gap: 40px; align-items: start;
+  margin-top: 8px;
+}
+html.pin-on .cs-process-split.pin-stage .cs-process-grid { align-items: center; min-height: 60vh; }
+.cs-process-copy { position: relative; }
+
+/* The deck window — compact; each card hugs its own image (no crop). Cards
+   are centered on a common point and stacked; the front one sits in place
+   while passed ones recede + blur behind it. */
+.cs-deck {
+  position: sticky; top: 20vh;
+  width: 100%; max-width: 340px; margin: 0 auto;
+  min-height: 340px;
+  display: flex; align-items: center; justify-content: center;
+}
+.cs-deck-card {
+  position: absolute; top: 50%; left: 50%; margin: 0;
+  border-radius: 14px; overflow: hidden; background: #0d0605;
+  max-width: 100%; max-height: 62vh;
+  will-change: transform, opacity, filter;
+  transition: transform 0.7s var(--hover-ease), opacity 0.7s var(--hover-ease), filter 0.7s var(--hover-ease);
+}
+/* Full image, no crop — the window is the size of the image content. */
+.cs-deck-card img, .cs-deck-card video {
+  display: block; width: auto; height: auto;
+  max-width: 340px; max-height: 62vh; object-fit: contain;
+}
+/* Front card: ambient accent glow (colour set per-card via --glow in JS). */
+.cs-deck-card.top {
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.12),
+              0 0 34px 2px var(--glow, rgba(255,42,0,0.5)),
+              0 0 70px 8px var(--glow, rgba(255,42,0,0.3)),
+              0 18px 50px rgba(0,0,0,0.5);
+}
+/* Caption chip on the front card. */
+.cs-deck-card figcaption {
+  position: absolute; left: 12px; right: 12px; bottom: 12px;
+  font-size: var(--fs-tertiary); color: #fff; line-height: 1.4;
+  background: rgba(0,0,0,0.42); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  padding: 8px 12px; border-radius: 10px; opacity: 0;
+  transition: opacity 0.4s var(--hover-ease);
+}
+.cs-deck-card.top figcaption { opacity: 1; }
+
+/* Fallback when the pinning engine isn't driving it (touch / reduced motion /
+   narrow): show the first card on top, the rest lightly fanned behind so it
+   still reads as a stack. */
+html:not(.pin-on) .cs-deck-card { opacity: 0; transform: translate(-50%, -46%) scale(0.97); filter: blur(2px); }
+html:not(.pin-on) .cs-deck-card:first-child {
+  opacity: 1; transform: translate(-50%, -50%); filter: none;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 0 34px 2px rgba(255,42,0,0.5), 0 18px 50px rgba(0,0,0,0.5);
+}
+html:not(.pin-on) .cs-deck-card:first-child figcaption { opacity: 1; }
+
+@media (max-width: 860px) {
+  .cs-process-grid { grid-template-columns: 1fr; gap: 24px; }
+  .cs-deck { position: relative; top: 0; max-width: 420px; margin: 0 auto; }
+}
+
+/* ═══ THE FOCUS GRADIENT ═══════════════════════════════════════════════
+   Full-bleed, icon-based, scroll-driven zoning. A full-viewport background
+   gradient shifts warm/bright (loud) → mid → cool/calm (quiet) as the pinned
+   section scrolls; sparse line icons fade in/out per beat. Crossfades in from
+   the previous section's tone and out into the next via --fg over-scroll. */
+
+/* The section itself just holds layout/scroll space. The visuals (background
+   + icon field) are painted by FIXED, full-viewport layers while the section
+   is the active pinned one — that guarantees true edge-to-edge coverage
+   regardless of the centered content column it lives in. */
+.cs-gradient { position: relative; padding: 0 !important; }
+
+/* Pinned stage (own class, not .pin-stage — avoids the step-collapse rules). */
+html.fg-on .cs-gradient.fg-stage-pin {
+  position: sticky; top: 0; height: 100vh;
+}
+
+/* Full-viewport background gradient. --fg (set by JS, ~ -0.28 .. 1.28) drives
+   the tone: warm/bright/high-contrast at 0, cool/calm/low-contrast at 1, with
+   soft over-scroll tails so it blends with the neighbouring sections.
+   FIXED so it truly fills the whole screen. */
+.fg-bg {
+  --fg: 0;
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(120% 100% at 18% 22%,
+      hsla(calc(20 + var(--fg) * 176), 92%, 56%, calc(0.5 - var(--fg) * 0.3)) 0%,
+      transparent 62%),
+    radial-gradient(120% 100% at 82% 80%,
+      hsla(calc(30 + var(--fg) * 175), 80%, 48%, calc(0.34 - var(--fg) * 0.18)) 0%,
+      transparent 66%),
+    linear-gradient(140deg,
+      hsla(calc(16 + var(--fg) * 184), 84%, calc(52% - var(--fg) * 14%), calc(0.30 - var(--fg) * 0.14)) 0%,
+      hsla(calc(205 + var(--fg) * 15), 55%, calc(30% + var(--fg) * 6%), calc(0.12 + var(--fg) * 0.16)) 100%);
+  filter: saturate(calc(1.35 - var(--fg) * 0.6)) contrast(calc(1.08 - var(--fg) * 0.16));
+  transition: background 0.25s linear, filter 0.25s linear, opacity 0.4s var(--hover-ease);
+}
+
+/* Icon / copy field, also fixed to the viewport so icons spread edge-to-edge. */
+.fg-inner {
+  position: fixed; inset: 0;
+  width: 100vw; height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: clamp(72px, 10vh, 120px) clamp(24px, 6vw, 96px) clamp(40px, 8vh, 80px);
+  transition: opacity 0.4s var(--hover-ease);
+}
+
+/* Both fixed layers are hidden until the section is the active pinned one, so
+   they cover the whole screen only while you're inside this section and never
+   bleed over its neighbours. Kept below the nav (100) / header (200) / search
+   overlay (300) so all chrome floats over the gradient. */
+.fg-bg { z-index: 40; opacity: 0; visibility: hidden; }
+.fg-inner { z-index: 41; opacity: 0; visibility: hidden; pointer-events: none; }
+.cs-gradient.fg-active .fg-bg { opacity: 1; visibility: visible; }
+.cs-gradient.fg-active .fg-inner { opacity: 1; visibility: visible; pointer-events: auto; }
+
+/* One line of framing copy at the very top-left of the field. */
+.fg-framing {
+  position: absolute; top: clamp(72px, 9vh, 104px); left: clamp(24px, 6vw, 96px);
+  font-size: clamp(1.3rem, 2.6vw, 2rem); font-weight: 700; letter-spacing: -0.02em;
+  color: var(--text-primary); max-width: 60%;
+}
+
+/* Icon field: each beat overlays the same full area; icons are absolutely
+   placed (sparse, well-spaced) via inline left/top from the renderer. */
+.fg-beats { position: relative; flex: 1 1 auto; }
+.fg-beat {
+  position: absolute; inset: 0;
+  opacity: 0; transition: opacity 0.6s var(--hover-ease);
+  pointer-events: none;
+}
+.fg-beat[data-on] { opacity: 1; }
+
+.fg-icon-node {
+  position: absolute; transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  color: var(--accent);
+}
+.fg-ico {
+  width: clamp(34px, 4vw, 52px); height: clamp(34px, 4vw, 52px);
+  filter: drop-shadow(0 2px 10px rgba(0,0,0,0.25));
+}
+.fg-icon-label {
+  font-size: var(--fs-tertiary); font-weight: 600; letter-spacing: 0.04em;
+  color: var(--text-primary); white-space: nowrap;
+}
+
+/* Depth dots (progress), bottom-centre of the field. */
+.fg-dots {
+  position: absolute; bottom: clamp(28px, 5vh, 48px); left: 0; right: 0;
+  display: flex; gap: 10px; justify-content: center;
+}
+.fg-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.35); transition: all 0.3s var(--hover-ease); }
+.fg-dot.active { background: var(--accent); transform: scale(1.4); }
+
+/* ── Static fallback (touch / reduced-motion / narrow): a single mid-tone
+   gradient with ALL icons shown at once — no pinning, no fixed layers, no
+   scroll shift. The section paints inline in the flow. */
+html:not(.fg-on) .cs-gradient.fg-stage-pin { position: relative; height: auto; min-height: 0; overflow: hidden; border-radius: 22px; }
+html:not(.fg-on) .fg-bg {
+  --fg: 0.5;
+  position: absolute; inset: 0; opacity: 1; visibility: visible;
+  background: linear-gradient(120deg,
+    hsla(20, 88%, 54%, 0.34) 0%, hsla(120, 55%, 45%, 0.16) 50%, hsla(205, 60%, 34%, 0.26) 100%);
+  filter: none;
+}
+html:not(.fg-on) .fg-inner {
+  position: relative; width: 100%; height: auto; min-height: 0;
+  opacity: 1; visibility: visible; pointer-events: auto;
+  padding: clamp(48px, 8vh, 80px) clamp(24px, 5vw, 64px);
+}
+html:not(.fg-on) .fg-framing { position: static; max-width: none; margin-bottom: 28px; }
+html:not(.fg-on) .fg-beats { position: static; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 20px; }
+html:not(.fg-on) .fg-beat { position: static; opacity: 1; display: flex; flex-wrap: wrap; gap: 28px; align-content: flex-start; }
+html:not(.fg-on) .fg-icon-node { position: static; transform: none; }
+html:not(.fg-on) .fg-dots { display: none; }
+@media (max-width: 860px) {
+  html:not(.fg-on) .fg-beats { grid-template-columns: 1fr; }
+}

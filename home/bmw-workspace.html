@@ -4,16 +4,28 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BMW Workspace Redesign — Gaurav Dalbhanjan</title>
-  <meta name="description" content="Designed BMW's employee experience to instigate collaboration, innovation and productivity within a workspace." />
+  <meta name="description" content="Transforming BMW's workspace into a machine for collaboration, inspiration and innovation — grounded in on-site research and scaled spatial prototyping." />
+  <link rel="icon" type="image/png" href="../assets/logo/greateagledesigns.png" />
+  <link rel="apple-touch-icon" href="../assets/logo/greateagledesigns.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Great Eagle Designs" />
+  <meta property="og:image" content="https://greateagledesigns.com/assets/logo/greateagledesigns.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:image" content="https://greateagledesigns.com/assets/logo/greateagledesigns.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/site.css" />
   <link rel="stylesheet" href="../assets/search-menu.css" />
+  <link rel="stylesheet" href="../assets/case-study.css" />
+  <link rel="stylesheet" href="../assets/page-transition.css" />
+  <script>try{if(sessionStorage.getItem('ged:ptx')==='1'){sessionStorage.removeItem('ged:ptx');var h=document.documentElement;h.classList.add('ptx-arriving');setTimeout(function(){h.classList.remove('ptx-arriving','ptx-ready','ptx-resolve');},4500);}}catch(e){}</script>
   <script src="../assets/site.js"></script>
+  <script defer src="../assets/page-transition.js"></script>
   <style>/* GED-HIDE-LEGACY-NAV */ body > nav.glass { display:none !important; }</style>
 </head>
-<body>
+<body class="cs-page">
+<div class="scroll-progress" id="scrollProgress"></div>
 <svg id="lg-filter-svg" xmlns="http://www.w3.org/2000/svg"><defs id="lg-defs"></defs></svg>
 
 <nav class="glass liquid-glass">
@@ -33,57 +45,7 @@
   </div>
 </nav>
 
-<section class="page-hero">
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
-  <div class="eyebrow-pill reveal">Case Study · Spatial Design</div>
-  <h1 class="reveal reveal-delay-1">Transforming BMW's <em>Workspace</em></h1>
-  <p class="reveal reveal-delay-2">What if a workspace environment amplifies collaboration, inspiration and innovation for its employees? BMW needed to draw employees back post-COVID by making the office more desirable.</p>
-</section>
-
-<section style="padding-top:0;">
-  <div class="prose">
-    <a href="../index.html#work" class="back-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back to Work</a>
-
-    <div class="case-meta" style="justify-content:flex-start;">
-      <span class="case-tag">Spatial Design</span>
-      <span class="case-tag">Human-Centered Design</span>
-      <span class="case-tag">Wayfinding</span>
-      <span class="case-tag">Industrial Design</span>
-      <span class="case-tag">User Research</span>
-    </div>
-
-    <img src="../images/frame-1437253332.png" alt="BMW workspace concept" class="reveal" />
-
-    <div class="pull-quote glass reveal">
-      <blockquote>The space we created captured what BMW stands for — "The Ultimate Driving Machine" — and in our case, driving Collaboration, Inspiration and Innovation.</blockquote>
-    </div>
-
-    <h2 class="reveal">The Problem</h2>
-    <p class="reveal">The existing BMW workspace failed to foster a productive and engaging environment, leading employees to prefer remote work. This stemmed from three core deficiencies:</p>
-    <ul class="reveal">
-      <li><strong>Inadequate infrastructure for modern work</strong> — the office lacked technical and acoustic support for hybrid collaboration, including private soundproof areas for meetings and deep focus.</li>
-      <li><strong>Poor spatial and ergonomic design</strong> — uncomfortable, disorganized seating and a lack of functional zoning created a "shop-like" atmosphere and constant distraction.</li>
-      <li><strong>Absence of biophilic and social connectivity</strong> — a scarcity of greenery and casual breakout spaces eroded well-being and hindered spontaneous idea generation.</li>
-    </ul>
-
-    <h2 class="reveal">The Approach</h2>
-    <p class="reveal">I led the research and product development, redesigning the workspace to foster natural collaboration through modular meeting areas and pods, swing-style window seating with natural light, BMW-iconic cafeteria elements, and custom modular furniture. Strategic wayfinding and spatial design encourage spontaneous conversations and idea sharing.</p>
-
-    <h2 class="reveal">The Result</h2>
-    <ul class="reveal">
-      <li>Three concepts <span class="accent">tested, approved and developed</span>.</li>
-      <li><span class="accent">Positive response</span> from BMW's employees.</li>
-      <li>Successfully balanced aesthetics, functionality, budget and human behavior to <span class="accent">increase innovation, productivity and workplace appeal</span>.</li>
-    </ul>
-
-    <div style="text-align:center;margin-top:48px;" class="reveal">
-      <a href="contact.html" class="btn btn-primary">Discuss a Project
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-    </div>
-  </div>
-</section>
+<main id="cs-root"></main>
 
 <footer>
   <div class="footer-logo">Gaurav <span>Dalbhanjan</span></div>
@@ -95,6 +57,9 @@
   </ul>
   <div class="footer-copy">© 2026 greateagledesigns.com</div>
 </footer>
+
+<script src="../data/bmw.js"></script>
+<script src="../assets/case-study.js"></script>
 <script src="../assets/edit-mode.js"></script>
 <script>window.GED_BASE='../';</script>
 <script src="../assets/search-data.js"></script>

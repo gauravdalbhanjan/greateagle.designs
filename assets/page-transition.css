@@ -1,0 +1,138 @@
+/* ══════════════════════════════════════════════════════════════
+   GREAT EAGLE DESIGNS — Immersive project route transition
+   ──────────────────────────────────────────────────────────────
+   Simple portal: click a card → it zooms forward and frosts over
+   → the destination page arrives already BLURRED (the real content
+   itself, not an overlay) → the blur fades off, sharpening the page
+   into focus. That's it. Paired with page-transition.js.
+   prefers-reduced-motion → no animation.
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+  --ptx-ease: cubic-bezier(0.33, 0, 0.2, 1);       /* soft but quick */
+  --ptx-blur: 24px;                                /* shared frost level */
+  /* One accent frost, shared by the card blur AND the destination blur so
+     the color blends continuously across the handoff. */
+  --ptx-accent-1: rgba(255, 120, 70, 0.22);
+  --ptx-accent-2: rgba(255, 42, 0, 0.13);
+  --ptx-accent-3: rgba(255, 42, 0, 0.04);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   OUTGOING — grid page: the clicked card, cloned + zoomed forward.
+   ───────────────────────────────────────────────────────────── */
+.ptx-clone {
+  position: fixed;
+  margin: 0;
+  border-radius: 22px;
+  overflow: hidden;
+  z-index: 9998;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  box-shadow: 0 0 0 3px rgba(255, 42, 0, 0.35), var(--hover-glow);
+  transform: scale(1);
+  transform-origin: center center;
+  will-change: transform, opacity;
+  transition:
+    transform 0.26s var(--ptx-ease),
+    border-radius 0.22s var(--ptx-ease),
+    box-shadow 0.22s var(--ptx-ease);
+  pointer-events: none;
+}
+.ptx-clone img {
+  width: 100%; height: 100%; display: block;
+  object-fit: cover; object-position: top center;
+}
+
+/* Frosted-glass overlay over the zooming card — blur + warm accent tint.
+   Uses the SAME accent stops as the destination blur so the color blends
+   seamlessly across the page handoff. */
+.ptx-frost {
+  position: fixed; inset: 0; z-index: 9999;
+  -webkit-backdrop-filter: blur(0px) saturate(1);
+  backdrop-filter: blur(0px) saturate(1);
+  background: radial-gradient(140% 140% at 50% 45%,
+    rgba(255, 120, 70, 0) 0%, rgba(255, 42, 0, 0) 60%);
+  transition:
+    backdrop-filter 0.18s var(--ptx-ease),
+    -webkit-backdrop-filter 0.18s var(--ptx-ease),
+    background 0.18s var(--ptx-ease);
+  pointer-events: none;
+}
+.ptx-frost.ptx-peak {
+  -webkit-backdrop-filter: blur(var(--ptx-blur)) saturate(1.3);
+  backdrop-filter: blur(var(--ptx-blur)) saturate(1.3);
+  background: radial-gradient(140% 140% at 50% 45%,
+    var(--ptx-accent-1) 0%,
+    var(--ptx-accent-2) 55%,
+    var(--ptx-accent-3) 100%);
+}
+
+/* Softly dim the rest of the grid as the card lifts off. */
+.ptx-veil {
+  position: fixed; inset: 0; z-index: 9997;
+  background: var(--bg);
+  opacity: 0;
+  transition: opacity 0.22s var(--ptx-ease);
+  pointer-events: none;
+}
+.ptx-veil.ptx-on { opacity: 0.92; }
+
+/* ─────────────────────────────────────────────────────────────
+   INCOMING — destination page: blur the REAL content, then fade
+   the blur off. No overlay, no scale, no hidden body — the page
+   itself arrives blurred and simply sharpens into focus.
+
+   The head snippet sets html.ptx-arriving before first paint, so
+   the blur + warm tint are on the content from the very first frame
+   (no unblurred flash). JS adds .ptx-resolve when ready → blur to 0.
+   ───────────────────────────────────────────────────────────── */
+html.ptx-arriving body {
+  filter: blur(var(--ptx-blur)) saturate(1.15);
+  background-color: var(--bg);
+  will-change: filter;
+  transition: filter 0.28s var(--ptx-ease);
+}
+html.ptx-arriving.ptx-resolve body {
+  filter: blur(0) saturate(1);
+}
+
+/* A soft warm wash over the blurred page — SAME accent as the card frost,
+   so the color carries straight through the handoff — fading with the blur. */
+.ptx-arrive-wash {
+  position: fixed; inset: 0; z-index: 9990;
+  background: radial-gradient(140% 140% at 50% 44%,
+    var(--ptx-accent-1) 0%,
+    var(--ptx-accent-2) 55%,
+    var(--ptx-accent-3) 100%);
+  opacity: 1;
+  transition: opacity 0.28s var(--ptx-ease);
+  pointer-events: none;
+}
+html.ptx-resolve .ptx-arrive-wash { opacity: 0; }
+
+/* Arriving via the portal, scroll-reveal is retired for this one load so
+   nothing slides up from below as the blur clears — the blur-to-focus IS
+   the entrance. Normal (non-transition) loads are untouched. */
+html.ptx-arriving .reveal,
+html.ptx-arriving [class*="reveal-delay"],
+.ptx-settled {
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+  transition: none !important;
+}
+html.ptx-arriving .pin-step,
+html.ptx-arriving .cs-walk-copy,
+html.ptx-arriving .cs-quote,
+html.ptx-arriving .cs-beforeafter {
+  transition: none !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   REDUCED MOTION — skip everything; keep instant navigation.
+   ───────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html.ptx-arriving body { filter: none !important; transition: none !important; }
+  .ptx-arrive-wash, .ptx-clone, .ptx-frost, .ptx-veil { display: none !important; }
+}

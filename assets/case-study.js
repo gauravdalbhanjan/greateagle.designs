@@ -19,6 +19,22 @@
 
   const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
 
+  /* Whether the scroll-pinned engines (walkthrough / decisions / gradient)
+     should run. We DON'T use GED.isTouch here: it flags any touch-CAPABLE
+     device (incl. mouse-driven laptops with a touchscreen), which would
+     wrongly drop those machines to the "reveal all at once" fallback. Instead
+     we pin whenever a FINE pointer (mouse/trackpad) is available at desktop
+     width with motion allowed — hybrid laptops keep the pinned reveal, while
+     pure touch phones/tablets get the swipe/static fallback. */
+  function canPinScroll() {
+    if (window.GED && window.GED.reduceMotion) return false;
+    if (!window.matchMedia('(min-width: 861px)').matches) return false;
+    // Prefer a real fine pointer; fall back to "not coarse-only" for old browsers.
+    const fine = window.matchMedia('(any-pointer: fine), (pointer: fine)').matches;
+    const coarseOnly = window.matchMedia('(any-pointer: coarse)').matches && !fine;
+    return fine || !coarseOnly;
+  }
+
   function mediaTag(m, cls) {
     if (!m) return '';
     cls = cls || '';
@@ -134,8 +150,29 @@
     '</section>';
   };
 
-  /* 7. Problem */
-  S.problem = d => d.problem ? stepsSection('The Problem', d.problem.title || 'What was breaking down', d.problem.lead, d.problem.points, d.problem.quote) : '';
+  /* 7. Problem — numbered steps (default), OR a research-note board of
+     sticky-card artifacts when d.problem.notes is provided.
+     notes form: [{ text: "...", tone: "keep" | undefined }]  (tone "keep"
+     highlights a strength to preserve/build on). */
+  S.problem = d => {
+    if (!d.problem) return '';
+    const p = d.problem;
+    if (p.notes && p.notes.length) {
+      return '<section class="cs-section reveal">' +
+        '<div class="cs-num">The Problem</div>' +
+        '<h2 class="cs-h2">' + rich(p.title || 'What we found on the ground') + '</h2>' +
+        (p.lead ? '<p class="cs-lead">' + rich(p.lead) + '</p>' : '') +
+        '<div class="cs-notes">' + p.notes.map((nt, i) => {
+          const note = (typeof nt === 'string') ? { text: nt } : nt;
+          const tone = note.tone === 'keep' ? ' cs-note--keep' : '';
+          return '<div class="cs-note' + tone + '" style="--n:' + i + '">' +
+            (note.tone === 'keep' ? '<span class="cs-note-flag">Strength to keep</span>' : '') +
+            '<p>' + rich(note.text) + '</p></div>';
+        }).join('') + '</div>' +
+      '</section>';
+    }
+    return stepsSection('The Problem', p.title || 'What was breaking down', p.lead, p.points, p.quote);
+  };
 
   /* 8. The Shift */
   S.shift = d => {
@@ -155,8 +192,106 @@
     '</section>';
   };
 
-  /* 9. Process */
-  S.process = d => d.process ? stepsSection('Process', d.process.title || 'How we got there', d.process.lead, d.process.steps, d.process.quote) : '';
+  /* 9. Process — numbered steps (default). When d.process.deck is provided,
+     the section becomes a two-column layout: the step copy on the left, and
+     a scroll-driven stacked photo deck on the right (research / ideation /
+     sketch artifacts) styled like the About "outside of work" stack — each
+     card comes up from below-center, the previous ones blur back, and every
+     card carries its own accent-colour glow. The deck is advanced by the
+     pinning engine (see initPinning → deck sync). */
+  function processDeck(deck) {
+    if (!deck || !deck.length) return '';
+    var cards = deck.map(function (m, i) {
+      var media = (typeof m === 'string') ? { img: m } : m;
+      return '<figure class="cs-deck-card" data-i="' + i + '">' +
+        mediaTag(media) +
+        (media.caption ? '<figcaption>' + rich(media.caption) + '</figcaption>' : '') +
+      '</figure>';
+    }).join('');
+    return '<div class="cs-deck" data-deck aria-label="Process artifacts">' + cards + '</div>';
+  }
+  S.process = d => {
+    if (!d.process) return '';
+    var p = d.process;
+    if (p.deck && p.deck.length) {
+      var steps = (p.steps || []).map(function (s) {
+        var inner = (typeof s === 'string')
+          ? '<div class="cs-step-body">' + rich(s) + '</div>'
+          : (s.title ? '<div class="cs-step-title">' + rich(s.title) + '</div>' : '') +
+            (s.body ? '<div class="cs-step-body">' + rich(s.body) + '</div>' : '');
+        return '<li class="pin-step">' + inner + '</li>';
+      }).join('');
+      return '<section class="cs-section cs-process-split" data-pin>' +
+        '<div class="cs-num">Process</div>' +
+        '<h2 class="cs-h2">' + rich(p.title || 'How we got there') + '</h2>' +
+        (p.lead ? '<p class="cs-lead">' + rich(p.lead) + '</p>' : '') +
+        '<div class="cs-process-grid">' +
+          '<div class="cs-process-copy"><ol class="cs-steps">' + steps + '</ol>' +
+            '<div class="pin-dots"></div></div>' +
+          processDeck(p.deck) +
+        '</div>' +
+      '</section>';
+    }
+    return stepsSection('Process', p.title || 'How we got there', p.lead, p.steps, p.quote);
+  };
+
+  /* Minimal line icons — single-stroke, currentColor, matching the site's
+     SVG language (fill:none; stroke; round joins). Keyed by name. */
+  const FG_ICONS = {
+    bulb: '<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>',
+    coffee: '<path d="M4 8h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8z"/><path d="M17 9h2.5a2.5 2.5 0 0 1 0 5H17"/><path d="M7 2v2M11 2v2"/>',
+    group: '<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 6a3 3 0 0 1 0 6M21 20a6 6 0 0 0-4-5.7"/>',
+    presentation: '<rect x="3" y="4" width="18" height="12" rx="1"/><path d="M12 16v4M8 21l4-3 4 3"/>',
+    book: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M9 3v10l3-2 3 2V3"/>',
+    headphones: '<path d="M4 14a8 8 0 0 1 16 0"/><rect x="2.5" y="14" width="4" height="7" rx="2"/><rect x="17.5" y="14" width="4" height="7" rx="2"/>',
+    moon: '<path d="M21 12.8A8 8 0 1 1 11.2 3a6 6 0 0 0 9.8 9.8z"/>',
+    desk: '<rect x="3" y="5" width="18" height="10" rx="1"/><path d="M12 15v3M8 21h8M2 11h20"/>'
+  };
+  function fgIcon(name) {
+    const inner = FG_ICONS[name] || FG_ICONS.desk;
+    return '<svg class="fg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" ' +
+      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + '</svg>';
+  }
+
+  /* 9.5 The Focus Gradient — full-bleed, icon-based, scroll-driven zoning.
+     A full-viewport background gradient shifts warm/bright (loud) → mid →
+     cool/calm (quiet) across three beats as the pinned section scrolls;
+     sparse line icons for each beat fade in/out with their zone. One line
+     of framing copy at the start. Crossfades in/out with neighbours via the
+     extended --fg range. Reduced-motion / touch → static mid-tone + all icons. */
+  S.gradient = d => {
+    if (!d.gradient || !d.gradient.beats || !d.gradient.beats.length) return '';
+    const g = d.gradient;
+    const n = g.beats.length;
+    // Sparse, well-spaced icon anchor positions across the full screen, per beat.
+    const POS = [
+      // Beat 1 (loud) — spread across the upper/left field
+      [ {x:16,y:26}, {x:74,y:20}, {x:44,y:64} ],
+      // Beat 2 (transition) — calmer, centred
+      [ {x:30,y:34}, {x:66,y:60} ],
+      // Beat 3 (quiet) — sparse, lower/right, more breathing room
+      [ {x:22,y:58}, {x:78,y:30}, {x:52,y:72} ]
+    ];
+    const beat = (b, bi) => {
+      const spaces = (b.spaces || []).map((s, si) => {
+        const p = (POS[bi] && POS[bi][si]) || { x: 20 + si * 26, y: 40 };
+        return '<div class="fg-icon-node" style="left:' + p.x + '%;top:' + p.y + '%">' +
+          fgIcon(s.icon) +
+          '<span class="fg-icon-label">' + esc(s.label) + '</span>' +
+        '</div>';
+      }).join('');
+      return '<div class="fg-beat" data-beat="' + bi + '"' + (bi === 0 ? ' data-on' : '') + '>' + spaces + '</div>';
+    };
+    const dots = g.beats.map((_, i) => '<span class="fg-dot' + (i === 0 ? ' active' : '') + '"></span>').join('');
+    return '<section class="cs-section cs-gradient" data-gradient data-steps="' + n + '">' +
+      '<div class="fg-bg" aria-hidden="true"></div>' +
+      '<div class="fg-inner">' +
+        (g.framing ? '<div class="fg-framing">' + rich(g.framing) + '</div>' : '') +
+        '<div class="fg-beats">' + g.beats.map(beat).join('') + '</div>' +
+        '<div class="fg-dots">' + dots + '</div>' +
+      '</div>' +
+    '</section>';
+  };
 
   /* 10. Solution Walkthrough */
   S.walkthrough = d => {
@@ -202,15 +337,33 @@
     '</section>';
   };
 
-  /* 12. Gallery */
+  /* 12. Gallery — flat grid, OR grouped into sub-categories with sub-headers.
+     Grouped form: d.gallery = [{ group: "Ideation", items: [ {img,caption,wide}, ... ] }, ...]
+     Flat form:    d.gallery = [ {img,caption,wide}, ... ]  (unchanged) */
+  function galleryGrid(items) {
+    return '<div class="cs-gallery">' + items.map(g =>
+      '<figure' + (g.wide ? ' class="span-2"' : '') + '>' + mediaTag(g) +
+        (g.caption ? '<figcaption>' + rich(g.caption) + '</figcaption>' : '') + '</figure>'
+    ).join('') + '</div>';
+  }
   S.gallery = d => {
     if (!d.gallery || !d.gallery.length) return '';
+    const grouped = d.gallery[0] && d.gallery[0].group && d.gallery[0].items;
+    const title = d.galleryTitle || 'Final screens &amp; artifacts';
+    let body;
+    if (grouped) {
+      body = d.gallery.map(grp =>
+        '<div class="cs-gallery-group">' +
+          '<h3 class="cs-gallery-subhead">' + rich(grp.group) + '</h3>' +
+          galleryGrid(grp.items || []) +
+        '</div>'
+      ).join('');
+    } else {
+      body = galleryGrid(d.gallery);
+    }
     return '<section class="cs-section reveal">' +
-      '<div class="cs-num">Gallery</div><h2 class="cs-h2">Final screens &amp; artifacts</h2>' +
-      '<div class="cs-gallery">' + d.gallery.map(g =>
-        '<figure' + (g.wide ? ' class="span-2"' : '') + '>' + mediaTag(g) +
-          (g.caption ? '<figcaption>' + rich(g.caption) + '</figcaption>' : '') + '</figure>'
-      ).join('') + '</div>' +
+      '<div class="cs-num">Gallery</div><h2 class="cs-h2">' + rich(title) + '</h2>' +
+      body +
     '</section>';
   };
 
@@ -246,7 +399,7 @@
   /* Short nav labels keyed by the section function name, for the sidebar. */
   const NAV_LABELS = {
     hook: 'overview', context: 'context', problem: 'problem', shift: 'the shift',
-    process: 'process', walkthrough: 'solution', decisions: 'design decisions',
+    process: 'process', gradient: 'focus gradient', walkthrough: 'solution', decisions: 'design decisions',
     gallery: 'screens', impact: 'impact', reflection: 'reflection'
   };
 
@@ -260,7 +413,8 @@
     const order = [
       ['hook', S.hook], ['title', S.title], ['hero', S.hero], ['metrics', S.metrics],
       ['snapshot', S.snapshot], ['context', S.context], ['problem', S.problem],
-      ['shift', S.shift], ['process', S.process], ['walkthrough', S.walkthrough],
+      ['shift', S.shift], ['process', S.process], ['gradient', S.gradient],
+      ['walkthrough', S.walkthrough],
       ['decisions', S.decisions], ['gallery', S.gallery], ['impact', S.impact],
       ['reflection', S.reflection]
     ];
@@ -281,6 +435,7 @@
     initReveal();
     initPinning();
     initWalk();
+    initGradient();
     initTouchSteps();
   }
 
@@ -292,8 +447,7 @@
     const sections = Array.from(document.querySelectorAll('section[data-walk]'));
     if (!sections.length) return;
 
-    const canPin = !(window.GED && (window.GED.isTouch || window.GED.reduceMotion))
-                   && window.matchMedia('(min-width: 861px)').matches;
+    const canPin = canPinScroll();
 
     sections.forEach(section => {
       const slides = Array.from(section.querySelectorAll('.cs-walk-slide'));
@@ -340,6 +494,90 @@
     });
   }
 
+  /* ─── THE FOCUS GRADIENT ENGINE (scroll = walking deeper in) ──────
+     Pins the gradient stage and, as the track scrolls, drives:
+       • --fg (0..1) on the stage → ambient colour + blur + noise shift
+       • the active beat (entrance → transition → deep)
+       • the depth dots + noise meter
+     On touch / reduced-motion it does nothing — CSS shows a static
+     3-column gradient graphic (no scroll-jacking). */
+  function initGradient() {
+    const sections = Array.from(document.querySelectorAll('section[data-gradient]'));
+    if (!sections.length) return;
+
+    const canPin = canPinScroll();
+    if (!canPin) return; // CSS static fallback
+
+    document.documentElement.classList.add('fg-on');
+
+    sections.forEach(section => {
+      const beats = Array.from(section.querySelectorAll('.fg-beat'));
+      const dots = Array.from(section.querySelectorAll('.fg-dot'));
+      const bg = section.querySelector('.fg-bg');
+      const n = beats.length;
+      if (n < 2 || !bg) return;
+
+      // Track layout: a lead-IN band (crossfade from the previous section's
+      // tone), the beats themselves, and a lead-OUT band (crossfade into the
+      // next section's tone). Bands give the blended, no-hard-cut feel.
+      const leadIn = 0.55, perBeat = 1.1, leadOut = 0.55;
+      const span = leadIn + n * perBeat + leadOut;
+      const track = document.createElement('div');
+      track.className = 'pin-track fg-track';
+      section.parentNode.insertBefore(track, section);
+      track.appendChild(section);
+      section.classList.add('fg-stage-pin');   // own sticky class (not .pin-stage)
+      track.style.height = (span * 100) + 'vh';
+
+      let curIdx = -1;
+      let active = false;
+      const onScroll = () => {
+        const vh = window.innerHeight;
+        const rect = track.getBoundingClientRect();
+        const total = track.offsetHeight - vh;
+        const scrolled = Math.min(Math.max(-rect.top, 0), total);
+        const prog = total > 0 ? scrolled / total : 0;              // 0..1 whole track
+
+        // The fixed full-screen layers are only shown while this section is
+        // actually filling the viewport (its track spans top→bottom).
+        const isActive = rect.top <= 1 && rect.bottom >= vh - 1;
+        if (isActive !== active) { active = isActive; section.classList.toggle('fg-active', isActive); }
+
+        // Map track progress to a beat-space value in [-1 .. n] where the
+        // [0..n] window holds the beats and the negative / >n tails are the
+        // crossfade bands with neighbours.
+        const inFrac = leadIn / span;
+        const outFrac = leadOut / span;
+        const beatsFrac = 1 - inFrac - outFrac;
+        // fg drives the background tone 0 (loud) → 1 (quiet), with soft
+        // over-scroll at both ends so entry/exit blend rather than snap.
+        let depth;
+        if (prog < inFrac) depth = (prog / inFrac) * 0 - (1 - prog / inFrac) * 0.28; // enter: from -0.28 → 0
+        else if (prog > 1 - outFrac) depth = 1 + ((prog - (1 - outFrac)) / outFrac) * 0.28; // exit: 1 → 1.28
+        else depth = (prog - inFrac) / beatsFrac;                    // 0..1 across beats
+        bg.style.setProperty('--fg', depth.toFixed(4));
+
+        // Active beat only within the beats window; tails show nearest beat.
+        const clamped = Math.min(Math.max(depth, 0), 0.9999);
+        const idx = Math.min(n - 1, Math.floor(clamped * n + 1e-6));
+        if (idx !== curIdx) {
+          curIdx = idx;
+          beats.forEach((b, i) => b.toggleAttribute('data-on', i === idx));
+          dots.forEach((dt, i) => dt.classList.toggle('active', i === idx));
+        }
+      };
+
+      const scroll = window.GED && window.GED.scroll;
+      if (scroll && scroll.onScroll) scroll.onScroll(onScroll);
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', () => {
+        track.style.height = (span * 100) + 'vh';
+        onScroll();
+      });
+      onScroll();
+    });
+  }
+
   /* ─── PINNED SCROLLYTELLING ENGINE ────────────────────────────
      For each [data-pin] section on desktop (motion-ok, non-touch):
        - wrap the section in a tall .pin-track
@@ -361,8 +599,7 @@
     // JS is running — enable the hide-then-reveal behaviour for steps.
     document.documentElement.classList.add('js-motion');
 
-    const canPin = !(window.GED && window.GED.isTouch)
-                   && window.matchMedia('(min-width: 861px)').matches;
+    const canPin = canPinScroll();
 
     if (!canPin) {
       // Fallback (touch / small screens): reveal each step group on scroll,
@@ -410,7 +647,17 @@
       steps[0].classList.add('in');
       dots.forEach((d, i) => d.classList.toggle('active', i === 0));
 
-      pins.push({ track, section, steps, dots, perStep, leadOut, maxIdx: 0 });
+      // Optional scroll-driven photo deck on the right (Process section).
+      const deckEl = section.querySelector('[data-deck]');
+      const deckCards = deckEl ? Array.from(deckEl.querySelectorAll('.cs-deck-card')) : [];
+      const GLOWS = [
+        'rgba(255,42,0,0.55)', 'rgba(255,150,0,0.5)', 'rgba(56,210,0,0.45)',
+        'rgba(0,198,255,0.5)', 'rgba(180,0,255,0.5)', 'rgba(255,0,120,0.5)',
+        'rgba(0,220,180,0.5)', 'rgba(255,210,0,0.5)'
+      ];
+      deckCards.forEach((c, i) => c.style.setProperty('--glow', GLOWS[i % GLOWS.length]));
+
+      pins.push({ track, section, steps, dots, perStep, leadOut, maxIdx: 0, deckCards, deckTop: -1 });
     });
 
     // Drive all pins off the shared smooth-scroll position.
@@ -449,8 +696,50 @@
         // Active dot follows current scroll position (can move back for context),
         // but revealed steps never un-reveal.
         p.dots.forEach((d, i) => d.classList.toggle('active', i <= idx));
+
+        // Scroll-driven photo deck: map the step-progress across all cards.
+        if (p.deckCards && p.deckCards.length) {
+          const dc = p.deckCards.length;
+          const topIdx = Math.min(dc - 1, Math.floor(stepProg * dc + 1e-6));
+          if (topIdx !== p.deckTop) { p.deckTop = topIdx; layoutDeck(p.deckCards, topIdx); }
+        }
       }
     };
+
+    // Stack the deck like the About "outside of work" cards: the current card
+    // sits on top (front, glowing); cards below it recede + blur; cards not yet
+    // reached wait just below, ready to rise up into place as you scroll.
+    function layoutDeck(cards, top) {
+      const VISIBLE = 4;
+      // Cards are anchored at top:50%/left:50%, so every transform starts by
+      // pulling back to its own center (-50%,-50%), then applies the stack.
+      const C = 'translate(-50%,-50%) ';
+      cards.forEach((el, i) => {
+        const depth = i - top;                 // 0 = front, <0 = passed, >0 = waiting
+        if (depth === 0) {
+          el.style.transform = C + 'translate(0,0) scale(1)';
+          el.style.filter = 'none';
+          el.style.opacity = '1';
+          el.style.zIndex = String(cards.length + 10);
+          el.classList.add('top');
+        } else if (depth < 0) {
+          // Already passed: recede up/back, blurred, tinted by its own glow.
+          const d = Math.min(-depth, VISIBLE);
+          el.style.transform = C + 'translate(' + (-d * 5) + '%,' + (-d * 10) + '%) scale(' + (1 - d * 0.06) + ')';
+          el.style.filter = 'blur(' + (d * 1.6) + 'px)';
+          el.style.opacity = String(-depth <= VISIBLE ? (0.8 - d * 0.14) : 0);
+          el.style.zIndex = String(cards.length - d);
+          el.classList.remove('top');
+        } else {
+          // Not yet reached: parked just below-center, ready to rise up.
+          el.style.transform = C + 'translate(0, 18%) scale(0.96)';
+          el.style.filter = 'blur(3px)';
+          el.style.opacity = '0';
+          el.style.zIndex = '1';
+          el.classList.remove('top');
+        }
+      });
+    }
 
     if (scroll && scroll.onScroll) scroll.onScroll(onScroll);
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -471,6 +760,11 @@
      and let the user swipe left/right (or tap the arrows) to move
      through them — the dots track the active step, same as desktop. */
   function initTouchSteps() {
+    // Only run the swipe/step fallback when the scroll-pinned engines are NOT
+    // active (pure touch, narrow, or reduced-motion). On hybrid laptops that
+    // are touch-CAPABLE but pin via a fine pointer, the pinned engine owns
+    // these sections — running both would double-drive them.
+    if (canPinScroll()) return;
     const isTouch = window.GED && window.GED.isTouch;
     if (!isTouch) return;
 
