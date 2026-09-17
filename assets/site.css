@@ -136,12 +136,37 @@ a { text-decoration: none; color: inherit; }
   backdrop-filter: url(#lg-filter);
   -webkit-backdrop-filter: url(#lg-filter);
 }
+/* Wet-droplet specular rim: a bright top-edge glint fading to a soft inner
+   ring, like light catching the curved lip of an Apple "Liquid Glass" surface. */
 .liquid-glass::before {
   content: ''; position: absolute; inset: 0; z-index: 1;
   border-radius: inherit;
-  box-shadow: inset 0 0 20px -5px rgba(255,255,255,0.5);
-  background: rgba(255,255,255,0.04);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.65),      /* crisp top glint */
+    inset 0 0 24px -6px rgba(255,255,255,0.55),   /* inner glow ring */
+    inset 0 -1px 2px rgba(255,255,255,0.12);      /* faint bottom catch */
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 32%),
+    rgba(255,255,255,0.04);
   pointer-events: none;
+}
+/* Light mode: a rounder, brighter "bubble" — the top glint reads as a curved
+   highlight and the rim carries a soft double ring, like a clear glass bubble. */
+[data-theme="light"] .liquid-glass::before {
+  box-shadow:
+    inset 0 1.5px 1px rgba(255,255,255,0.9),
+    inset 0 0 30px -4px rgba(255,255,255,0.7),
+    inset 0 0 0 1px rgba(255,255,255,0.35),
+    inset 0 -2px 6px rgba(255,255,255,0.35);
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 45%),
+    linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 40%);
+}
+/* Light mode: gentle magnify feel — brighten + slightly boost the backdrop so
+   the low-refraction glass still lenses the content underneath. */
+[data-theme="light"] .liquid-glass::after {
+  backdrop-filter: url(#lg-filter) brightness(1.04) contrast(1.02);
+  -webkit-backdrop-filter: url(#lg-filter) brightness(1.04) contrast(1.02);
 }
 
 /* ─── NAV ───────────────────────────────────────────────────────── */

@@ -21,11 +21,38 @@
 .ged-name { font-size: 16px; font-weight: 500; letter-spacing: -0.01em; color: var(--text-primary); white-space: nowrap; }
 .ged-name span { color: var(--accent); }
 .ged-search-btn {
+  position: relative; overflow: hidden;
   background: var(--accent); color: #fff; border: 0; cursor: pointer;
   font-size: 14px; font-weight: 600; padding: 9px 24px; border-radius: 100px;
   box-shadow: 0 4px 18px rgba(255,42,0,0.35); transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 92px;                 /* stable width across Chat / Search / Menu */
 }
 .ged-search-btn:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 8px 26px rgba(255,42,0,0.45); }
+/* Blinking typing caret next to the label */
+.ged-btn-label { white-space: nowrap; }
+.ged-btn-caret {
+  display: inline-block; width: 2px; height: 1em; margin-left: 2px;
+  background: currentColor; border-radius: 1px; vertical-align: -0.12em;
+  animation: gedCaretBlink 1s steps(1) infinite;
+}
+@keyframes gedCaretBlink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+/* Shine sweep — a soft light band passes across the button edge once. */
+.ged-search-btn::after {
+  content: ''; position: absolute; top: 0; left: -60%; width: 45%; height: 100%;
+  background: linear-gradient(100deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%);
+  transform: skewX(-18deg); opacity: 0; pointer-events: none;
+}
+.ged-search-btn.ged-shine::after { animation: gedBtnShine 0.9s ease-out; }
+@keyframes gedBtnShine {
+  0% { left: -60%; opacity: 0; }
+  15% { opacity: 1; }
+  100% { left: 130%; opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ged-btn-caret { animation: none; opacity: 0; }
+  .ged-search-btn.ged-shine::after { animation: none; }
+}
 
 /* Reusable hover tooltip */
 .ged-tip { position: relative; }
@@ -69,18 +96,44 @@ body.ged-lock { position: fixed; left: 0; right: 0; width: 100%; overflow: hidde
    ease-out — glass/bubble fluid, no spring/weight. */
 .ged-overlay.open .ged-panel {
   opacity: 1; width: calc(100vw - 48px); max-height: 52px;
-  transition: width 0.85s cubic-bezier(0.22, 0.7, 0.2, 1), opacity 0.3s ease;
+  /* Soft liquid ease with a gentle tail settle — glass-bubble fluid, not a
+     hard spring (no mid-way hold). */
+  transition: width 0.85s cubic-bezier(0.34, 1.12, 0.42, 1), opacity 0.3s ease;
 }
 .ged-overlay.open .ged-panel.expand {
   max-height: calc(100vh - 32px);
   transition:
-    width 0.85s cubic-bezier(0.22, 0.7, 0.2, 1),
-    max-height 0.7s cubic-bezier(0.22, 0.7, 0.2, 1);
+    width 0.85s cubic-bezier(0.34, 1.12, 0.42, 1),
+    max-height 0.7s cubic-bezier(0.34, 1.12, 0.42, 1);
 }
 .ged-panel .ged-panel-body { opacity: 0; transition: opacity 0.5s ease; }
 .ged-panel.expand .ged-panel-body { opacity: 1; }
 .ged-panel-top { display: flex; align-items: center; gap: 12px; flex-shrink: 0; height: 40px; }
 .ged-brand--panel { flex-shrink: 0; }
+
+/* The panel is a big glass bubble. We DON'T use the SVG displacement filter
+   here — its fixed 400×400 map stretches across the huge expanded panel and
+   leaves a visible seam. Instead: a clean frosted-glass magnify (backdrop
+   blur + saturate) that scales to any size, plus a rim-only sheen. */
+.ged-panel--glassy {
+  -webkit-backdrop-filter: blur(28px) saturate(1.7);
+  backdrop-filter: blur(28px) saturate(1.7);
+}
+[data-theme="light"] .ged-panel--glassy {
+  -webkit-backdrop-filter: blur(28px) saturate(1.5) brightness(1.05);
+  backdrop-filter: blur(28px) saturate(1.5) brightness(1.05);
+}
+.ged-panel--glassy::before {
+  content: ''; position: absolute; inset: 0; z-index: 1; border-radius: inherit; pointer-events: none;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+  background: radial-gradient(140% 60% at 50% 0%, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0) 22%);
+}
+[data-theme="light"] .ged-panel--glassy::before {
+  box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.85);
+  background: radial-gradient(140% 60% at 50% 0%, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 24%);
+}
+/* Panel content must sit above the rim sheen. */
+.ged-panel-top, .ged-panel-body { position: relative; z-index: 2; }
 
 /* Search field — solid red border idle, rainbow when AI-on */
 .ged-search-wrap {
@@ -193,6 +246,14 @@ a.ged-card:hover { transform: translateY(-3px); box-shadow: var(--hover-glow); b
 .ged-contact-title { font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 700; letter-spacing: -0.03em; color: var(--text-primary); margin: 0 0 20px; }
 .ged-contact-title span { color: var(--accent); }
 .ged-empty { color: var(--text-tertiary); font-size: 14px; padding: 20px 0; }
+.ged-empty p { margin: 0 0 14px; font-size: 15px; color: var(--text-secondary); line-height: 1.5; }
+/* Clickable suggestion chips shown under the friendly empty state. */
+.ged-suggest-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.ged-chip.ged-suggest {
+  cursor: pointer; border: 1px solid rgba(255,255,255,0.18); font-family: inherit;
+  transition: transform 0.15s var(--hover-ease), background 0.2s, box-shadow 0.2s;
+}
+.ged-chip.ged-suggest:hover { transform: translateY(-1px); background: var(--accent); box-shadow: 0 6px 18px rgba(255,42,0,0.35); }
 
 /* AI answer card — Siri-style border whose colour rotates CLOCKWISE around
    the perimeter. A conic gradient on a ::before layer spins; a mask keeps
@@ -201,7 +262,7 @@ a.ged-card:hover { transform: translateY(-3px); box-shadow: var(--hover-glow); b
 .ged-answer {
   --ged-bw: 1.6px;                     /* border thickness */
   position: relative; border-radius: 16px; padding: 20px 22px;
-  margin: 24px 0 24px;                 /* 24px gap from tabs above + results below */
+  margin: 4px 24px 24px 0;             /* keep clear of the right-side tabs */
   background: var(--bg-secondary);
   border: var(--ged-bw) solid transparent;   /* space for the ring */
 }
@@ -233,7 +294,72 @@ a.ged-card:hover { transform: translateY(-3px); box-shadow: var(--hover-glow); b
 .ged-answer-badge { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; background: var(--accent); padding: 4px 10px; border-radius: 100px; }
 .ged-answer-q { font-size: 13px; color: var(--text-tertiary); font-style: italic; }
 .ged-answer h4 { font-size: 17px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px; letter-spacing: -0.01em; }
-.ged-answer p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin: 0; }
+.ged-answer p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin: 0 0 8px; }
+.ged-answer p:last-child { margin-bottom: 0; }
+.ged-answer strong { color: var(--text-primary); font-weight: 700; }
+.ged-answer-list { margin: 6px 0 0; padding-left: 18px; }
+.ged-answer-list li { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 4px; }
+.ged-answer-list li::marker { color: var(--accent); }
+/* Relevant project image cards beneath the AI answer (Google + AI feel). */
+.ged-answer-cards { display: grid; grid-template-columns: repeat(auto-fill, 226px); gap: 16px; margin: 16px 0 4px; }
+@media (max-width: 760px) { .ged-answer-cards { grid-template-columns: 1fr; } }
+/* Categorized AI results — grouped by section with bold names + bullets. */
+.ged-results-cats { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
+.ged-res-cat { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.ged-res-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.ged-res-item { position: relative; padding-left: 16px; }
+.ged-res-item::before { content: ""; position: absolute; left: 2px; top: 9px; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+.ged-res-link { display: block; text-decoration: none; color: var(--text-secondary); border-radius: 8px; padding: 2px 0; transition: color 0.2s; }
+a.ged-res-link:hover { color: var(--text-primary); }
+a.ged-res-link:hover strong { color: var(--accent); }
+.ged-res-link strong { display: block; font-size: 14px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.01em; }
+.ged-res-link span { display: block; font-size: 13px; color: var(--text-tertiary); line-height: 1.5; margin-top: 1px; }
+
+/* ── Rich project cards (Figma 393-8554), laid out in the same 2-col grid ── */
+/* Fixed-width cards that wrap and pack as many per row as fit (up to ~4). */
+.ged-pc-grid { display: grid; grid-template-columns: repeat(auto-fill, 226px); gap: 20px; align-items: start; justify-content: start; }
+/* Glass project cards — translucent frosted panel + bubble rim highlight.
+   (Lightweight glass, not the heavy SVG displacement, so a grid of them stays
+   smooth.) The image window keeps its own solid backing. */
+.ged-pc {
+  position: relative; isolation: isolate;
+  display: flex; flex-direction: column; text-decoration: none;
+  background: rgba(255,255,255,0.06);
+  -webkit-backdrop-filter: blur(14px) saturate(1.5);
+  backdrop-filter: blur(14px) saturate(1.5);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 16px; overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 8px 26px rgba(0,0,0,0.22);
+  transition: transform 0.3s var(--hover-ease), box-shadow 0.3s var(--hover-ease), border-color 0.3s;
+}
+[data-theme="light"] .ged-pc {
+  background: rgba(255,255,255,0.5);
+  border-color: rgba(255,255,255,0.7);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 8px 26px rgba(0,0,0,0.10);
+}
+a.ged-pc:hover { transform: translateY(-3px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), var(--hover-glow); border-color: rgba(255,42,0,0.3); }
+.ged-pc-media { width: 100%; background: #0d0b0a; line-height: 0; }
+.ged-pc-media img { width: 100%; height: auto; display: block; object-fit: contain; }
+.ged-pc-body { padding: 12px 13px 14px; display: flex; flex-direction: column; gap: 6px; }
+.ged-pc-title { font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0; letter-spacing: -0.01em; line-height: 1.3; }
+.ged-pc-cats { font-size: 11.5px; color: var(--text-tertiary); margin: 0; }
+.ged-pc-summary { font-size: 12.5px; color: var(--text-secondary); line-height: 1.45; margin: 0; }
+.ged-pc-metric { align-self: flex-start; font-size: 11.5px; font-weight: 700; color: #fff; background: var(--accent); padding: 6px 12px; border-radius: 100px; margin-top: 2px; }
+.ged-pc-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+/* Glass chips — frosted translucent pill with a top glint. */
+.ged-pc-tag {
+  font-size: 11px; font-weight: 600; color: var(--text-secondary);
+  background: rgba(255,255,255,0.08);
+  -webkit-backdrop-filter: blur(8px) saturate(1.4); backdrop-filter: blur(8px) saturate(1.4);
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+  padding: 4px 10px; border-radius: 100px;
+}
+[data-theme="light"] .ged-pc-tag {
+  background: rgba(255,255,255,0.55); color: var(--text-secondary);
+  border-color: rgba(255,255,255,0.8); box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+}
+a.ged-pc:hover .ged-pc-title { color: var(--accent); }
 
 @media (max-width: 760px) {
   .ged-name { display: none; }
@@ -243,4 +369,5 @@ a.ged-card:hover { transform: translateY(-3px); box-shadow: var(--hover-glow); b
   .ged-sidenav { float: none; position: static; flex-direction: row; width: auto; margin: 0 0 12px auto; justify-content: flex-end; }
   .ged-content { margin-right: 0; }
   .ged-cols { grid-template-columns: 1fr; }
+  .ged-pc-grid { grid-template-columns: 1fr; }
 }

@@ -17,43 +17,61 @@
     /* ---- WORK / PROJECTS ---- */
     {
       id: 'opex', category: 'work', href: 'home/opex-allocation.html',
+      img: 'images/budget-planner2.gif',
       title: 'OPEX Allocation Tool Redesign',
-      desc: 'A verification-first dashboard that surfaces all decision-critical context on a single screen.',
+      desc: 'No more tab-hopping — every decision on one calm screen.',
+      cats: ['SaaS', 'Product', 'FinTech'],
+      metric: '94% faster — 9.7 hrs to 33 min',
       chips: ['94% faster — 9.7 hrs to 33 min', 'Amazon', 'Enterprise'],
       tags: ['opex', 'allocation', 'dashboard', 'finance', 'enterprise', 'amazon', 'verification', 'systems thinking', 'ux', 'product', 'research', 'efficiency', '300b', 'reporting']
     },
     {
       id: 'sous-chef', category: 'work', href: 'home/sous-chef-device.html',
+      img: 'images/chef1.gif',
       title: 'Sous Chef — Countertop Cooking Companion',
-      desc: 'Track, plan, learn and manage your cooking and health goals step by step.',
+      desc: 'A countertop friend that turns cooking into confidence.',
+      cats: ['UI & UX', 'Product', 'Industrial Design'],
+      metric: '72% higher user confidence',
       chips: ['72% higher user confidence', 'Eliminated 5x frictions', 'Industrial Design'],
       tags: ['sous chef', 'cooking', 'countertop', 'device', 'industrial design', 'product', 'hardware', 'consumer', 'health', 'ux', 'iot', 'appliance']
     },
     {
       id: 'metrics', category: 'work', href: 'home/executive-metrics.html',
+      img: 'assets/thumbnails/opening-thumbnail-dashboard.gif',
       title: 'Executive Product Metrics Dashboard',
-      desc: 'A live executive view that collapses a month of manual reporting into a two-second glance.',
+      desc: 'Gave leaders a live pulse on the business, not a month-old snapshot.',
+      cats: ['UI', 'Dashboard', 'Enterprise'],
+      metric: '1 month reporting → 2s live view',
       chips: ['1 month reporting → 2 second live view', 'Amazon', 'Dashboard'],
       tags: ['metrics', 'dashboard', 'executive', 'analytics', 'reporting', 'amazon', 'data', 'visualization', 'kpi', 'product']
     },
     {
       id: 'comment-panel', category: 'work', href: 'home/design-system-comment-panel.html',
+      img: 'assets/comment-panel/opening-thumbnail-design-system%201.gif',
       title: 'Unified Comment Panel',
-      desc: 'Treating comments as shared infrastructure across the product suite.',
+      desc: 'One comment system, shared like infrastructure across the suite.',
+      cats: ['UI', 'Design System', 'Enterprise'],
+      metric: '40% faster production',
       chips: ['40% faster production', '72+ hrs saved', 'Design System'],
       tags: ['comment', 'panel', 'design system', 'component', 'infrastructure', 'amazon', 'consistency', 'tokens', 'reuse', 'systems thinking', 'ux']
     },
     {
       id: 'bmw', category: 'work', href: 'home/bmw-workspace.html',
+      img: 'assets/thumbnails/opening-thumbnail-bmw.gif',
       title: 'BMW Workspace Redesign',
-      desc: 'A spatial workspace concept exploring how people and vehicles share an environment.',
+      desc: 'Reimagining how people and vehicles share one living space.',
+      cats: ['Spatial', 'Industrial Design'],
+      metric: 'Scaled spatial prototype',
       chips: ['Spatial Design', 'BMW', 'Concept'],
       tags: ['bmw', 'workspace', 'spatial', 'automotive', 'concept', 'industrial design', 'environment', 'mobility']
     },
     {
       id: 'origami', category: 'work', href: 'home/origami-chair.html',
+      img: 'assets/thumbnails/origami-chair-opening.gif',
       title: 'Sustainable Origami Chair',
-      desc: 'A flat-pack chair folded from a single sheet to cut material and shipping waste.',
+      desc: 'A chair that folds flat, treads lighter, and still invites you to sit.',
+      cats: ['Industrial Design', 'Sustainability'],
+      metric: '65% less carbon footprint',
       chips: ['65% less carbon footprint', 'Industrial Design', 'Sustainability'],
       tags: ['origami', 'chair', 'furniture', 'sustainable', 'sustainability', 'carbon', 'industrial design', 'manufacturing', 'material', 'flat pack']
     },
@@ -64,6 +82,12 @@
       desc: "Grew up fascinated with sketching and redesigning everyday objects. Bachelor's in Mechanical Engineering (Savitribai Phule Pune University) and a Master's in Industrial Design (Savannah College of Art and Design).",
       chips: ['Curiosity', 'Adaptable', 'SCAD', 'Design', 'Engineer'],
       tags: ['background', 'education', 'mechanical engineering', 'industrial design', 'scad', 'pune', 'masters', 'bachelors', 'about', 'who', 'history', 'story']
+    },
+    {
+      id: 'about-inhiswords', category: 'about', title: 'In his own words',
+      desc: "I've spent years figuring out how to make complicated things feel simple \u2014 physical products, software, and the new space where AI and humans work together. I take something messy and unclear and turn it into something people can use and rely on without thinking twice. I just want the things I build to get out of people's way \u2014 an engineer's brain and a designer's eye.",
+      chips: ['Creative @ Amazon', 'Make complexity simple', "Engineer's brain, designer's eye", 'Design Services'],
+      tags: ['linkedin', 'summary', 'philosophy', 'approach', 'creative', 'amazon', 'designer', 'simple', 'simplify', 'complexity', 'human', 'ai', 'engineer', 'systems thinking', 'about', 'who', 'values', 'care', 'headline', 'story', 'voice']
     },
     {
       id: 'about-intent', category: 'about', title: 'Intent',
@@ -225,20 +249,38 @@
     role: 'Multidisciplinary product designer & engineer',
     location: 'Seattle, WA',
     email: 'gaurav.dalbhanjan@gmail.com',
-    years: '5+'
+    years: '5+',
+    /* From LinkedIn (assets/LinkedIn-data.csv) — his own words. */
+    headline: 'PHIL.IV:XIII | Creative @ Amazon',
+    industry: 'Design Services',
+    summary: "As a designer I've spent years figuring out how to make complicated things feel simple \u2014 whether that's a physical product, a piece of software, or the strange new space where AI and humans have to work together. What I care about most is taking something messy, serious and unclear and turning it into something someone can actually use and rely on without thinking twice. At the core, I just want the things I build to get out of people's way. I come at this with an engineer's brain and a designer's eye, so I'm as comfortable in the research and the systems thinking as I am delivering the product."
   };
 
   var INTENTS = [
     {
       id: 'who',
-      keys: ['who', 'about', 'yourself', 'gaurav', 'bio', 'introduce', 'introduction', 'background'],
+      keys: ['who', 'about', 'yourself', 'gaurav', 'bio', 'introduce', 'introduction', 'background', 'creative', 'designer', 'amazon'],
       title: 'Who is Gaurav?',
-      answer: "Gaurav Dalbhanjan is a multidisciplinary product designer and engineer in Seattle, WA. He bridges rigid business logic and human-centered craft — moving from UX research through industrial design to shipping real code. Mechanical Engineering (Pune) + Master's in Industrial Design (SCAD).",
-      chips: ['Product Design', 'Industrial Design', 'Engineering', 'Seattle, WA']
+      answer: "Gaurav Dalbhanjan is a multidisciplinary product designer and engineer in Seattle, WA \u2014 currently a Creative at Amazon. In his own words: he's spent years figuring out how to make complicated things feel simple, whether that's a physical product, software, or the new space where AI and humans work together. He comes at it with an engineer's brain and a designer's eye, equally at home in research and systems thinking as in shipping the product. Foundation: Mechanical Engineering (Pune) + Master's in Industrial Design (SCAD).",
+      chips: ['Creative @ Amazon', 'Product Design', 'Industrial Design', "Engineer's brain, designer's eye", 'Seattle, WA']
+    },
+    {
+      id: 'philosophy',
+      keys: ['philosophy', 'approach', 'believe', 'belief', 'care about', 'value', 'values', 'mindset', 'how do you think', 'why design', 'ethos', 'principle', 'principles', 'simple', 'simplify', 'complexity'],
+      title: "Gaurav's design philosophy",
+      answer: "In his own words: \u201CI just want the things I build to get out of people's way.\u201D He takes something messy, serious and unclear and turns it into something people can actually use and rely on without thinking twice \u2014 making complicated things feel simple across physical products, software, and the emerging space where AI and humans collaborate. An engineer's brain and a designer's eye, so the rigor of research and systems thinking and the craft of delivery come from the same place.",
+      chips: ['Make complexity simple', "Get out of people's way", 'Engineer + designer', 'Human-centered']
+    },
+    {
+      id: 'style',
+      keys: ['ambiguity', 'ambiguous', 'messy', 'unclear', 'chaos', 'work style', 'how does he work', 'how do you work', 'collaborate', 'collaboration', 'team', 'cross-functional', 'facilitate', 'facilitation', 'decisions', 'decision', 'critical', 'direct'],
+      title: 'How Gaurav works through ambiguity',
+      answer: "Gaurav is at his best where things are messy and unclear. He resolves ambiguity fast \u2014 running research to find where a workflow actually breaks, then reframing the problem into clear, buildable direction. His decisions are logical and direct, and they trace back to a real user painpoint rather than taste: every choice has a \u201Cwhy this, not the obvious thing\u201D behind it.",
+      chips: ['Resolves ambiguity', 'Research-led', 'Painpoint-driven', 'Direct & critical']
     },
     {
       id: 'hire',
-      keys: ['hire', 'available', 'freelance', 'work with', 'open', 'job', 'opportunity', 'role', 'recruit'],
+      keys: ['hire', 'available', 'freelance', 'work with', 'open', 'job', 'opportunity', 'recruit', 'why you', 'why hire', 'why should'],
       title: 'Is Gaurav available to work?',
       answer: "Yes — Gaurav is open to work. The fastest way to reach him is email; he's based in Seattle, WA and works Monday–Friday, 8am–6pm PT.",
       chips: ['Open to work', 'gaurav.dalbhanjan@gmail.com', 'Seattle, WA']
@@ -322,18 +364,190 @@
     }
   ];
 
-  /* Return a synthesized answer for a free-text query, or null. */
+  /* ---- Per-project reasoning (distilled from the case studies) ----
+     Each project carries the thought process, not just the outcome: the
+     painpoint Gaurav was solving, the reframe/insight, a signature decision
+     WITH the "why not the obvious?" reasoning, and the measured impact. This
+     is what lets the assistant answer project questions with real context. */
+  var PROJECTS = {
+    opex: {
+      name: 'OPEX Allocation Tool (Amazon)', href: 'home/opex-allocation.html',
+      one: 'a verification-first finance dashboard that put every decision-critical number on one screen',
+      pain: 'analysts were losing ~9.7 hours per review chasing context across tabs and reconciling numeric IDs by hand',
+      insight: 'the real barrier was opaque data, not the layout \u2014 so surface the context instead of asking people to go find it',
+      decision: 'he replaced raw numeric IDs with natural-language names right in the table',
+      whyNot: 'tooltips on hover were the obvious fix, but that still leaves a lookup step on every single row',
+      impact: '94% faster reviews \u2014 9.7 hours down to 33 minutes',
+      keys: ['opex', 'allocation', 'finance', 'fintech', 'dashboard', 'amazon', 'verification', 'reporting', 'tabs', 'budget']
+    },
+    'sous-chef': {
+      name: 'Sous Chef', href: 'home/sous-chef-device.html',
+      one: 'a countertop cooking companion \u2014 a physical device plus app \u2014 that turns cooking into confidence',
+      pain: 'people abandon home cooking because searching recipes then checking the pantry is backwards and full of friction',
+      insight: 'flip search into select \u2014 show people the meals they can already make with what they have on hand',
+      decision: 'he ranked meals by how much of the recipe the pantry already covers, and moved guidance onto a device so the phone can be put away',
+      whyNot: 'a conventional recipe search hides the one thing users actually need: what they can cook right now',
+      impact: '72% higher user confidence and 5x fewer frictions in the flow',
+      keys: ['sous', 'chef', 'cooking', 'countertop', 'device', 'kitchen', 'pantry', 'recipe', 'hardware', 'consumer', 'health', 'iot']
+    },
+    'comment-panel': {
+      name: 'Unified Comment Panel (Amazon)', href: 'home/design-system-comment-panel.html',
+      one: 'a single comment system treated as shared infrastructure across a product suite',
+      pain: 'every team was rebuilding comments slightly differently, so behaviour drifted and effort was duplicated',
+      insight: 'treat comments as infrastructure, not a feature \u2014 one governed component the whole suite composes',
+      decision: 'he designed one tokenized, reusable panel with governed patterns rather than per-team variants',
+      whyNot: 'letting each team keep its own version felt faster short-term, but it compounds inconsistency and maintenance cost',
+      impact: '40% faster production and 72+ hours saved',
+      keys: ['comment', 'panel', 'design system', 'component', 'infrastructure', 'tokens', 'consistency', 'governance', 'reuse', 'enterprise']
+    },
+    bmw: {
+      name: 'BMW Workspace Redesign', href: 'home/bmw-workspace.html',
+      one: 'a spatial redesign of BMW\u2019s ITRC office built to pull people back to a place they were avoiding',
+      pain: 'the office felt dark and shop-like, so post-COVID employees simply preferred to stay remote',
+      insight: 'reframe the office as a machine for collaboration \u2014 space that generates spontaneous interaction, not just holds desks',
+      decision: 'he engineered circulation and shared zones around where people would naturally bump into each other, tuned loud-to-quiet',
+      whyNot: 'just refreshing furniture and finishes would look nicer but wouldn\u2019t change why nobody wanted to be there',
+      impact: 'positive employee response to the redesigned space (in delivery)',
+      keys: ['bmw', 'workspace', 'office', 'spatial', 'automotive', 'environment', 'itrc', 'collaboration', 'remote']
+    }
+  };
+
+  /* ---- Distilled traits (what the people who worked with Gaurav consistently
+     observe). We DON'T quote anyone verbatim — instead we hold the *meaning*
+     of the recommendation as a trait the assistant can weave into prose, and a
+     neutral attribution of who tends to notice it. Honest, candid, no blob. */
+  var TRAITS = [
+    { meaning: "he pulls signal out of ambiguity fast \u2014 turning a messy, unclear problem into direction a team can actually build against", by: 'the engineering leads he\u2019s worked with at Amazon', tags: ['ambiguity', 'ambiguous', 'messy', 'unclear', 'systems', 'clarity', 'lead', 'manager', 'work with', 'chaos'] },
+    { meaning: "he moves comfortably between design intent and how a thing actually gets manufactured, so his ideas survive contact with production", by: 'engineers he\u2019s partnered with', tags: ['engineering', 'engineer', 'dfm', 'manufacturing', 'manufacturability', 'prototype', 'hardware', 'physical', 'product'] },
+    { meaning: "he keeps the customer at the centre and balances a clear vision with getting it shipped, rather than choosing one over the other", by: 'the product managers he\u2019s built with', tags: ['strategy', 'strategic', 'product', 'customer', 'vision', 'execution', 'impact', 'business'] },
+    { meaning: "he scales design thinking across teams and governs shared patterns so quality holds as more people touch the work", by: 'senior designers on his teams', tags: ['design system', 'systems', 'ux', 'scale', 'governance', 'patterns', 'consistency', 'component', 'reuse'] },
+    { meaning: "he\u2019s genuinely curious and adaptable, onboards fast, and leans into a hard challenge instead of away from it", by: 'founders and leads who\u2019ve brought him in', tags: ['curiosity', 'curious', 'adaptable', 'adaptability', 'onboard', 'onboarding', 'initiative', 'versatile', 'learn', 'fast'] }
+  ];
+
+  function hit(text, keys) {
+    var s = 0;
+    keys.forEach(function (k) { if (text.indexOf(k) !== -1) s += (k.indexOf(' ') !== -1 ? 2 : 1); });
+    return s;
+  }
+  /* Distinctive names that should route straight to a project when mentioned. */
+  var PROJECT_NAMES = {
+    opex: ['opex', 'allocation'],
+    'sous-chef': ['sous chef', 'sous-chef', 'countertop', 'cooking companion'],
+    'comment-panel': ['comment panel', 'comment-panel', 'unified comment'],
+    bmw: ['bmw', 'workspace redesign', 'itrc']
+  };
+  function namedProject(text) {
+    var found = null, sc = 0;
+    Object.keys(PROJECT_NAMES).forEach(function (k) {
+      var s = hit(text, PROJECT_NAMES[k]);
+      if (s > sc) { sc = s; found = k; }
+    });
+    return sc > 0 ? found : null;
+  }
+  /* Pick the trait most relevant to the query (meaning, not a quote). */
+  function bestTrait(text) {
+    var best = null, bestS = 0;
+    TRAITS.forEach(function (p) { var s = hit(text, p.tags); if (s > bestS) { bestS = s; best = p; } });
+    return best;
+  }
+  /* Weave a trait's MEANING into a candid sentence (no verbatim quote). */
+  function traitSentence(tr) {
+    return 'People who\u2019ve worked with him keep noticing the same thing: ' + tr.meaning + '.';
+  }
+  /* Compose a project-specific answer (thought process → decision → impact). */
+  function projectAnswer(pj, key, text) {
+    var lead = 'On ' + pj.name + ', ' + pj.one + '.';
+    var body = 'The painpoint: ' + pj.pain + '. Gaurav\u2019s read was that ' + pj.insight +
+      '. So ' + pj.decision + ' \u2014 not the obvious route, because ' + pj.whyNot +
+      '. The result: ' + pj.impact + '.';
+    return {
+      title: pj.name,
+      answer: lead + ' ' + body,
+      chips: [pj.impact],
+      href: pj.href,
+      cards: key ? [key] : []          // project id(s) to render as image cards
+    };
+  }
+
+  /* Return a synthesized, COMPOSED answer for a free-text query, or null.
+     Rather than echoing one fixed paragraph, it understands the query, picks
+     the most relevant knowledge (a project, an intent, and — when it fits — a
+     real recommendation) and assembles a contextual reply in Gaurav's voice. */
   function answer(q) {
     var text = ' ' + (q || '').toLowerCase() + ' ';
     if (!text.trim()) return null;
-    var best = null, bestScore = 0;
-    INTENTS.forEach(function (it) {
-      var s = 0;
-      it.keys.forEach(function (k) { if (text.indexOf(k) !== -1) s += (k.indexOf(' ') !== -1 ? 2 : 1); });
-      if (s > bestScore) { bestScore = s; best = it; }
+
+    // 0. A distinctive project name (e.g. "opex", "sous chef", "bmw") routes
+    //    straight to that project — those questions are unambiguous.
+    var named = namedProject(text);
+
+    // 1. Best keyword-scored project (broader, topical match).
+    var pjKey = null, pjScore = 0;
+    Object.keys(PROJECTS).forEach(function (k) {
+      var s = hit(text, PROJECTS[k].keys);
+      if (s > pjScore) { pjScore = s; pjKey = k; }
     });
-    return bestScore > 0 ? best : null;
+
+    // 2. Best-matching intent.
+    var intent = null, intentScore = 0;
+    INTENTS.forEach(function (it) {
+      var s = hit(text, it.keys);
+      if (s > intentScore) { intentScore = s; intent = it; }
+    });
+
+    // Named project always wins; otherwise a topical project wins when it ties
+    // or beats the generic intent.
+    var routeProject = named || ((pjKey && pjScore >= 2 && pjScore >= intentScore) ? pjKey : null);
+    if (routeProject) {
+      var pa = projectAnswer(PROJECTS[routeProject], routeProject, text);
+      var tr = bestTrait(text);
+      if (tr) { pa.answer += ' ' + traitSentence(tr); }
+      return pa;
+    }
+
+    if (!intent) {
+      // Nothing matched an intent or project — but if a project loosely matched,
+      // still answer from it so the reply stays specific rather than empty.
+      if (pjKey && pjScore > 0) return projectAnswer(PROJECTS[pjKey], pjKey, text);
+      return null;
+    }
+
+    // 3. Compose around the intent. Start from its written answer, then, when
+    //    relevant, ground it in a concrete decision and weave in the MEANING of
+    //    what colleagues observe (never a verbatim quote), and attach the most
+    //    relevant project as an image card.
+    var out = { title: intent.title, answer: intent.answer, chips: intent.chips.slice(), cards: [] };
+
+    // "who / philosophy / how he thinks / works" → ground in a signature
+    // decision, then weave in the distilled trait meaning.
+    if (intent.id === 'who' || intent.id === 'philosophy' || intent.id === 'research' || intent.id === 'style') {
+      var exKey = pjKey && pjScore > 0 ? pjKey : 'opex';
+      var ex = PROJECTS[exKey];
+      out.answer += ' You can see it in the work: on ' + ex.name + ', ' + ex.decision +
+        ' \u2014 because ' + ex.whyNot + '.';
+      var tr2 = bestTrait(text) || TRAITS[0];
+      out.answer += ' ' + traitSentence(tr2);
+      out.cards = [exKey];
+    }
+    // Impact / experience → point at the specific project + show its card.
+    else if ((intent.id === 'impact' || intent.id === 'experience') && pjKey && pjScore > 0) {
+      var ex2 = PROJECTS[pjKey];
+      out.answer += ' Take ' + ex2.name + ': ' + ex2.pain + ', and the result was ' + ex2.impact + '.';
+      out.href = ex2.href;
+      out.cards = [pjKey];
+    }
+    // Impact with no specific project → show the top outcome projects as cards.
+    else if (intent.id === 'impact') {
+      out.cards = ['opex', 'comment-panel', 'sous-chef'];
+    }
+    // Skills / hire → weave in the distilled meaning of what people observe.
+    else if (intent.id === 'skills' || intent.id === 'hire') {
+      var tr3 = bestTrait(text) || TRAITS[2];
+      out.answer += ' ' + traitSentence(tr3);
+    }
+
+    return out;
   }
 
-  global.GEDSearch = { query: query, all: all, answer: answer, RECORDS: RECORDS, PROFILE: PROFILE };
+  global.GEDSearch = { query: query, all: all, answer: answer, RECORDS: RECORDS, PROFILE: PROFILE, PROJECTS: PROJECTS, TRAITS: TRAITS };
 })(window);

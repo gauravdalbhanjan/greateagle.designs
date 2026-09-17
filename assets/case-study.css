@@ -731,3 +731,31 @@ html:not(.fg-on) .fg-dots { display: none; }
   .cs-collage { grid-template-columns: 1fr; grid-auto-rows: 200px; }
   .cs-collage figure.span-2 { grid-column: auto; }
 }
+
+/* (section-index removed) */
+
+/* ─── Glass tiles — frosted translucent surfaces + bubble rim highlight ───
+   Applied to the case-study content tiles. Lightweight glass (backdrop blur,
+   not the heavy SVG displacement) so grids of them stay smooth. */
+.cs-metric,
+.cs-quote,
+.cs-decision,
+.cs-impact-card,
+.cs-principle,
+.cs-ba-card.before {
+  background: rgba(255,255,255,0.06);
+  -webkit-backdrop-filter: blur(14px) saturate(1.5);
+  backdrop-filter: blur(14px) saturate(1.5);
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.30), 0 8px 26px rgba(0,0,0,0.18);
+}
+[data-theme="light"] .cs-metric,
+[data-theme="light"] .cs-quote,
+[data-theme="light"] .cs-decision,
+[data-theme="light"] .cs-impact-card,
+[data-theme="light"] .cs-principle,
+[data-theme="light"] .cs-ba-card.before {
+  background: rgba(255,255,255,0.5);
+  border-color: rgba(255,255,255,0.7);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 8px 26px rgba(0,0,0,0.08);
+}

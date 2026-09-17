@@ -87,16 +87,50 @@
   function buildLiquidGlass() {
     const defs = document.getElementById('lg-defs');
     if (!defs) return;
-    const W = 400, H = 400, radius = 60, bezel = 40;
-    const profile = calcProfile(80, bezel, 2.5, 128);
+    /* Apple "Liquid Glass" look. A Snell-law refraction profile is baked into
+       a displacement map (dispMap) and used to bend the backdrop through the
+       bezel. Theme-aware:
+         • DARK  — pronounced refraction + chromatic aberration (wet droplet).
+         • LIGHT — gentle bubble MAGNIFY: low displacement, no aberration, just
+           a soft rounded-lens bend so it reads as a clear bubble, not a prism. */
+    const isLight = html.getAttribute('data-theme') !== 'dark';
+    const W = 400, H = 400, radius = 60;
+    const bezel = isLight ? 64 : 52;
+    const profile = calcProfile(isLight ? 120 : 96, bezel, isLight ? 1.6 : 2.5, 128);
     const maxD = Math.max(...Array.from(profile).map(Math.abs)) || 1;
     const url = dispMap(W, H, radius, bezel, profile, maxD);
+
+    if (isLight) {
+      // Bubble magnify: single low-scale displacement (soft lens), no rainbow
+      // fringe, mild saturation. Feels like a rounded clear-glass bubble.
+      const base = maxD * 0.6;
+      defs.innerHTML =
+        '<filter id="lg-filter" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">' +
+          '<feImage href="' + url + '" x="0" y="0" width="' + W + '" height="' + H + '" result="m"/>' +
+          '<feGaussianBlur in="SourceGraphic" stdDeviation="0.5" result="b"/>' +
+          '<feDisplacementMap in="b" in2="m" scale="' + base + '" xChannelSelector="R" yChannelSelector="G" result="d"/>' +
+          '<feColorMatrix in="d" type="saturate" values="1.35"/>' +
+        '</filter>';
+      return;
+    }
+
+    const base = maxD * 1.55;        // stronger edge refraction (droplet rim)
+    const ab = 2.2;                  // chromatic aberration spread (px)
     defs.innerHTML =
-      '<filter id="lg-filter" x="0%" y="0%" width="100%" height="100%">' +
-      '<feGaussianBlur in="SourceGraphic" stdDeviation="0.4" result="b"/>' +
-      '<feImage href="' + url + '" x="0" y="0" width="' + W + '" height="' + H + '" result="m"/>' +
-      '<feDisplacementMap in="b" in2="m" scale="' + (maxD * 1.0) + '" xChannelSelector="R" yChannelSelector="G" result="d"/>' +
-      '<feColorMatrix in="d" type="saturate" values="3"/>' +
+      '<filter id="lg-filter" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">' +
+        '<feImage href="' + url + '" x="0" y="0" width="' + W + '" height="' + H + '" result="m"/>' +
+        '<feGaussianBlur in="SourceGraphic" stdDeviation="0.6" result="b"/>' +
+        // Per-channel displacement at slightly different scales → aberration.
+        '<feDisplacementMap in="b" in2="m" scale="' + (base + ab) + '" xChannelSelector="R" yChannelSelector="G" result="dR"/>' +
+        '<feDisplacementMap in="b" in2="m" scale="' + base + '" xChannelSelector="R" yChannelSelector="G" result="dG"/>' +
+        '<feDisplacementMap in="b" in2="m" scale="' + (base - ab) + '" xChannelSelector="R" yChannelSelector="G" result="dB"/>' +
+        // Keep R from dR, G from dG, B from dB (drop each other channel).
+        '<feColorMatrix in="dR" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="cR"/>' +
+        '<feColorMatrix in="dG" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="cG"/>' +
+        '<feColorMatrix in="dB" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="cB"/>' +
+        '<feBlend in="cR" in2="cG" mode="screen" result="cRG"/>' +
+        '<feBlend in="cRG" in2="cB" mode="screen" result="d"/>' +
+        '<feColorMatrix in="d" type="saturate" values="3.2"/>' +
       '</filter>';
   }
 
@@ -148,8 +182,8 @@
     let velocity = 0;
     let pos = window.scrollY;
     let running = false;
-    const FRICTION = 0.82;     // higher = longer glide (0..1)
-    const IMPULSE = 0.093;     // how much a wheel notch adds to velocity (3x slower)
+    const FRICTION = 0.83;     // higher = longer glide (0..1)
+    const IMPULSE = 0.17;      // how much a wheel notch adds to velocity (faster overall)
     const maxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
 
     function frame() {
@@ -179,11 +213,14 @@
       kick();
     }, { passive: false });
 
-    // Keyboard + anchor jumps: animate pos directly via a short glide.
+    // Keyboard + anchor jumps + section-index clicks: animate pos directly
+    // via a fast "fast-forward" glide. Duration scales a little with distance
+    // (longer jumps take slightly longer) but stays snappy.
     function glideTo(targetY) {
       targetY = Math.max(0, Math.min(targetY, maxScroll()));
       velocity = 0;
-      const start = pos, dist = targetY - start, dur = 520;
+      const start = pos, dist = targetY - start;
+      const dur = Math.max(320, Math.min(680, Math.abs(dist) * 0.32));
       let t0 = null;
       function step(t) {
         if (t0 === null) t0 = t;

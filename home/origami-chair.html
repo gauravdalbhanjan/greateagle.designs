@@ -21,7 +21,16 @@
   <script>try{if(sessionStorage.getItem('ged:ptx')==='1'){sessionStorage.removeItem('ged:ptx');var h=document.documentElement;h.classList.add('ptx-arriving');setTimeout(function(){h.classList.remove('ptx-arriving','ptx-ready','ptx-resolve');},4500);}}catch(e){}</script>
   <script src="../assets/site.js"></script>
   <script defer src="../assets/page-transition.js"></script>
-  <style>/* GED-HIDE-LEGACY-NAV */ body > nav.glass { display:none !important; }</style>
+  <style>
+    /* GED-HIDE-LEGACY-NAV */ body > nav.glass { display:none !important; }
+    /* Case-study figures */
+    .oc-figure { margin: 28px 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--border); background: var(--bg-secondary); }
+    .oc-figure img { width: 100%; display: block; }
+    .oc-figure figcaption { font-size: var(--fs-tertiary); color: var(--text-tertiary); padding: 12px 16px; line-height: 1.5; }
+    .oc-figrow { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 28px 0; }
+    .oc-figrow .oc-figure { margin: 0; }
+    @media (max-width: 700px) { .oc-figrow { grid-template-columns: 1fr; } }
+  </style>
 </head>
 <body>
 <svg id="lg-filter-svg" xmlns="http://www.w3.org/2000/svg"><defs id="lg-defs"></defs></svg>
@@ -75,6 +84,22 @@
 
     <h2 class="reveal">The Design</h2>
     <p class="reveal">Stance uses <strong>bio-based polycarbonate from cornstarch</strong>, addressing tariff tensions and plastic waste. Its origami-inspired design folds into a backrest and legs with minimal manufacturing complexity. The transparent form suits offices, libraries and exhibitions.</p>
+
+    <div class="oc-figrow reveal">
+      <figure class="oc-figure">
+        <img src="../assets/origami-chair/concept-development.jpg" alt="Origami chair concept development" loading="lazy" />
+        <figcaption>Concept development — folding a single sheet into backrest and legs</figcaption>
+      </figure>
+      <figure class="oc-figure">
+        <img src="../assets/origami-chair/orthographic-specification.jpg" alt="Orthographic specification drawing of the chair" loading="lazy" />
+        <figcaption>Orthographic specification — dimensions and fold geometry</figcaption>
+      </figure>
+    </div>
+
+    <figure class="oc-figure reveal">
+      <img src="../assets/origami-chair/colors-of-the-chair.jpg" alt="Colour variants of the origami chair" loading="lazy" />
+      <figcaption>Colours of the chair — transparent bio-polycarbonate in a range of tints</figcaption>
+    </figure>
 
     <h2 class="reveal">The Impact</h2>
     <ul class="reveal">

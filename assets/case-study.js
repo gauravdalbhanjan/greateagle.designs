@@ -178,6 +178,28 @@
     if (!d.problem) return '';
     const p = d.problem;
     if (p.notes && p.notes.length) {
+      // Optional supporting photo gallery (grouped or flat), rendered as a
+      // collage below the note board — reuses the gallery collage styling.
+      let galleryHtml = '';
+      if (p.gallery && p.gallery.length) {
+        const grouped = p.gallery[0] && p.gallery[0].group && p.gallery[0].items;
+        if (grouped) {
+          galleryHtml = p.gallery.map(grp =>
+            '<div class="cs-gallery-group">' +
+              '<h3 class="cs-gallery-subhead">' + rich(grp.group) + '</h3>' +
+              '<div class="cs-collage">' + (grp.items || []).map(g =>
+                '<figure' + (g.wide ? ' class="span-2"' : '') + '>' + mediaTag(g) +
+                  (g.caption ? '<figcaption>' + rich(g.caption) + '</figcaption>' : '') + '</figure>'
+              ).join('') + '</div>' +
+            '</div>'
+          ).join('');
+        } else {
+          galleryHtml = '<div class="cs-collage">' + p.gallery.map(g =>
+            '<figure' + (g.wide ? ' class="span-2"' : '') + '>' + mediaTag(g) +
+              (g.caption ? '<figcaption>' + rich(g.caption) + '</figcaption>' : '') + '</figure>'
+          ).join('') + '</div>';
+        }
+      }
       return '<section class="cs-section reveal">' +
         '<div class="cs-num">The Problem</div>' +
         '<h2 class="cs-h2">' + rich(p.title || 'What we found on the ground') + '</h2>' +
@@ -189,6 +211,7 @@
             (note.tone === 'keep' ? '<span class="cs-note-flag">Strength to keep</span>' : '') +
             '<p>' + rich(note.text) + '</p></div>';
         }).join('') + '</div>' +
+        galleryHtml +
       '</section>';
     }
     return stepsSection('The Problem', p.title || 'What was breaking down', p.lead, p.points, p.quote);
@@ -483,7 +506,7 @@
       const n = slides.length;
       if (n < 2 || !canPin) return; // fallback: CSS shows all copies stacked
 
-      const perStep = 1.1, leadOut = 0.4;
+      const perStep = 0.8, leadOut = 0.35;   // faster step reveal
       const track = document.createElement('div');
       track.className = 'pin-track';
       section.parentNode.insertBefore(track, section);
@@ -657,9 +680,10 @@
       section.classList.add('pin-stage');
 
       // Track height: scroll distance allotted per step + short lead-out so
-      // the last step can breathe before the pin releases. Even room per step.
-      const perStep = 1.1;
-      const leadOut = 0.4;
+      // the last step can breathe before the pin releases. Smaller perStep =
+      // content reveals faster (less scrolling needed per step).
+      const perStep = 0.62;
+      const leadOut = 0.35;
       const trackVh = (steps.length * perStep + leadOut);
       track.style.height = (trackVh * 100) + 'vh';
 
@@ -720,10 +744,9 @@
           p.maxIdx = idx;
           if (p.maxIdx >= n - 1) p.section.classList.add('steps-done');
         }
-        // One active dot = the current step (matches every other dot engine
-        // on the site — walkthrough, gradient, touch). Revealed steps stay
-        // revealed, but only the dot for the current step is lit.
-        p.dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+        // Cumulative: every dot up to the current step lights orange as its
+        // content loads (so earlier steps stay lit, not just the current one).
+        p.dots.forEach((d, i) => d.classList.toggle('active', i <= idx));
 
         // Scroll-driven photo deck: map the step-progress across all cards.
         if (p.deckCards && p.deckCards.length) {

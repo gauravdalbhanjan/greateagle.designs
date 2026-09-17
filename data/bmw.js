@@ -53,6 +53,17 @@ window.CASE_STUDY = {
       { text: "Uninviting, unsupported coffee area." },
       { text: "Loud AC enables noise isolation but hinders proximate conversation." },
       { text: "There is an overall lack of color in the office space." }
+    ],
+    gallery: [
+      {
+        group: "Before &mdash; the old ITRC office",
+        items: [
+          { img: "../assets/BMW/previous-interior-meeting-area.png", caption: "Old meeting area" },
+          { img: "../assets/BMW/previous-interior-seating-area.png", caption: "Old seating area" },
+          { img: "../assets/BMW/previous-interior-pathway.png", caption: "Old pathway / circulation" },
+          { img: "../assets/BMW/previous-interior-call-room.png", caption: "Old call room" }
+        ]
+      }
     ]
   },
 
@@ -147,15 +158,6 @@ window.CASE_STUDY = {
   /* 12. Gallery — grouped sub-categories (asset-heavy). */
   galleryTitle: "Ideation, floorplans &amp; scaled models",
   gallery: [
-    {
-      group: "Before &mdash; the old ITRC office",
-      items: [
-        { img: "../assets/BMW/previous-interior-meeting-area.png", caption: "Old meeting area" },
-        { img: "../assets/BMW/previous-interior-seating-area.png", caption: "Old seating area" },
-        { img: "../assets/BMW/previous-interior-pathway.png", caption: "Old pathway / circulation" },
-        { img: "../assets/BMW/previous-interior-call-room.png", caption: "Old call room" }
-      ]
-    },
     {
       group: "Ideation &amp; Sketches",
       items: [
