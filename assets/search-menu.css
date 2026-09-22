@@ -72,10 +72,10 @@ html.ged-lock { overflow: hidden; }
 body.ged-lock { position: fixed; left: 0; right: 0; width: 100%; overflow: hidden; touch-action: none; }
 .ged-overlay { position: fixed; inset: 0; z-index: 300; display: none; overscroll-behavior: contain; }
 .ged-overlay.open { display: block; }
+/* Transparent click-catcher only — the page stays normal (no dark/blur wash);
+   the panel's own glass magnify carries the effect. */
 .ged-backdrop {
-  position: absolute; inset: 0; background: rgba(0,0,0,0.5);
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  opacity: 0; transition: opacity 0.3s var(--ease);
+  position: absolute; inset: 0; background: transparent;
 }
 .ged-overlay.open .ged-backdrop { opacity: 1; }
 /* Panel morph: the glass bar grows WIDTH first, then HEIGHT. Same margins
