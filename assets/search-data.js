@@ -48,12 +48,12 @@
     {
       id: 'comment-panel', category: 'work', href: 'home/design-system-comment-panel.html',
       img: 'assets/comment-panel/opening-thumbnail-design-system%201.gif',
-      title: 'Unified Comment Panel',
+      title: 'Simplified Enterprise Design System',
       desc: 'One comment system, shared like infrastructure across the suite.',
       cats: ['UI', 'Design System', 'Enterprise'],
       metric: '40% faster production',
       chips: ['40% faster production', '72+ hrs saved', 'Design System'],
-      tags: ['comment', 'panel', 'design system', 'component', 'infrastructure', 'amazon', 'consistency', 'tokens', 'reuse', 'systems thinking', 'ux']
+      tags: ['comment', 'panel', 'design system', 'enterprise', 'simplified', 'component', 'infrastructure', 'amazon', 'consistency', 'tokens', 'reuse', 'systems thinking', 'ux']
     },
     {
       id: 'bmw', category: 'work', href: 'home/bmw-workspace.html',
@@ -391,7 +391,7 @@
       keys: ['sous', 'chef', 'cooking', 'countertop', 'device', 'kitchen', 'pantry', 'recipe', 'hardware', 'consumer', 'health', 'iot']
     },
     'comment-panel': {
-      name: 'Unified Comment Panel (Amazon)', href: 'home/design-system-comment-panel.html',
+      name: 'Simplified Enterprise Design System (Amazon)', href: 'home/design-system-comment-panel.html',
       one: 'a single comment system treated as shared infrastructure across a product suite',
       pain: 'every team was rebuilding comments slightly differently, so behaviour drifted and effort was duplicated',
       insight: 'treat comments as infrastructure, not a feature \u2014 one governed component the whole suite composes',
@@ -433,7 +433,7 @@
   var PROJECT_NAMES = {
     opex: ['opex', 'allocation'],
     'sous-chef': ['sous chef', 'sous-chef', 'countertop', 'cooking companion'],
-    'comment-panel': ['comment panel', 'comment-panel', 'unified comment'],
+    'comment-panel': ['comment panel', 'comment-panel', 'unified comment', 'design system', 'enterprise design system', 'simplified enterprise'],
     bmw: ['bmw', 'workspace redesign', 'itrc']
   };
   function namedProject(text) {

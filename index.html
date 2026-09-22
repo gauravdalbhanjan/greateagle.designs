@@ -111,6 +111,9 @@
     .wp-media-inner { width: 100%; overflow: hidden; border-radius: 8px; background: #0d0605; }
     .wp-media img { width: 100%; height: auto; display: block; transition: transform 0.6s var(--ease); }
     .wp-card:hover .wp-media img { transform: scale(1.02); }
+
+    /* ═══ Live comment-panel animated thumbnail (Simplified Design System) ═══
+       Recreated comment panel; a ~4s loop mimics typing, delete+undo, upload. */
     /* "View case study" cue over each project's media window. On laptops it
        appears on hover (like a tooltip); on touch devices it gently fades in. */
     .wp-media-inner { position: relative; }
@@ -582,9 +585,9 @@
        scroll region is always bounded regardless of flex height quirks. */
     .ged-panel-body {
       position: relative; flex: 1 1 auto; min-height: 0;
-      display: block; padding: 16px 0 8px 0;
+      display: block; padding: 16px 0 28px 0;
       overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
-      -webkit-overflow-scrolling: touch;
+      -webkit-overflow-scrolling: touch; touch-action: pan-y;
       scrollbar-width: none; -ms-overflow-style: none;
     }
     .ged-panel-body::-webkit-scrollbar { display: none; width: 0; height: 0; background: transparent; }
@@ -698,6 +701,37 @@
 
     /* ═══════════════ SCROLL-PINNED "DESIGNING FOR ___" ═══════════════ */
     .work-intro { position: relative; height: 340vh; max-width: none; padding: 0; margin: 0; }
+    /* Dynamic orange gradient backdrop that flows with scroll direction and
+       pulses as each label changes. Position/intensity driven by JS via
+       --wi-x / --wi-y / --wi-i custom properties on the section. */
+    .work-intro { --wi-x: 22%; --wi-y: 22%; --wi-i: 0.5; }
+    /* A soft, diffuse orange orb that drifts around the EDGES as you scroll.
+       Heavy blur + a centre-dimming mask keep the middle (where the label
+       sits) readable even when the orb passes near it. */
+    .work-intro-glow {
+      position: absolute; inset: -25% -15%; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(38% 34% at var(--wi-x) var(--wi-y),
+          rgba(255,80,10, calc(0.5 * var(--wi-i))) 0%,
+          rgba(255,120,30, calc(0.22 * var(--wi-i))) 40%,
+          rgba(200,52,0, calc(0.08 * var(--wi-i))) 66%,
+          rgba(0,0,0,0) 85%);
+      filter: blur(60px) saturate(1.15);
+      /* Fade the glow out toward the centre so it never washes over the text. */
+      -webkit-mask: radial-gradient(closest-side at 50% 50%, transparent 0%, transparent 24%, #000 52%);
+      mask: radial-gradient(closest-side at 50% 50%, transparent 0%, transparent 24%, #000 52%);
+      will-change: background;
+    }
+    [data-theme="light"] .work-intro-glow {
+      background:
+        radial-gradient(38% 34% at var(--wi-x) var(--wi-y),
+          rgba(255,100,30, calc(0.34 * var(--wi-i))) 0%,
+          rgba(255,150,60, calc(0.18 * var(--wi-i))) 42%,
+          rgba(255,190,140, calc(0.07 * var(--wi-i))) 68%,
+          rgba(255,255,255,0) 86%);
+    }
+    .work-intro-top, .work-swap, .work-intro-bottom { position: relative; z-index: 1; }
+    @media (prefers-reduced-motion: reduce) { .work-intro-glow { display: none; } }
     .work-intro-pin {
       position: sticky; top: 0; height: 100vh;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -784,7 +818,7 @@
   <div class="blob blob-2"></div>
   <div class="eyebrow-pill reveal">Hi, I'm Gaurav</div>
   <h1 class="hero-title reveal reveal-delay-1">I'm a creative who <em class="rotator" id="heroRotator" aria-live="polite">Researches</em></h1>
-  <p class="hero-sub reveal reveal-delay-2">I create the future of user experiences for digital and physical products. I just want the things I build to get out of people's way — turning messy, complicated systems into things people can trust without thinking twice.</p>
+  <p class="hero-sub reveal reveal-delay-2">I create the future of user experiences for <strong style="color:var(--accent);font-weight:700;">digital and physical products</strong>. I just want the things I build to get out of people's way — turning messy, complicated systems into things people can trust without thinking twice.</p>
   <div class="hero-stats glass reveal reveal-delay-4" id="heroStats">
     <div class="stat"><div class="stat-num"><span class="cnt" data-to="5">0</span></div><div class="stat-label">Years across Amazon, BMW &amp; independent work</div></div>
     <div class="stat"><div class="stat-num"><span class="cnt" data-to="94">0</span><span>%</span></div><div class="stat-label">Task-time cut on a $300B enterprise platform</div></div>
@@ -796,6 +830,7 @@
 <!-- WORK — scroll-pinned "Designing for ___" heading -->
 <section id="workIntro" class="work-intro">
   <div class="work-intro-pin">
+    <div class="work-intro-glow" id="workGlow" aria-hidden="true"></div>
     <div class="work-intro-top">Designing for</div>
     <div class="work-swap" id="workSwap">Customers!</div>
     <div class="work-intro-bottom">not just aesthetics</div>
@@ -1228,7 +1263,7 @@
   (function () {
     var el = document.getElementById('heroRotator');
     if (!el) return;
-    var words = ['Listens', 'Observes', 'Researches', 'Learns', 'Designs', 'Visualizes', 'Codes', 'Engineers', 'Repeats'];
+    var words = ['Researches', 'Designs', 'Develops', 'Delivers', 'Learns'];
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { return; }
     var i = 0;
     setInterval(function () {
@@ -1278,7 +1313,7 @@
       },
       {
         href: 'home/design-system-comment-panel.html', img: 'assets/comment-panel/opening-thumbnail-design-system%201.gif',
-        title: 'Unified Comment Panel',
+        title: 'Simplified Enterprise Design System',
         cats: ['UI', 'Design System', 'Enterprise'],
         chips: ['\u26A1 40% faster production'],
         filters: ['enterprise', 'product', 'endtoend'], small: true
@@ -1316,11 +1351,14 @@
     /* "View case study" cue placed over each project's media window. */
     var WP_CTA = '<span class="wp-cta">View case study' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>';
+    function mediaHTML(p) {
+      return '<div class="wp-media"><div class="wp-media-inner"><img src="' + p.img + '" alt="' + esc(p.title) + '" loading="lazy" />' + WP_CTA + '</div></div>';
+    }
     /* Big rich card (one below another) */
     function bigCard(p, i) {
       var chips = (p.chips || []).map(function (c) { return '<span class="wp-chip">' + esc(c) + '</span>'; }).join('');
       return '<a class="wp-card" href="' + p.href + '" style="animation-delay:' + (i * 70) + 'ms">' +
-        '<div class="wp-media"><div class="wp-media-inner"><img src="' + p.img + '" alt="' + esc(p.title) + '" loading="lazy" />' + WP_CTA + '</div></div>' +
+        mediaHTML(p) +
         '<div class="wp-body"><div class="wp-head">' +
         '<div class="wp-title">' + esc(p.title) + '</div>' +
         '<div class="wp-cats">' + (p.cats || []).map(esc).join(' \u00b7 ') + '</div></div>' +
@@ -1343,7 +1381,7 @@
       }
       var chips = (p.chips || []).map(function (c) { return '<span class="wp-chip">' + esc(c) + '</span>'; }).join('');
       return '<a class="wp-card wp-card--sm" href="' + p.href + '" style="animation-delay:' + (i * 70) + 'ms">' +
-        '<div class="wp-media"><div class="wp-media-inner"><img src="' + p.img + '" alt="' + esc(p.title) + '" loading="lazy" />' + WP_CTA + '</div></div>' +
+        mediaHTML(p) +
         '<div class="wp-body">' +
         '<div class="wp-title">' + esc(p.title) + '</div>' +
         '<div class="wp-cats">' + (p.cats || []).map(esc).join(' \u00b7 ') + '</div>' +
@@ -1394,26 +1432,66 @@
     var section = document.getElementById('workIntro');
     var swap = document.getElementById('workSwap');
     if (!section || !swap) return;
-    var words = ['Customers!', 'Director!', 'Ease!', 'Value!', 'Impact!', 'Grandma!', 'Love!'];
+    var words = ['Customers!', 'Purpose!', 'Needs!', 'Value!', 'Impact!', 'Grandma!', 'Love!'];
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduce) { swap.textContent = words[words.length - 1]; return; }
     var current = 0;
     swap.textContent = words[0];
-    var ticking = false;
-    function update() {
-      ticking = false;
+    var progress = 0, lastProg = 0;
+    // Smoothed glow state (lerped toward the scroll target each frame → fluid).
+    var gx = 22, gy = 22, tx = 22, ty = 22, inten = 0.5, pulse = 0;
+    var raf = null;
+
+    /* Orbit the orb around the PERIMETER so it stays clear of the centre text.
+       progress 0→1 walks a path through the corners/edges (never the middle). */
+    function targetPos(p) {
+      // Waypoints around the edges (percent). Interp between them by progress.
+      var pts = [[20,24],[80,20],[84,72],[22,78],[50,88],[18,30]];
+      var f = p * (pts.length - 1);
+      var i = Math.min(pts.length - 2, Math.floor(f));
+      var t = f - i;
+      // ease the segment blend for extra smoothness
+      t = t * t * (3 - 2 * t);
+      return [ pts[i][0] + (pts[i+1][0]-pts[i][0]) * t,
+               pts[i][1] + (pts[i+1][1]-pts[i][1]) * t ];
+    }
+
+    function readScroll() {
       var rect = section.getBoundingClientRect();
       var scrollable = section.offsetHeight - window.innerHeight;
-      var progress = Math.min(1, Math.max(0, -rect.top / scrollable));
+      progress = Math.min(1, Math.max(0, -rect.top / scrollable));
+      var dir = progress - lastProg; lastProg = progress;
+      pulse = Math.min(1, pulse + Math.abs(dir) * 12);   // velocity flare
+      var tp = targetPos(progress);
+      tx = tp[0]; ty = tp[1];
       var idx = Math.min(words.length - 1, Math.floor(progress * words.length));
       if (idx !== current) {
         current = idx;
+        pulse = 1;                                 // strong flare on each label swap
         swap.classList.add('swap');
         setTimeout(function () { swap.textContent = words[idx]; swap.classList.remove('swap'); }, 180);
       }
+      startLoop();
     }
-    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
-    update();
+
+    /* Continuous smoothing loop: ease the glow toward its target so position
+       changes are soft/fluid (not snapping to raw scroll), and let the flare
+       decay gently. Stops itself once settled to save cycles. */
+    function frame() {
+      gx += (tx - gx) * 0.08;
+      gy += (ty - gy) * 0.08;
+      pulse *= 0.94;
+      inten = 0.4 + pulse * 0.8;
+      section.style.setProperty('--wi-x', gx.toFixed(2) + '%');
+      section.style.setProperty('--wi-y', gy.toFixed(2) + '%');
+      section.style.setProperty('--wi-i', inten.toFixed(3));
+      var moving = Math.abs(tx - gx) > 0.05 || Math.abs(ty - gy) > 0.05 || pulse > 0.02;
+      if (moving) { raf = requestAnimationFrame(frame); } else { raf = null; }
+    }
+    function startLoop() { if (!raf) raf = requestAnimationFrame(frame); }
+
+    window.addEventListener('scroll', readScroll, { passive: true });
+    readScroll();
   })();
 
   /* ══ "Keep Scrolling" cursor tooltip — only in the Designing-for section.

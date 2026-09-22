@@ -76,6 +76,7 @@
     return '<section class="cs-hook reveal">' +
       (h.label ? '<div class="eyebrow-pill cs-hook-label">' + esc(h.label) + '</div>' : '') +
       (h.headline ? '<h2 class="cs-h2" style="max-width:720px;margin:0 auto 28px;">' + rich(h.headline) + '</h2>' : '') +
+      (h.summary ? '<p class="cs-hook-summary">' + rich(h.summary) + '</p>' : '') +
       inner +
     '</section>';
   };
@@ -85,8 +86,10 @@
     const t = d.title || {};
     return '<section class="cs-title-block reveal">' +
       '<h1>' + rich(t.headline || d.name) + '</h1>' +
-      (t.tags ? '<div class="cs-tags">' + t.tags.map(x => '<span class="cs-tag">' + esc(x) + '</span>').join('') + '</div>' : '') +
+      (t.subtitle ? '<div class="cs-subtitle">' + rich(t.subtitle) + '</div>' : '') +
       (t.client ? '<div class="cs-client"><strong>' + esc(t.client) + '</strong></div>' : '') +
+      (t.summary ? '<p class="cs-title-summary">' + rich(t.summary) + '</p>' : '') +
+      (t.tags ? '<div class="cs-tags">' + t.tags.map(x => '<span class="cs-tag">' + esc(x) + '</span>').join('') + '</div>' : '') +
       (t.result ? '<div class="cs-result-claim">' + rich(t.result) + '</div>' : '') +
     '</section>';
   };
@@ -116,6 +119,22 @@
       '<div class="cs-3d-fallback">' +
         (fallback ? '<img src="' + esc(fallback) + '" alt="' + esc((d.hero && d.hero.alt) || 'Sous Chef device') + '" />' : '') +
       '</div>' +
+    '</section>';
+  };
+
+  /* 3.8 Executive summary — STAR (Situation, Task, Action, Result). Renders a
+     semantic 4-row structure near the top for a fast, scannable overview. */
+  S.summary = d => {
+    if (!d.summary || !d.summary.star) return '';
+    const s = d.summary;
+    return '<section class="cs-section cs-section--narrow cs-summary reveal">' +
+      '<div class="cs-num">' + esc(s.title || 'Executive summary') + '</div>' +
+      '<ol class="cs-star">' + s.star.map(function (r) {
+        return '<li class="cs-star-row">' +
+          '<span class="cs-star-k">' + esc(r.k) + '</span>' +
+          '<p class="cs-star-b">' + rich(r.body) + '</p>' +
+        '</li>';
+      }).join('') + '</ol>' +
     '</section>';
   };
 
@@ -215,6 +234,220 @@
       '</section>';
     }
     return stepsSection('The Problem', p.title || 'What was breaking down', p.lead, p.points, p.quote);
+  };
+
+  /* 7.5 Legacy lookup workflow — scroll-driven reenactment (OPEX).
+     A pinned stage recreates the old Cognos-style lookup: a wall of 4-digit
+     CostPool IDs, copying one, pasting it into a query studio that takes ~30s,
+     juggling tabs, and the resulting cognitive load. Beats advance on scroll
+     (engine: initLegacyFlow). Recreated UI — deliberately retro, not a real
+     screenshot. */
+  S.legacyFlow = d => {
+    if (!d.legacyFlow || !d.legacyFlow.beats) return '';
+    const f = d.legacyFlow;
+    const n = f.beats.length;
+    const target = f.targetId || '';
+    // Turn the dense ID string into spans, marking the target ID so it can be
+    // highlighted/"copied" on the right beat.
+    const idHtml = (f.ids || '').split(';').filter(Boolean).map(function (id) {
+      const t = id.trim();
+      const isTarget = t === target;
+      return '<span class="lf-id' + (isTarget ? ' lf-id--target' : '') + '">' + esc(t) + '</span><span class="lf-sep">;</span>';
+    }).join('');
+
+    // Recreated legacy "query studio" object tree. Rows carry a drill-DEPTH
+    // (data-drill 0..3): the engine reveals deeper rows as the manager drills
+    // down through the folder names. A chevron marks expandable folders.
+    const chev = '<span class="lf-chev">\u203A</span>';
+    const tree =
+      '<div class="lf-tree">' +
+        '<div class="lf-tree-row lf-tree-root" data-drill="0">' + chev + '\uD83D\uDCC1 24 Total Compensation</div>' +
+        '<div class="lf-tree-row lf-drillrow" data-drill="1" style="--d:1">' + chev + '\uD83D\uDCC1 organization</div>' +
+        '<div class="lf-tree-row lf-drillrow" data-drill="2" style="--d:2">' + chev + '\uD83D\uDCC1 organization</div>' +
+        '<div class="lf-tree-row lf-drillrow lf-tree-folder-100" data-drill="3" style="--d:3">' + chev + '\uD83D\uDCC1 100</div>' +
+        '<div class="lf-tree-row lf-drillrow lf-tree-hit" data-drill="4" style="--d:4">\u25A4 101</div>' +
+        '<div class="lf-tree-row lf-drillrow" data-drill="4" style="--d:4">\u25A4 102</div>' +
+        '<div class="lf-tree-row lf-drillrow" data-drill="4" style="--d:4">\u25A4 103</div>' +
+        '<div class="lf-tree-row lf-drillrow" data-drill="3" style="--d:3">\u25A4 200</div>' +
+        '<div class="lf-tree-row lf-drillrow" data-drill="3" style="--d:3">\u25A4 300</div>' +
+        '<div class="lf-tree-row lf-drillrow" data-drill="3" style="--d:3">\u25A4 400</div>' +
+        '<div class="lf-tree-row lf-drillrow" data-drill="1" style="--d:1">\uD83D\uDCC1 Currency</div>' +
+        '<div class="lf-tree-row lf-drillrow" data-drill="1" style="--d:1">\uD83D\uDCC1 EmployeeList</div>' +
+        '<div class="lf-tree-row lf-drillrow" data-drill="1" style="--d:1">\uD83D\uDCC1 Month</div>' +
+        '<div class="lf-tree-row lf-drillrow" data-drill="1" style="--d:1">\uD83D\uDCC1 Compensation</div>' +
+      '</div>';
+    const grid =
+      '<div class="lf-grid">' +
+        '<div class="lf-grid-search">' +
+          '<span class="lf-grid-search-lbl">Search value:</span>' +
+          '<span class="lf-grid-search-box"><span class="lf-typed"></span><span class="lf-caret2"></span></span>' +
+          '<span class="lf-run">Run</span>' +
+        '</div>' +
+        '<div class="lf-grid-body">' +
+          '<div class="lf-spinner" aria-hidden="true"><span></span></div>' +
+          '<div class="lf-latency">Retrieving\u2026 <b class="lf-timer">0.0</b>s</div>' +
+          '<table class="lf-table"><thead><tr><th>YTD Salary &amp; Bonus</th><th>Jan</th><th>Feb</th><th>Mar</th></tr></thead>' +
+            '<tbody>' +
+              '<tr><td>101</td><td>46,072</td><td>90,142</td><td>136,042</td></tr>' +
+              '<tr><td>102</td><td>37,061</td><td>74,121</td><td>111,082</td></tr>' +
+              '<tr><td>103</td><td>50,712</td><td>101,424</td><td>151,136</td></tr>' +
+            '</tbody></table>' +
+        '</div>' +
+      '</div>';
+    // ── App 1: the "Budget Planner" SOURCE screen the manager copies from.
+    //    Dark navy header, Simulations breadcrumb, Inputs tab, the floating
+    //    "Particular Values with changes" popover holding the ID wall, a data
+    //    table, and the right-hand nav rail. This is where the copy happens. */
+    const budgetApp =
+      '<div class="lf-app lf-app--budget">' +
+        '<div class="lf-bp-top"><span class="lf-bp-grid">\u2637</span><span class="lf-bp-brand">Budget Planner</span>' +
+          '<span class="lf-bp-user">\u25CB username \u25BE</span></div>' +
+        '<div class="lf-bp-body">' +
+          '<div class="lf-bp-main">' +
+            '<div class="lf-bp-crumb"><span>Simulations</span> \u203A <span>Sample Sim 1</span></div>' +
+            '<div class="lf-bp-searchbar"><span class="lf-bp-searchtxt">RemovingVendor</span><span class="lf-bp-actions">Actions</span></div>' +
+            '<div class="lf-bp-tabs"><span>Reports</span><span class="lf-bp-tab-on">Inputs</span><span>Results</span></div>' +
+            '<div class="lf-bp-table">' +
+              '<div class="lf-bp-tr lf-bp-th"><span>From</span><span>To</span><span>Code</span><span>ID</span><span>Owner</span><span>Type</span></div>' +
+              '<div class="lf-bp-tr"><span>GRD-001</span><span>GRD-001</span><span>544</span><span>1000;103\u2026</span><span>John</span><span>To Product</span></div>' +
+              '<div class="lf-bp-tr"><span>GRD-001</span><span>GRD-001</span><span>544</span><span>1171;117\u2026</span><span>John</span><span>To Product</span></div>' +
+            '</div>' +
+            // The floating popover with the dense ID list (source of the copy).
+            '<div class="lf-bp-popover">' +
+              '<div class="lf-bp-pop-hd">Particular Values with changes: <span class="lf-copied">Copied \u2713</span></div>' +
+              '<div class="lf-ids">' + idHtml + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="lf-bp-nav">' +
+            '<div class="lf-bp-nav-hd">Budget Planner</div>' +
+            '<div class="lf-bp-nav-i">Home</div>' +
+            '<div class="lf-bp-nav-i">Start New</div>' +
+            '<div class="lf-bp-nav-i lf-bp-nav-on">History</div>' +
+            '<div class="lf-bp-nav-i lf-bp-nav-sub">Simulations</div>' +
+            '<div class="lf-bp-nav-i lf-bp-nav-sub">Change Requests</div>' +
+            '<div class="lf-bp-nav-i">System Dictionary</div>' +
+            '<div class="lf-bp-nav-i lf-bp-nav-sub">Cost Pool History</div>' +
+            '<div class="lf-bp-nav-i lf-bp-nav-sub">Definitions</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+    // ── App 2: the legacy Cognos query studio the ID gets pasted into.
+    const cognosApp =
+      '<div class="lf-app lf-app--cognos">' +
+        '<div class="lf-menubar"><span>File</span><span>Edit</span><span>View</span><span>Settings</span><span>Run</span><span>Help</span></div>' +
+        '<div class="lf-toolbar"></div>' +
+        '<div class="lf-workspace">' +
+          '<div class="lf-panel-lbl">Insertable Objects</div>' + tree + grid +
+        '</div>' +
+      '</div>';
+
+    // A little stack of browser tabs (one per parallel search) for the "tabs" beat.
+    const nTabs = f.tabs || 4;
+    let tabsHtml = '';
+    for (let i = 0; i < nTabs; i++) {
+      tabsHtml += '<div class="lf-tab" style="--i:' + i + '"><span class="lf-tab-dot"></span>Query Studio \u2014 ' + (i + 1) + '<span class="lf-tab-spin"></span></div>';
+    }
+
+    const captions = f.beats.map(function (b, i) {
+      return '<p class="lf-caption" data-beat="' + i + '">' + rich(b.caption) + '</p>';
+    }).join('');
+    const dots = f.beats.map(function (_, i) { return '<span class="pin-dot' + (i === 0 ? ' active' : '') + '"></span>'; }).join('');
+
+    // Both apps live inside ONE screen/monitor bezel and cross-fade: the Budget
+    // Planner shows first (copy the ID), then the Cognos studio slides in.
+    return '<section class="cs-section cs-legacy" data-legacy data-beats="' + n + '"' +
+        ' data-target="' + esc(target) + '" data-latency="' + (f.latencySeconds || 30) + '">' +
+      '<div class="pin-dots cs-legacy-dots">' + dots + '</div>' +
+      '<div class="cs-num">The Problem, felt</div>' +
+      '<h2 class="cs-h2">' + rich(f.title || 'One number at a time') + '</h2>' +
+      (f.lead ? '<p class="cs-lead">' + rich(f.lead) + '</p>' : '') +
+      '<div class="lf-stage">' +
+        '<div class="lf-cursor" aria-hidden="true">' +
+          '<svg viewBox="0 0 24 24"><path d="M5 3l14 8-6 1.5L15 20l-3 1-2.5-7L5 17z"/></svg>' +
+          '<span class="lf-cursor-tag"></span>' +
+        '</div>' +
+        '<div class="lf-screen">' +
+          '<div class="lf-screen-bar"><span class="lf-dots"><i></i><i></i><i></i></span>' +
+            '<span class="lf-screen-title"></span></div>' +
+          '<div class="lf-screen-view">' +
+            '<div class="lf-tabs">' + tabsHtml + '</div>' +
+            budgetApp + cognosApp +
+          '</div>' +
+        '</div>' +
+        '<div class="lf-stand"></div><div class="lf-base"></div>' +
+        '<div class="lf-load"><span class="lf-load-num">\u00d7' + (f.retrievalsPerCycle || 1000) + '</span> retrievals every cycle</div>' +
+      '</div>' +
+      '<div class="lf-captions">' + captions + '</div>' +
+    '</section>';
+  };
+
+  /* 7.6 Problem, visualized — three recreated windows showing the SAME
+     communication need implemented differently per product, then a reveal
+     that collapses them to one intention. Static (no scroll engine). */
+  S.problemViz = d => {
+    if (!d.problemViz || !d.problemViz.windows) return '';
+    const v = d.problemViz;
+    const win = (w) => {
+      let body = '';
+      if (w.kind === 'field') {
+        body = '<div class="pv-field"><label class="pv-field-lbl">' + esc(w.label || 'Comment') + '</label>' +
+          '<div class="pv-field-box">' + esc(w.placeholder || '') + '</div>' +
+          '<div class="pv-field-btn">Post</div></div>';
+      } else if (w.kind === 'sheet') {
+        const rows = (w.rows || []).map(function (r, i) {
+          return '<div class="pv-sheet-row"><span class="pv-sheet-cell pv-sheet-rownum">' + (i + 1) + '</span>' +
+            '<span class="pv-sheet-cell">GRD-00' + (i + 1) + '</span>' +
+            '<span class="pv-sheet-cell pv-sheet-fb">' + esc(r) + '</span></div>';
+        }).join('');
+        body = '<div class="pv-sheet"><div class="pv-sheet-row pv-sheet-head">' +
+          '<span class="pv-sheet-cell pv-sheet-rownum">#</span><span class="pv-sheet-cell">Item</span>' +
+          '<span class="pv-sheet-cell pv-sheet-fb">' + esc(w.column || 'Feedback') + '</span></div>' + rows + '</div>';
+      } else {
+        const items = (w.items || []).map(function (it) {
+          return '<div class="pv-thread-item"><span class="pv-thread-av">' + esc((it.who || '?').charAt(0)) + '</span>' +
+            '<div class="pv-thread-bubble"><b>' + esc(it.who || '') + '</b><span>' + esc(it.text || '') + '</span></div></div>';
+        }).join('');
+        body = '<div class="pv-thread"><div class="pv-thread-hd">' + esc(w.heading || 'Comments') + '</div>' + items + '</div>';
+      }
+      return '<figure class="pv-win">' +
+        '<div class="pv-win-bar"><span class="pv-win-dots"><i></i><i></i><i></i></span>' +
+          '<span class="pv-win-app">' + esc(w.app || '') + '</span></div>' +
+        '<div class="pv-win-body">' + body + '</div>' +
+      '</figure>';
+    };
+    const windows = '<div class="pv-windows">' + v.windows.map(win).join('') +
+      '<div class="pv-arrows" aria-hidden="true"><span>\u2198</span><span>\u2193</span><span>\u2199</span></div>' +
+    '</div>';
+    const reveal = '<div class="pv-reveal">' +
+      '<span class="pv-reveal-lbl">' + esc(v.revealLabel || 'All of it is') + '</span>' +
+      '<span class="pv-reveal-word">' + esc(v.revealWord || 'Communication') + '</span>' +
+      (v.revealBody ? '<p class="pv-reveal-body">' + rich(v.revealBody) + '</p>' : '') +
+    '</div>';
+    return '<section class="cs-section cs-problemviz reveal">' +
+      '<div class="cs-num">Context</div>' +
+      '<h2 class="cs-h2">' + rich(v.title || 'The same need, different disguises') + '</h2>' +
+      (v.lead ? '<p class="cs-lead">' + rich(v.lead) + '</p>' : '') +
+      windows + reveal +
+    '</section>';
+  };
+
+  /* 7.7 Design-system components — Comment Panel is one of many; list them all
+     as chips (the highlighted one is the subject of this study). */
+  S.components = d => {
+    if (!d.components || !d.components.items) return '';
+    const c = d.components;
+    const hi = c.highlight || '';
+    return '<section class="cs-section cs-components reveal">' +
+      '<div class="cs-num">Systems contribution</div>' +
+      '<h2 class="cs-h2">' + rich(c.title || 'One of a system I built with the team') + '</h2>' +
+      (c.lead ? '<p class="cs-lead">' + rich(c.lead) + '</p>' : '') +
+      '<div class="cs-comp-chips">' + c.items.map(function (it) {
+        const on = it === hi ? ' cs-comp-chip--hi' : '';
+        return '<span class="cs-comp-chip' + on + '">' + esc(it) + '</span>';
+      }).join('') + '</div>' +
+      (c.lead2 ? '<p class="cs-comp-note">' + rich(c.lead2) + '</p>' : '') +
+    '</section>';
   };
 
   /* 8. The Shift */
@@ -461,8 +694,10 @@
 
     // Section render order + their nav keys (some produce no nav entry).
     const order = [
-      ['hook', S.hook], ['title', S.title], ['hero', S.hero], ['story3d', S.story3d], ['metrics', S.metrics],
-      ['snapshot', S.snapshot], ['context', S.context], ['problem', S.problem],
+      ['hook', S.hook], ['title', S.title], ['story3d', S.story3d], ['metrics', S.metrics],
+      ['snapshot', S.snapshot], ['components', S.components],
+      ['problemViz', S.problemViz], ['problem', S.problem], ['hero', S.hero],
+      ['legacyFlow', S.legacyFlow],
       ['shift', S.shift], ['process', S.process], ['gradient', S.gradient],
       ['walkthrough', S.walkthrough],
       ['decisions', S.decisions], ['gallery', S.gallery], ['impact', S.impact],
@@ -486,6 +721,7 @@
     initPinning();
     initWalk();
     initGradient();
+    initLegacyFlow();
     initTouchSteps();
   }
 
@@ -802,6 +1038,174 @@
       });
       onScroll();
     });
+    onScroll();
+  }
+
+  /* ─── LEGACY LOOKUP WORKFLOW ENGINE (OPEX) ────────────────────────
+     Pins the recreated Cognos UI and scrubs a 5-beat reenactment off scroll:
+       0 list   — the wall of IDs
+       1 copy   — one ID highlights + "Copied ✓"
+       2 search — the ID is typed into the query box, spinner + ~30s timer
+       3 tabs   — parallel tabs stack in to keep pace
+       4 load   — cognitive-load payoff (×1000 retrievals)
+     The section carries a `lf-b0..lf-b4` class = current beat. The 30s timer
+     is driven by scroll position within the "search" beat (scrubbable), not a
+     real 30s wait. Touch / reduced-motion: no pin — show the final state. */
+  function initLegacyFlow() {
+    const sections = Array.from(document.querySelectorAll('section[data-legacy]'));
+    if (!sections.length) return;
+
+    function paint(section, beat, subProg) {
+      const n = +section.getAttribute('data-beats') || 5;
+      for (let i = 0; i < n; i++) section.classList.toggle('lf-b' + i, i === beat);
+      section.classList.toggle('lf-copied-on', beat >= 1);
+      section.classList.toggle('lf-searching', beat >= 2);
+      section.classList.toggle('lf-tabs-on', beat >= 3);
+      section.classList.toggle('lf-load-on', beat >= 4);
+      // Which app fills the screen: Budget Planner (source) for the copy beats,
+      // then the Cognos query studio once the ID is pasted in (beat >= 2).
+      const onCognos = beat >= 2;
+      section.classList.toggle('lf-on-cognos', onCognos);
+      section.classList.toggle('lf-on-budget', !onCognos);
+      const stitle = section.querySelector('.lf-screen-title');
+      if (stitle) stitle.textContent = onCognos ? 'IBM Cognos Query Studio \u2014 CostPool lookup' : 'Budget Planner \u2014 Sample Sim 1';
+      // Type the target ID progressively during the copy/search beats.
+      const target = section.getAttribute('data-target') || '';
+      const typed = section.querySelector('.lf-typed');
+      if (typed) {
+        let chars = 0;
+        if (beat < 1) chars = 0;
+        else if (beat === 1) chars = Math.round(subProg * target.length);
+        else chars = target.length;
+        typed.textContent = target.slice(0, chars);
+      }
+      // Latency timer ticks up across the "search" beat (scrubbable 0→latency).
+      const timer = section.querySelector('.lf-timer');
+      const latency = +section.getAttribute('data-latency') || 30;
+      if (timer) {
+        let secs = 0;
+        if (beat < 2) secs = 0;
+        else if (beat === 2) secs = subProg * latency;
+        else secs = latency;
+        timer.textContent = secs.toFixed(1);
+      }
+      // Drill-down: reveal deeper tree rows as the "load" beat progresses, so
+      // the folder names expand one level at a time (100 → 101/102/103).
+      // maxDrill grows 1..4 across beat 4; earlier beats keep the top level.
+      let maxDrill;
+      if (beat < 4) maxDrill = 1;                 // only top-level folders show
+      else maxDrill = 1 + Math.min(3, Math.floor(subProg * 3 + 0.001) + 1);  // 2..4
+      section.querySelectorAll('.lf-drillrow').forEach(function (row) {
+        const dd = +row.getAttribute('data-drill') || 0;
+        row.classList.toggle('lf-drill-in', dd <= maxDrill);
+      });
+      section.classList.toggle('lf-drilling', beat >= 4);
+
+      // Mimic the mouse pointer moving through the workflow, one target per beat.
+      let sel = null, tag = '';
+      if (beat === 0) { sel = '.lf-ids'; tag = 'scanning\u2026'; }
+      else if (beat === 1) { sel = '.lf-id--target'; tag = 'copy'; }
+      else if (beat === 2) { sel = subProg < 0.6 ? '.lf-grid-search-box' : '.lf-run'; tag = subProg < 0.6 ? 'paste' : 'Run'; }
+      else if (beat === 3) { sel = '.lf-tab'; tag = 'switch tabs'; }
+      else { sel = maxDrill >= 4 ? '.lf-tree-hit' : '.lf-tree-folder-100'; tag = 'drill down'; }
+      moveCursor(section, sel, tag);
+
+      // Dots reflect the active beat cumulatively.
+      const dots = Array.from(section.querySelectorAll('.cs-legacy-dots .pin-dot'));
+      dots.forEach((dt, i) => dt.classList.toggle('active', i <= beat));
+    }
+
+    // Position the fake cursor over a target element (relative to .lf-stage).
+    function moveCursor(section, sel, tag) {
+      const cursor = section.querySelector('.lf-cursor');
+      const stage = section.querySelector('.lf-stage');
+      if (!cursor || !stage || !sel) return;
+      const el = section.querySelector(sel);
+      if (!el) { cursor.style.opacity = '0'; return; }
+      const sr = stage.getBoundingClientRect();
+      const er = el.getBoundingClientRect();
+      // Aim a little inside the target's top-left so the arrow tip lands on it.
+      const x = (er.left - sr.left) + Math.min(er.width * 0.5, 40);
+      const y = (er.top - sr.top) + Math.min(er.height * 0.5, 16);
+      cursor.style.opacity = '1';
+      cursor.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+      const tagEl = cursor.querySelector('.lf-cursor-tag');
+      if (tagEl) tagEl.textContent = tag || '';
+    }
+
+    // Touch / narrow: the pinned scrub can't run. Instead of a frozen stack,
+    // AUTOPLAY the beats on a loop — a "GIF-like" reenactment that tells the
+    // story on its own. Only plays while the section is on screen.
+    if (!canPinScroll()) {
+      const reduce = window.GED && window.GED.reduceMotion;
+      if (reduce) {
+        // True reduced-motion: keep the static, all-revealed stack (no motion).
+        sections.forEach(s => { s.classList.add('lf-static'); paint(s, (+s.getAttribute('data-beats') || 5) - 1, 1); });
+        return;
+      }
+      sections.forEach(section => {
+        section.classList.add('lf-auto');
+        const n = +section.getAttribute('data-beats') || 5;
+        // Per-beat dwell (ms): give search (the 30s latency) a longer beat.
+        const dwell = [1600, 1400, 2600, 1800, 2400];
+        let raf = null, playing = false, t0 = 0, beat = 0;
+        function frame(ts) {
+          if (!t0) t0 = ts;
+          const d = dwell[beat] || 1800;
+          const sp = Math.min((ts - t0) / d, 1);
+          paint(section, beat, sp);
+          if (sp >= 1) {
+            beat++; t0 = ts;
+            if (beat >= n) {              // brief hold on the final frame, then loop
+              beat = 0; t0 = ts + 900;
+            }
+          }
+          if (playing) raf = requestAnimationFrame(frame);
+        }
+        function play() { if (playing) return; playing = true; t0 = 0; beat = 0; raf = requestAnimationFrame(frame); }
+        function stop() { playing = false; if (raf) cancelAnimationFrame(raf); }
+        paint(section, 0, 0);
+        if ('IntersectionObserver' in window) {
+          const io = new IntersectionObserver(function (es) {
+            es.forEach(function (e) { if (e.isIntersecting) play(); else stop(); });
+          }, { threshold: 0.35 });
+          io.observe(section);
+        } else { play(); }
+      });
+      return;
+    }
+
+    document.documentElement.classList.add('pin-on');
+    const legacies = [];
+    sections.forEach(section => {
+      const n = +section.getAttribute('data-beats') || 5;
+      const track = document.createElement('div');
+      track.className = 'pin-track';
+      section.parentNode.insertBefore(track, section);
+      track.appendChild(section);
+      section.classList.add('pin-stage');
+      const perBeat = 0.85, leadOut = 0.4;   // scroll room per beat
+      track.style.height = ((n * perBeat + leadOut) * 100) + 'vh';
+      paint(section, 0, 0);
+      legacies.push({ track, section, n, perBeat, leadOut });
+    });
+
+    const onScroll = () => {
+      const vh = window.innerHeight;
+      for (const L of legacies) {
+        const rect = L.track.getBoundingClientRect();
+        const total = L.track.offsetHeight - vh;
+        const scrolled = Math.min(Math.max(-rect.top, 0), total);
+        const prog = total > 0 ? scrolled / total : 0;         // 0..1 whole track
+        const beatsFraction = (L.n * L.perBeat) / (L.n * L.perBeat + L.leadOut);
+        const bp = Math.min(prog / beatsFraction, 1) * L.n;    // 0..n
+        const beat = Math.min(L.n - 1, Math.floor(bp + 1e-6));
+        const subProg = Math.min(Math.max(bp - beat, 0), 1);   // 0..1 within beat
+        paint(L.section, beat, subProg);
+      }
+    };
+    const scroll = window.GED && window.GED.scroll;
+    if (scroll && scroll.onScroll) scroll.onScroll(onScroll); else window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
   }
 

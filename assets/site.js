@@ -204,6 +204,10 @@
     function kick() { if (!running) { running = true; requestAnimationFrame(frame); } }
 
     window.addEventListener('wheel', (e) => {
+      // When the Menu/search overlay is open the page is locked; let the wheel
+      // scroll the overlay's own scroll container natively (its scrollbar is
+      // hidden via CSS, so content stays reachable without a visible bar).
+      if (document.documentElement.classList.contains('ged-lock')) return;
       e.preventDefault();
       const delta = e.deltaY * (e.deltaMode === 1 ? 24 : 1);
       velocity += delta * IMPULSE;

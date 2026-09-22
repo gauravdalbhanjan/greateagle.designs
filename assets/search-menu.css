@@ -204,9 +204,9 @@ body.ged-lock { position: fixed; left: 0; right: 0; width: 100%; overflow: hidde
 /* Body scrolls; cards keep clear of the fixed right-hand nav via padding-right */
 .ged-panel-body {
   position: relative; flex: 1 1 auto; min-height: 0;
-  display: block; padding: 16px 0 8px 0;
+  display: block; padding: 16px 0 28px 0;
   overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch; touch-action: pan-y;   /* allow finger scroll despite the page lock */
   scrollbar-width: none; -ms-overflow-style: none;
 }
 .ged-panel-body::-webkit-scrollbar { display: none; width: 0; height: 0; background: transparent; }

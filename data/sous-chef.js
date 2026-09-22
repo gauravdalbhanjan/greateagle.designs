@@ -106,5 +106,5 @@ window.CASE_STUDY = {
     ]
   },
 
-  next: { label: "Unified Comment Panel", href: "design-system-comment-panel.html" }
+  next: { label: "Simplified Enterprise Design System", href: "design-system-comment-panel.html" }
 };

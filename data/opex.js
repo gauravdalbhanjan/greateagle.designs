@@ -49,6 +49,27 @@ window.CASE_STUDY = {
     quote: { text: "You will make our life a lot easier if this puzzle could be solved.", cite: "Finance Manager - Stakeholder" }
   },
 
+  /* Scroll-driven reenactment of the legacy lookup workflow. Each cost-pool
+     change came as a dense list of 4-digit IDs; managers copied one ID at a
+     time into a Cognos-style query studio where every search took ~30s, so
+     they kept several tabs running in parallel just to keep pace — then had to
+     drill down and eyeball results by hand. Recreated UI (not screenshots). */
+  legacyFlow: {
+    title: "One number at a time, thirty seconds each",
+    ids: "1234;4567;42664;6246;24;246246;2462;246246;34757;46764;657;35634;3462;24624;2353;24362347;347;457;457;347;347;46745;747;574577;5578;576456;35652;2424242;42423;46335;4657;35;6346;3555321;5421;51245;5412;54124;5412;1524;542;524;1254;1245;5421;5421;541;1524;5124;1542;12;512;1245;46;2462462;624624;24624;246246;",
+    targetId: "42664",
+    latencySeconds: 30,
+    retrievalsPerCycle: 1000,
+    tabs: 4,
+    beats: [
+      { key: "list",    caption: "It starts as a wall of 4-digit CostPool IDs. Each one has to be looked up individually." },
+      { key: "copy",    caption: "Copy one ID\u2026 then paste it into the legacy query studio." },
+      { key: "search",  caption: "Run the search \u2014 and wait. Each retrieval takes about 30 seconds of latency." },
+      { key: "tabs",    caption: "To keep pace, managers run several tabs at once, each mid-search." },
+      { key: "load",    caption: "Then drill down and eyeball the result by hand \u2014 \u00d71,000 retrievals a cycle. That\u2019s the cognitive load." }
+    ]
+  },
+
   shift: {
     title: "Stop making managers search",
     insight: "Managers weren't struggling from lack of skill &mdash; the system was hiding the context they needed. The bet: stop making managers search and assemble context; [[surface everything needed to confirm or reject a request in one view]].",
@@ -88,7 +109,7 @@ window.CASE_STUDY = {
     { img: "../assets/opex-allocation/Natural-language labels.png", caption: "Natural-language labels" },
     { img: "../assets/opex-allocation/Exclusions surfaced proactively.png", caption: "Exclusions surfaced proactively" },
     { img: "../assets/opex-allocation/Owner client audit trail per line.png", caption: "Owner / client audit trail per line" },
-    { img: "../assets/opex-allocation/allocation-deliverable.jpg", caption: "The allocation deliverable handed to engineering", wide: true }
+    { img: "../assets/opex-allocation/allocation-deliverable.jpg", caption: "The allocation prototype in making", wide: true }
   ],
 
   impact: [
