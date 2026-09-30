@@ -1,0 +1,117 @@
+/* ══════════════════════════════════════════════════════════════
+   SOUS CHEF — scroll-driven 3D product story
+   Pinned WebGL canvas: phone Act 1 → handoff → device 7-beat.
+   Paired with sous-chef-3d.js. Falls back to a static hero image
+   when JS is off / reduced-motion / WebGL unavailable.
+   ══════════════════════════════════════════════════════════════ */
+
+/* Before hydration (and as the no-JS / reduced-motion fallback) the section
+   is just the hero image in normal flow. JS adds .cs-3d--on to switch it
+   into the pinned WebGL experience. */
+.cs-3d { position: relative; }
+.cs-3d-fallback { border-radius: 18px; overflow: hidden; }
+.cs-3d-fallback img { width: 100%; height: auto; display: block; }
+
+/* ── Hydrated (desktop, motion-ok, WebGL) ─────────────────────── */
+.cs-3d--on { padding: 0 !important; }
+.cs-3d--on .cs-3d-fallback { display: none; }
+
+/* The tall track that provides scroll room; the stage pins inside it. */
+.cs-3d-track { position: relative; }
+.cs-3d-stage {
+  position: sticky; top: 0; height: 100vh; width: 100%;
+  overflow: hidden;
+}
+.cs-3d-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* Warm ambient wash behind the model, matching the site palette. */
+.cs-3d-stage::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(90% 80% at 50% 42%, rgba(255,90,40,0.10) 0%, transparent 60%);
+}
+
+/* Text overlays — one line per beat, fading in/out on scroll progress. */
+.cs-3d-copy {
+  position: absolute; left: 0; right: 0; bottom: 14vh; z-index: 3;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding: 0 24px; pointer-events: none;
+}
+.cs-3d-beat {
+  position: absolute; left: 50%; bottom: 0; transform: translate(-50%, 16px);
+  width: min(680px, 88vw);
+  opacity: 0; transition: opacity 0.5s var(--hover-ease), transform 0.5s var(--hover-ease);
+}
+.cs-3d-beat.on { opacity: 1; transform: translate(-50%, 0); }
+.cs-3d-beat .eq {
+  font-size: var(--fs-tertiary); font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
+}
+.cs-3d-beat h3 {
+  font-size: clamp(1.3rem, 3vw, 2.1rem); font-weight: 700; letter-spacing: -0.02em;
+  color: var(--text-primary); line-height: 1.2;
+}
+
+/* Progress dots up the right edge. */
+.cs-3d-dots {
+  position: absolute; top: 50%; right: 22px; transform: translateY(-50%);
+  z-index: 3; display: flex; flex-direction: column; gap: 9px;
+}
+.cs-3d-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.3); transition: all 0.3s var(--hover-ease); }
+.cs-3d-dot.active { background: var(--accent); transform: scale(1.4); }
+
+/* Colour selector — fades in during the reassembly beat. */
+.cs-3d-colors {
+  position: absolute; left: 50%; bottom: 6vh; transform: translateX(-50%);
+  z-index: 4; display: flex; gap: 14px; padding: 12px 16px;
+  border-radius: 100px; background: rgba(20,10,8,0.5);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.14);
+  opacity: 0; pointer-events: none; transition: opacity 0.5s var(--hover-ease);
+}
+.cs-3d-colors.on { opacity: 1; pointer-events: auto; }
+.cs-3d-swatch {
+  width: 30px; height: 30px; border-radius: 50%; cursor: pointer; padding: 0;
+  border: 2px solid rgba(255,255,255,0.5);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  transition: transform 0.2s var(--hover-ease), border-color 0.2s var(--hover-ease);
+}
+.cs-3d-swatch:hover { transform: scale(1.14); }
+.cs-3d-swatch.sel { border-color: #fff; transform: scale(1.18); box-shadow: 0 0 0 3px var(--accent); }
+
+/* Stats overlay — fades in at the closing hero pose. */
+.cs-3d-stats {
+  position: absolute; left: 0; right: 0; top: 16vh; z-index: 3;
+  display: flex; justify-content: center; gap: clamp(20px, 5vw, 64px);
+  opacity: 0; transition: opacity 0.6s var(--hover-ease); pointer-events: none;
+}
+.cs-3d-stats.on { opacity: 1; }
+.cs-3d-stat { text-align: center; }
+.cs-3d-stat .n { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 700; color: var(--accent); letter-spacing: -0.02em; }
+.cs-3d-stat .l { font-size: var(--fs-tertiary); color: var(--text-secondary); max-width: 150px; margin: 6px auto 0; line-height: 1.4; }
+
+/* Loading skeleton / spinner. */
+.cs-3d-loader {
+  position: absolute; inset: 0; z-index: 5; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 18px;
+  background: var(--bg); transition: opacity 0.5s var(--hover-ease);
+}
+.cs-3d-loader.gone { opacity: 0; pointer-events: none; }
+.cs-3d-spin {
+  width: 42px; height: 42px; border-radius: 50%;
+  border: 3px solid var(--border); border-top-color: var(--accent);
+  animation: cs3dSpin 0.8s linear infinite;
+}
+@keyframes cs3dSpin { to { transform: rotate(360deg); } }
+.cs-3d-loadlbl { font-size: var(--fs-tertiary); color: var(--text-tertiary); letter-spacing: 0.06em; }
+
+/* Drag-to-rotate hint (reduced-motion / mobile static mode). */
+.cs-3d-hint {
+  position: absolute; left: 50%; bottom: 4vh; transform: translateX(-50%);
+  z-index: 3; font-size: var(--fs-tertiary); color: var(--text-tertiary);
+  opacity: 0.8; pointer-events: none;
+}
+
+@media (max-width: 860px) {
+  .cs-3d-copy { bottom: 12vh; }
+  .cs-3d-dots { right: 12px; }
+}

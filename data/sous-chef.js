@@ -3,6 +3,10 @@ window.CASE_STUDY = {
   __file: "sous-chef.js",
   name: "Sous Chef",
 
+  // Sous Chef shows the product hero shot BEFORE the problem section. Only the
+  // keys that need reordering are listed; unlisted sections keep default order.
+  sectionOrder: ["hook", "title", "story3d", "metrics", "snapshot", "hero", "problem"],
+
   hook: {
     label: "The moment we designed against",
     headline: "\u201CWish I had that ingredient\u201D mid-cook &mdash; versus knowing [[what's cookable before you start]]."

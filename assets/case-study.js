@@ -693,7 +693,7 @@
     document.title = (d.title && d.title.headline ? d.title.headline.replace(/[*\[\]]/g, '') : d.name) + ' — Gaurav Dalbhanjan';
 
     // Section render order + their nav keys (some produce no nav entry).
-    const order = [
+    let order = [
       ['hook', S.hook], ['title', S.title], ['story3d', S.story3d], ['metrics', S.metrics],
       ['snapshot', S.snapshot], ['components', S.components],
       ['problemViz', S.problemViz], ['problem', S.problem], ['hero', S.hero],
@@ -703,6 +703,17 @@
       ['decisions', S.decisions], ['gallery', S.gallery], ['impact', S.impact],
       ['reflection', S.reflection]
     ];
+    // A data file may reorder sections for its own page via d.sectionOrder
+    // (an array of section keys). Listed keys are emitted in that sequence
+    // first; any sections not listed keep their default relative order after.
+    if (Array.isArray(d.sectionOrder) && d.sectionOrder.length) {
+      const byKey = new Map(order.map(pair => [pair[0], pair]));
+      const seen = new Set();
+      const reordered = [];
+      d.sectionOrder.forEach(k => { if (byKey.has(k) && !seen.has(k)) { reordered.push(byKey.get(k)); seen.add(k); } });
+      order.forEach(pair => { if (!seen.has(pair[0])) reordered.push(pair); });
+      order = reordered;
+    }
 
     const bodyHTML = order.map(([key, fn]) => {
       let html = fn(d);
@@ -723,6 +734,72 @@
     initGradient();
     initLegacyFlow();
     initTouchSteps();
+    initLightbox();
+  }
+
+  /* ─── IMAGE LIGHTBOX ──────────────────────────────────────────────
+     Click any content image (gallery, walkthrough, figures, deck) to open
+     it enlarged in a centred popup with an accent-color glow. Delegated
+     click handling covers images added dynamically. Close via the X, the
+     backdrop, or Esc. The compare-slider images are excluded (they're a
+     drag interaction, not a viewable still). */
+  function initLightbox() {
+    // Build the overlay once.
+    let box = document.getElementById('cs-lightbox');
+    if (!box) {
+      box = document.createElement('div');
+      box.id = 'cs-lightbox';
+      box.className = 'cs-lightbox';
+      box.setAttribute('aria-hidden', 'true');
+      box.innerHTML =
+        '<div class="cs-lb-backdrop"></div>' +
+        '<figure class="cs-lb-figure" role="dialog" aria-modal="true" aria-label="Image preview">' +
+          '<button class="cs-lb-close" aria-label="Close">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
+          '</button>' +
+          '<img class="cs-lb-img" alt="" />' +
+          '<figcaption class="cs-lb-cap"></figcaption>' +
+        '</figure>';
+      document.body.appendChild(box);
+    }
+    const lbImg = box.querySelector('.cs-lb-img');
+    const lbCap = box.querySelector('.cs-lb-cap');
+
+    function open(src, alt, caption) {
+      lbImg.src = src;
+      lbImg.alt = alt || '';
+      if (caption) { lbCap.textContent = caption; lbCap.style.display = ''; }
+      else { lbCap.textContent = ''; lbCap.style.display = 'none'; }
+      box.classList.add('on');
+      box.setAttribute('aria-hidden', 'false');
+      document.documentElement.style.overflow = 'hidden';   // lock scroll behind
+    }
+    function close() {
+      box.classList.remove('on');
+      box.setAttribute('aria-hidden', 'true');
+      document.documentElement.style.overflow = '';
+      // Clear the src after the fade so we don't keep the big image decoded.
+      setTimeout(() => { if (!box.classList.contains('on')) lbImg.src = ''; }, 300);
+    }
+
+    // Delegated: any clickable content <img>, excluding the compare slider,
+    // the lightbox's own image, and tiny UI icons/logos.
+    document.addEventListener('click', e => {
+      const img = e.target.closest('img');
+      if (!img) return;
+      if (box.contains(img)) return;                       // ignore the lightbox image itself
+      if (img.closest('.compare-slider, #cmp, .ged-header, nav, .cs-lb-figure')) return;
+      if (!img.closest('#cs-root')) return;                // only case-study content images
+      e.preventDefault();
+      // Prefer a caption from a sibling <figcaption> if present.
+      const fig = img.closest('figure');
+      const cap = fig ? fig.querySelector('figcaption') : null;
+      open(img.currentSrc || img.src, img.alt, cap ? cap.textContent.trim() : '');
+    });
+
+    box.querySelector('.cs-lb-close').addEventListener('click', close);
+    box.querySelector('.cs-lb-backdrop').addEventListener('click', close);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && box.classList.contains('on')) close(); });
   }
 
   /* ─── SOLUTION WALKTHROUGH ENGINE (static frame, swap on scroll) ──

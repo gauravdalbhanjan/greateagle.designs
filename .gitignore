@@ -35,3 +35,6 @@ _*.js
 # OS
 .DS_Store
 Thumbs.db
+
+# PII — never publish (content already distilled into search-data.js)
+assets/LinkedIn-data.csv

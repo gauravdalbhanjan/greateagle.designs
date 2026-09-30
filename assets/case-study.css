@@ -114,6 +114,13 @@ html.pin-on .pin-step.in {
   max-height: 80vh;
   pointer-events: auto;
 }
+/* Restore the boxed decision card's vertical padding when revealed in pinned
+   mode. The collapsed .pin-step rule zeroes padding-top/bottom and, being more
+   specific than .cs-decision, kept the text tight to the top/bottom edges. */
+html.pin-on .cs-decision.pin-step.in,
+html.pin-on .cs-impact-card.pin-step.in {
+  padding-top: 8px; padding-bottom: 8px;
+}
 /* Extras inside a pinned section (quote card, before/after) — hidden until
    the section marks itself complete via .steps-done. Collapsed = no top gap. */
 html.pin-on section[data-pin] .cs-quote,
@@ -351,7 +358,8 @@ html:not(.pin-on) .cs-walk-dots { display: flex; }
 /* ─── 11. Design Decisions ──────────────────────────────────────── */
 .cs-decisions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 .cs-decision {
-  padding: var(--tile-pad); border-radius: 18px; background: var(--bg-secondary); border: 1px solid var(--border);
+  /* Vertical text padding (top/bottom); horizontal unchanged so card width/layout stays the same. */
+  padding: 8px var(--tile-pad); border-radius: 18px; background: var(--bg-secondary); border: 1px solid var(--border);
   transition: transform 0.4s var(--hover-ease), box-shadow 0.4s var(--hover-ease), border-color 0.3s var(--hover-ease);
   will-change: transform;
 }
@@ -376,7 +384,8 @@ html:not(.pin-on) .cs-walk-dots { display: flex; }
 /* ─── 13. Impact, segmented ─────────────────────────────────────── */
 .cs-impact { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .cs-impact-card {
-  padding: var(--tile-pad); border-radius: 18px; background: var(--bg-secondary); border: 1px solid var(--border);
+  /* Match the decision cards: 8px vertical text padding, horizontal unchanged. */
+  padding: 8px var(--tile-pad); border-radius: 18px; background: var(--bg-secondary); border: 1px solid var(--border);
   transition: transform 0.4s var(--hover-ease), box-shadow 0.4s var(--hover-ease), border-color 0.3s var(--hover-ease);
   will-change: transform;
 }
@@ -1048,3 +1057,75 @@ html.pin-on .pin-stage.cs-legacy .lf-screen-view { height: min(540px, 58vh); }
   border: 1px solid var(--border); padding: 8px 15px; border-radius: 100px; transition: transform 0.2s var(--hover-ease), border-color 0.2s; }
 .cs-comp-chip--hi { color: #fff; background: var(--accent); border-color: var(--accent); box-shadow: 0 6px 18px rgba(255,42,0,0.3); }
 .cs-comp-note { margin-top: 14px; font-size: var(--fs-secondary); color: var(--text-tertiary); }
+
+
+/* ─── IMAGE LIGHTBOX ──────────────────────────────────────────────────────
+   Click any content image to view it enlarged in a centred popup with an
+   accent-color glow. Built once by initLightbox() in case-study.js. */
+#cs-root .cs-gallery img,
+#cs-root .cs-collage img,
+#cs-root figure img,
+#cs-root .cs-walk-frame img { cursor: zoom-in; }
+
+.cs-lightbox {
+  position: fixed; inset: 0; z-index: 300;
+  display: flex; align-items: center; justify-content: center;
+  padding: 4vh 4vw;
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity 0.28s var(--ease), visibility 0.28s var(--ease);
+}
+.cs-lightbox.on { opacity: 1; visibility: visible; pointer-events: auto; }
+
+.cs-lb-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(6, 3, 2, 0.82);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+}
+/* Light mode: a bright, near-white backdrop instead of the dark wash. */
+[data-theme="light"] .cs-lb-backdrop {
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.cs-lb-figure {
+  position: relative; margin: 0; z-index: 1;
+  max-width: min(1100px, 92vw); max-height: 92vh;
+  display: flex; flex-direction: column; align-items: center;
+  transform: scale(0.94); transition: transform 0.3s var(--hover-ease);
+}
+.cs-lightbox.on .cs-lb-figure { transform: scale(1); }
+
+.cs-lb-img {
+  max-width: 100%; max-height: 82vh; width: auto; height: auto;
+  display: block; border-radius: 14px;
+  border: 1px solid rgba(255, 42, 0, 0.45);
+  /* Accent-color glow around the popup image. */
+  box-shadow:
+    0 0 0 1px rgba(255, 42, 0, 0.35),
+    0 0 40px 4px rgba(255, 42, 0, 0.45),
+    0 0 120px 10px rgba(255, 42, 0, 0.28),
+    0 24px 60px rgba(0, 0, 0, 0.5);
+}
+.cs-lb-cap {
+  margin-top: 14px; max-width: 80ch; text-align: center;
+  font-size: var(--fs-secondary); color: rgba(255,255,255,0.72); line-height: 1.5;
+}
+/* Light mode: dark caption text for contrast against the white backdrop. */
+[data-theme="light"] .cs-lb-cap { color: rgba(20, 10, 8, 0.7); }
+.cs-lb-close {
+  position: absolute; top: -14px; right: -14px; z-index: 2;
+  width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #fff; background: rgba(20, 10, 8, 0.9);
+  border: 1px solid rgba(255, 42, 0, 0.5);
+  box-shadow: 0 0 18px rgba(255, 42, 0, 0.5);
+  transition: transform 0.2s var(--hover-ease), background 0.2s;
+}
+.cs-lb-close:hover { transform: scale(1.08); background: rgba(255, 42, 0, 0.9); }
+.cs-lb-close svg { width: 18px; height: 18px; }
+
+@media (max-width: 600px) {
+  .cs-lb-close { top: -10px; right: -10px; width: 36px; height: 36px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-lightbox, .cs-lb-figure { transition: none; }
+}

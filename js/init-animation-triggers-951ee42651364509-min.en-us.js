@@ -1,3 +1,0 @@
-"use strict";(globalThis.webpackChunkextract_css=globalThis.webpackChunkextract_css||[]).push([["35848"],{580461:(function(o,i,n){n.r(i),n.d(i,{initAnimationTriggers:()=>t});async function t(){if(window.__sqsAnimationRuntime||!document.querySelector("[data-has-block-animations]"))return;const{initializeAnimationRuntime:s,SUPPORTS_VIEW_TIMELINE:a}=await n.e("74713").then(n.bind(n,14296));a||await n.e("47518").then(n.t.bind(n,99323,23)),s()}})}]);
-
-//# sourceMappingURL=https://sourcemaps.squarespace.net/universal/scripts-compressed/sourcemaps/a3b209444871ae95/init-animation-triggers-951ee42651364509-min.en-US.js.map

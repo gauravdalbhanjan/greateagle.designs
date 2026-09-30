@@ -42,6 +42,32 @@
 
     var busy = false;
 
+    /* PREFETCH on first pointer intent: warm the destination HTML the moment
+       the user hovers (or touches) a card, so by click time it's often already
+       cached and the frosted hold clears near-instantly. Each href is
+       prefetched once. Skipped on Save-Data / very slow connections. */
+    var prefetched = {};
+    var conn = navigator.connection || {};
+    var allowPrefetch = !conn.saveData && !/2g/.test(conn.effectiveType || '');
+    function prefetch(href) {
+      if (!allowPrefetch || !href || prefetched[href]) return;
+      if (href.charAt(0) === '#' || /^https?:\/\//i.test(href) || /^(mailto:|tel:)/i.test(href)) return;
+      prefetched[href] = true;
+      var link = document.createElement('link');
+      link.rel = 'prefetch';
+      link.href = href;
+      link.as = 'document';
+      document.head.appendChild(link);
+    }
+    function intentFromEvent(e) {
+      var card = e.target.closest && e.target.closest('a.wp-card');
+      if (!card || !grid.contains(card) || card.target === '_blank') return;
+      prefetch(card.getAttribute('href'));
+    }
+    grid.addEventListener('pointerover', intentFromEvent);          // hover (pointerover bubbles)
+    grid.addEventListener('touchstart', intentFromEvent, { passive: true });
+    grid.addEventListener('focusin', intentFromEvent);              // keyboard tab-to-card
+
     grid.addEventListener('click', function (e) {
       var card = e.target.closest && e.target.closest('a.wp-card');
       if (!card || !grid.contains(card)) return;

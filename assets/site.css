@@ -85,6 +85,16 @@
   font-display: swap;
 }
 
+/* ─── Inter — SELF-HOSTED (latin woff2) ───────────────────────────
+   Was loaded from fonts.googleapis.com, which leaks visitor IPs to
+   Google. Now served from assets/fonts/ so no third-party font request.
+   Paths are relative to this stylesheet (assets/site.css). */
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 300; font-display: swap; src: url('fonts/inter-300.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url('fonts/inter-400.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap; src: url('fonts/inter-500.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap; src: url('fonts/inter-600.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 700; font-display: swap; src: url('fonts/inter-700.woff2') format('woff2'); }
+
 * , *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 /* Smoothness is handled by the JS momentum scroller (site.js).
    On touch/reduced-motion we fall back to native smooth. */
@@ -356,4 +366,48 @@ a.footer-logo:hover { opacity: 0.75; }
   .page-hero { padding: 120px 16px 48px; }
   footer { flex-direction: column; text-align: center; }
   .footer-links { flex-wrap: wrap; justify-content: center; }
+}
+
+
+/* ─── COOKIE / ANALYTICS CONSENT BANNER ───────────────────────────
+   Built by assets/consent.js. Small, themed, bottom-centred; defers
+   Microsoft Clarity until the visitor accepts. */
+.ged-consent {
+  position: fixed; left: 50%; bottom: 20px; z-index: 400;
+  transform: translate(-50%, 24px); opacity: 0;
+  transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
+  width: min(560px, calc(100vw - 32px));
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 16px 18px; border-radius: 16px;
+  background: var(--glass-bg, rgba(24,10,8,0.9));
+  -webkit-backdrop-filter: blur(16px) saturate(1.6); backdrop-filter: blur(16px) saturate(1.6);
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.12));
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,42,0,0.15);
+}
+.ged-consent.on { opacity: 1; transform: translate(-50%, 0); }
+.ged-consent-text {
+  flex: 1 1 260px; margin: 0;
+  font-size: var(--fs-secondary); line-height: 1.5; color: var(--text-secondary);
+}
+.ged-consent-text strong { color: var(--text-primary); font-weight: 600; }
+.ged-consent-actions { display: flex; gap: 8px; flex: 0 0 auto; }
+.ged-consent-btn {
+  font-family: inherit; font-size: var(--fs-secondary); font-weight: 600;
+  padding: 9px 18px; border-radius: 100px; cursor: pointer;
+  border: 1px solid var(--border); background: transparent; color: var(--text-secondary);
+  transition: background 0.2s, color 0.2s, transform 0.2s var(--hover-ease), border-color 0.2s;
+}
+.ged-consent-btn:hover { transform: translateY(-1px); }
+.ged-consent-decline:hover { color: var(--text-primary); border-color: var(--text-tertiary); }
+.ged-consent-accept {
+  background: var(--accent); border-color: transparent; color: #fff;
+  box-shadow: 0 4px 14px rgba(255,42,0,0.35);
+}
+.ged-consent-accept:hover { box-shadow: 0 6px 18px rgba(255,42,0,0.5); }
+@media (max-width: 480px) {
+  .ged-consent { flex-direction: column; align-items: stretch; }
+  .ged-consent-actions { justify-content: flex-end; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ged-consent { transition: opacity 0.2s linear; transform: translate(-50%, 0); }
 }

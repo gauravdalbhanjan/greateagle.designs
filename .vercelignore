@@ -10,3 +10,23 @@ _*.txt
 _*.js
 .git/
 node_modules/
+
+# ─── HTTrack scrape of the OLD Squarespace site (unused by this site) ───
+# ~713 MB of mirrored pages/images/videos. Not referenced by index.html,
+# home/, assets/, or data/. Kept out of the deploy; also deleted from disk.
+greateagledesigns.squarespace.com/
+images.squarespace-cdn.com/
+assets.squarespace.com/
+definitions.sqspcdn.com/
+static1.squarespace.com/
+platform.twitter.com/
+www.exploretock.com/
+js/
+css/
+hts-cache/
+cookies.txt
+hts-log.txt
+backblue.gif
+fade.gif
+
+assets/LinkedIn-data.csv
