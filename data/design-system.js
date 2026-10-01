@@ -7,7 +7,7 @@ window.CASE_STUDY = {
     headline: "Design Principle > UI Components",
     subtitle: "Simplified Design System",
     client: "Amazon",
-    summary: "Across a 4+ product enterprise suite, each team had independently built its own version of the same feature &mdash; comment fields, feedback columns, annotation notes, comment threads &mdash; solving identical needs in inconsistent, costly ways. While migrating components, I traced these variants back to a single underlying intent: [[communication]]. Rather than rebuilding per product, I designed one principle-based, variable-driven comment panel that any product could adopt through configuration instead of custom development, embedding it into a component-first design-system approach. Directly resulting in [[~40% faster production]], [[280+ developer hours saved per project]] across [[4+ projects]], consistent UI, eliminated design-review delays, and a reusable framework for evaluating future feature requests through a component-first lens.",
+    summary: "Across a 4+ product enterprise suite, each team had independently built its own version of the same feature &mdash; comment fields, feedback columns, annotation notes, comment threads &mdash; solving identical needs in inconsistent, costly ways. While migrating components, I traced these variants back to a single underlying intent: [[communication]]. Rather than rebuilding per product, I designed one principle-based, variable-driven comment panel that any product could adopt through configuration instead of custom development, embedding it into a component-first design-system approach. Directly resulting in [[~40% faster production]], [[280+ developer hours saved per project]] across [[4+ projects]] (per engineering team\u2019s own estimate), consistent UI, eliminated design-review delays, and a reusable framework for evaluating future feature requests through a component-first lens.",
     tags: ["Systems Thinking", "Research", "System Governance"]
   },
 
@@ -109,7 +109,7 @@ window.CASE_STUDY = {
   ],
 
   impact: [
-    { segment: "User / Developer", stat: "280+ hrs", body: "Saved per project across 4+ projects; eliminated redundant workload and wait time." },
+    { segment: "User / Developer", stat: "280+ hrs", body: "Saved per project across 4+ projects, per engineering\u2019s own estimate; eliminated redundant workload and wait time." },
     { segment: "Business", stat: "40% faster", body: "Production accelerated and design-review delay eliminated." },
     { segment: "Org", stat: "Component-first", body: "Established a component-first, design-system-lens approach for all new feature requests going forward." }
   ],

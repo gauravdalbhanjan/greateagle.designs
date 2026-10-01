@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="../assets/search-menu.css" />
   <link rel="stylesheet" href="../assets/page-transition.css" />
   <script>try{if(sessionStorage.getItem('ged:ptx')==='1'){sessionStorage.removeItem('ged:ptx');var h=document.documentElement;h.classList.add('ptx-arriving');setTimeout(function(){h.classList.remove('ptx-arriving','ptx-ready','ptx-resolve');},4500);}}catch(e){}</script>
+  <script src="../assets/accents.js"></script>
   <script src="../assets/site.js"></script>
   <script defer src="../assets/page-transition.js"></script>
   <style>/* GED-HIDE-LEGACY-NAV */ body > nav.glass { display:none !important; }</style>
@@ -73,7 +74,35 @@
       <div class="stat-card"><div class="num">+20%</div><div class="lbl">Efficiency in 3 months</div></div>
     </div>
 
+    <!-- (1) Case Snapshot -->
+    <div class="case-meta-table reveal" style="margin:40px 0 0;">
+      <div class="snapshot-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:18px;overflow:hidden;">
+        <div style="background:var(--bg);padding:22px;">
+          <div style="font-size:var(--fs-tertiary);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;">Role</div>
+          <div style="font-size:var(--fs-secondary);color:var(--text-secondary);line-height:1.55;">Lead Researcher &amp; Concept Developer, Product Vision — assisted in prototyping</div>
+        </div>
+        <div style="background:var(--bg);padding:22px;">
+          <div style="font-size:var(--fs-tertiary);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;">Team</div>
+          <div style="font-size:var(--fs-secondary);color:var(--text-secondary);line-height:1.55;">Creative Designer (me), Senior Designer, UX Designer, Product Manager, Senior Product Manager, Technical Engineer, Developers, Director</div>
+        </div>
+        <div style="background:var(--bg);padding:22px;">
+          <div style="font-size:var(--fs-tertiary);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;">Timeline</div>
+          <div style="font-size:var(--fs-secondary);color:var(--text-secondary);line-height:1.55;">3 months</div>
+        </div>
+        <div style="background:var(--bg);padding:22px;">
+          <div style="font-size:var(--fs-tertiary);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;">Context</div>
+          <div style="font-size:var(--fs-secondary);color:var(--text-secondary);line-height:1.55;">Part of the Amazon FP&amp;A Product Suite</div>
+        </div>
+        <div style="background:var(--bg);padding:22px;">
+          <div style="font-size:var(--fs-tertiary);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;">Tools</div>
+          <div style="font-size:var(--fs-secondary);color:var(--text-secondary);line-height:1.55;">Figma, prototyping tools</div>
+        </div>
+      </div>
+    </div>
+
     <h2 class="reveal">The Problem</h2>
+    <!-- (2) Problem framing line -->
+    <p class="reveal">Executives relied on manually drafted, monthly-reviewed data to make allocation, headcount, and resource decisions — creating weeks of delay between a problem surfacing and leadership being able to act on it.</p>
     <ul class="reveal">
       <li>Executives reviewing <strong>manually generated reports</strong> couldn't easily identify which products needed attention — delaying decisions and preventing prioritization of resources.</li>
       <li><strong>Inconsistent metrics</strong> across products made fair comparison and progress tracking difficult.</li>
@@ -82,13 +111,12 @@
       <li>There was <strong>no unified view</strong> of all products.</li>
     </ul>
 
-    <div class="pull-quote glass reveal">
-      <blockquote>"We are at the pilot seat, responsible for helping our customers get where they want — safely and as quickly as possible."</blockquote>
-      <cite>— Director, on the team's guiding mission</cite>
-    </div>
-
     <h2 class="reveal">The Approach</h2>
     <p class="reveal">We identified the key metrics, set thresholds with color coding, and designed the data flow. The result was a single source of truth: an automated dashboard with live updates and drill-down capability for faster, effective, data-driven decision-making.</p>
+
+    <!-- (3) Research subsection — before cockpit -->
+    <h3 class="reveal" style="margin-top:32px;">Research</h3>
+    <p class="reveal">Design direction was drawn from aviation cockpit dashboards — built around the same problem this project faced: surfacing dense, high-stakes data to a single decision-maker who needs to act immediately, not browse. Competitor analysis is an active next step to further validate this direction.</p>
 
     <h3 class="reveal" style="margin-top:32px;">Inspired by a cockpit</h3>
     <p class="reveal">The layout borrows from a pilot's cockpit — the most decision-critical instruments always in view, secondary detail a glance away.</p>
@@ -106,9 +134,20 @@
     <p class="reveal">Any metric expands into its underlying detail — the two-second answer to "why?".</p>
     <img src="../assets/product-metrics-dashboard/metrics-drill-down.gif" alt="Drilling down into a metric" class="reveal" />
 
+    <!-- (4) Validation subsection -->
+    <h3 class="reveal" style="margin-top:32px;">Validation</h3>
+    <p class="reveal">Tested and validated with the full cross-functional team — UX, product, engineering, and the director — before launch.</p>
+
+    <!-- (6) Director quote moved here — after Validation, before The Result -->
+    <div class="pull-quote glass reveal">
+      <blockquote>"We are at the pilot seat, responsible for helping our customers get where they want — safely and as quickly as possible."</blockquote>
+      <cite>— Director, on the team's guiding mission</cite>
+    </div>
+
     <h2 class="reveal">The Result</h2>
     <ul class="reveal">
-      <li>Efficiency increased <span class="accent">20% across the product suite</span> in the first 3 months.</li>
+      <!-- (5) Updated 20% bullet -->
+      <li>Product performance improved <span class="accent">20% within 3 months</span> — the explicit target the director and team set together, and hit. Issues and tickets now surface immediately, creating a continuous improvement loop across the organization.</li>
       <li>Real-time data visibility replaced <span class="accent">manual monthly reports</span> — a one-month cycle became a two-second live view.</li>
     </ul>
 

@@ -1020,32 +1020,32 @@
       <div class="loop-row">
         <div class="idx">01</div>
         <div class="rc"><div class="rt">Product &amp; UX Design</div></div>
-        <div class="rm">enterprise scale Â· end&#8209;to&#8209;end</div>
+        <div class="rm">enterprise scale · end&#8209;to&#8209;end</div>
       </div>
       <div class="loop-row">
         <div class="idx">02</div>
         <div class="rc"><div class="rt">UX Research</div></div>
-        <div class="rm">interviews Â· synthesis Â· testing</div>
+        <div class="rm">interviews · synthesis · testing</div>
       </div>
       <div class="loop-row">
         <div class="idx">03</div>
         <div class="rc"><div class="rt">Systems &amp; Design Systems</div></div>
-        <div class="rm">patterns Â· consistency Â· scale</div>
+        <div class="rm">patterns · consistency · scale</div>
       </div>
       <div class="loop-row">
         <div class="idx">04</div>
         <div class="rc"><div class="rt">Industrial &amp; Mechanical Design</div></div>
-        <div class="rm">concept Â· constraints Â· manufacturing</div>
+        <div class="rm">concept · constraints · manufacturing</div>
       </div>
       <div class="loop-row">
         <div class="idx">05</div>
         <div class="rc"><div class="rt">Prototyping &amp; Coding</div></div>
-        <div class="rm">interaction Â· motion Â· shipping</div>
+        <div class="rm">interaction · motion · shipping</div>
       </div>
       <div class="loop-row">
         <div class="idx">06</div>
         <div class="rc"><div class="rt">Storytelling &amp; Video</div></div>
-        <div class="rm">narrative Â· demo Â· impact</div>
+        <div class="rm">narrative · demo · impact</div>
       </div>
     </div>
   </div>
@@ -1113,27 +1113,27 @@
       <div class="flow-row">
         <div class="idx">01</div>
         <div class="rc"><div class="rt">Understand</div></div>
-        <div class="rm">interviews Â· data Â· pain points</div>
+        <div class="rm">interviews · data · pain points</div>
       </div>
       <div class="flow-row">
         <div class="idx">02</div>
         <div class="rc"><div class="rt">Frame</div></div>
-        <div class="rm">problem Â· constraints Â· scope</div>
+        <div class="rm">problem · constraints · scope</div>
       </div>
       <div class="flow-row">
         <div class="idx">03</div>
         <div class="rc"><div class="rt">Design</div></div>
-        <div class="rm">flows Â· patterns Â· fidelity</div>
+        <div class="rm">flows · patterns · fidelity</div>
       </div>
       <div class="flow-row">
         <div class="idx">04</div>
         <div class="rc"><div class="rt">Prototype</div></div>
-        <div class="rm">build Â· test Â· iterate</div>
+        <div class="rm">build · test · iterate</div>
       </div>
       <div class="flow-row">
         <div class="idx">05</div>
         <div class="rc"><div class="rt">Ship &amp; Learn</div></div>
-        <div class="rm">launch Â· measure Â· refine</div>
+        <div class="rm">launch · measure · refine</div>
       </div>
     </div>
   </div>
@@ -1560,7 +1560,7 @@
 </script>
 
 <script>
-  /* ══ Scroll-pinned "Designing for ___" word swap + 360Â° orbit glow ══ */
+  /* ══ Scroll-pinned "Designing for ___" word swap + 360° orbit glow ══ */
   (function () {
     var section = document.getElementById('workIntro');
     var swap = document.getElementById('workSwap');
@@ -1576,7 +1576,7 @@
     var gx = 50, gy = 50 - 40 * 0.75, tx = gx, ty = gy, inten = 0.5, pulse = 0;
     var raf = null;
 
-    /* Orbit the orb 360Â° around the CENTRE as you scroll. progress 0→1 maps to
+    /* Orbit the orb 360° around the CENTRE as you scroll. progress 0→1 maps to
        one full revolution (clockwise from the top); scrolling up runs it back
        the other way. A fixed orbit radius keeps it clear of the centre text. */
     var ORBIT_R = 40;                 // orbit radius, % of viewport (wider → keeps the
@@ -1880,7 +1880,7 @@
       if (!grouped) return '';
       var blocks = CAT_ORDER.filter(function (c) { return grouped[c] && grouped[c].length; }).map(function (c) {
         var rows = grouped[c].map(function (r) {
-          var line = r.desc || (r.chips ? r.chips.join(' Â· ') : '');
+          var line = r.desc || (r.chips ? r.chips.join(' · ') : '');
           var link = r.href ? ' href="' + r.href + '"' : '';
           var tag = r.href ? 'a' : 'div';
           return '<li class="ged-res-item"><' + tag + ' class="ged-res-link"' + link + '>' +

@@ -25,7 +25,7 @@ window.CASE_STUDY = {
   metrics: [
     { num: "9.7 hrs &rarr; 33 min", label: "Review time (94% reduction)" },
     { num: "9+ hrs", label: "Time reclaimed/cycle" },
-    { num: "1,000", label: "Data retrievals per review cycle, ~30 sec saved per retrieval" }
+    { num: "1,000", label: "Data retrievals per review cycle \u2014 ~30 sec saved per retrieval. This represents the lower end of real review cycles; individual allocation requests range from 1,000 to 1,000,000 cost pools, making this a conservative baseline, not a best case." }
   ],
 
   snapshot: {
@@ -72,7 +72,7 @@ window.CASE_STUDY = {
 
   shift: {
     title: "Stop making managers search",
-    insight: "Managers weren't struggling from lack of skill &mdash; the system was hiding the context they needed. The bet: stop making managers search and assemble context; [[surface everything needed to confirm or reject a request in one view]].",
+    insight: "The original ask was simpler than what shipped: stakeholders initially requested all values surfaced in a separate window. Research revealed why that wouldn\u2019t work \u2014 each number was tied to a specific row-line item that managers then copied into the legacy system for retrieval. That dependency is what led to an accordion-per-row design instead of a flat value display: the UI had to preserve the row-to-data relationship, not just expose the numbers.\n\nManagers weren\u2019t struggling from lack of skill \u2014 the system was hiding the context they needed. The bet: stop making managers search and assemble context; [[surface everything needed to confirm or reject a request in one view]].",
     before: "9.7 hrs of tab-switching and manual lookup",
     after: "33 min in a single dashboard view"
   },
@@ -80,7 +80,7 @@ window.CASE_STUDY = {
   process: {
     title: "How we got there?",
     steps: [
-      { title: "Contextual inquiry", body: "Shadowed managers during peak quarterly review, observing where the workflow actually broke down versus where they said it broke down." },
+      { title: "Contextual inquiry", body: "Shadowed managers during peak quarterly review, observing where the workflow actually broke down versus where they said it broke down. Interviewed and shadowed 4 finance managers and 2 product managers." },
       { title: "Friction mapping", body: "Logged every pause, tab-switch, and spreadsheet detour." },
       { title: "Decision-trigger interviews", body: "Asked stakeholders what specific data points are required to approve or deny a request, defining the minimum viable information surface." }
     ]
@@ -99,8 +99,9 @@ window.CASE_STUDY = {
   decisions: [
     { title: "Information architecture", body: "Reorganized the data hierarchy so Channel, Exclusions, Ownership, and Product type appear together.", whyNot: "Keeping separate views felt cleaner per-screen, but it forced toggling between views for a single decision &mdash; the exact friction we were removing." },
     { title: "Natural-language normalization", body: "Replaced numeric IDs to reduce mental-translation load per row.", whyNot: "Tooltips on hover were considered, but that still leaves a lookup step on every row." },
-    { title: "Proactive exclusion surfacing", body: "Turned a reactive error-catch into a built-in quality check.", whyNot: "A validation warning at submit-time catches errors late; surfacing exclusions during review prevents them." },
-    { title: "Audit trail by design", body: "Owner and client on every line as a structural feature, not an add-on &mdash; built-in compliance readiness.", whyNot: "A separate audit export would satisfy compliance but not help the reviewer in the moment." }
+    { title: "Proactive exclusion surfacing", body: "Turned a reactive error-catch into a built-in quality check. Color logic modeled on traffic signals \u2014 red, yellow, green \u2014 so status reads instantly without requiring a key.", whyNot: "A validation warning at submit-time catches errors late; surfacing exclusions during review prevents them." },
+    { title: "Audit trail by design", body: "Owner and client on every line as a structural feature, not an add-on &mdash; built-in compliance readiness.", whyNot: "A separate audit export would satisfy compliance but not help the reviewer in the moment." },
+    { title: "Accordion over flat display", body: "Preserves the row-to-data relationship that managers depended on to act \u2014 each number stays anchored to the line item it belongs to.", whyNot: "A separate results window was the original request and would have shipped faster, but it broke the link between each number and the row it belonged to, which managers needed to act on the data at all." }
   ],
 
   gallery: [
