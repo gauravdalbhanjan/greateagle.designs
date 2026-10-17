@@ -208,6 +208,9 @@
       // scroll the overlay's own scroll container natively (its scrollbar is
       // hidden via CSS, so content stays reachable without a visible bar).
       if (document.documentElement.classList.contains('ged-lock')) return;
+      // Ctrl/Cmd + wheel is the browser's pinch-zoom gesture — never hijack it
+      // so standard zoom-in/zoom-out keeps working on the site.
+      if (e.ctrlKey || e.metaKey) return;
       e.preventDefault();
       const delta = e.deltaY * (e.deltaMode === 1 ? 24 : 1);
       velocity += delta * IMPULSE;

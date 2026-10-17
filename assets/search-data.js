@@ -18,17 +18,27 @@
     {
       id: 'opex', category: 'work', href: 'home/opex-allocation.html',
       img: 'images/budget-planner2.gif',
-      title: 'OPEX Allocation Tool Redesign',
-      desc: 'No more tab-hopping — every decision on one calm screen.',
+      title: 'OPEX Allocation Tool - Reviewing resources',
+      desc: 'From chasing data across tabs to making decisions faster.',
       cats: ['SaaS', 'Product', 'FinTech'],
       metric: '94% faster — 9.7 hrs to 33 min',
       chips: ['94% faster — 9.7 hrs to 33 min', 'Amazon', 'Enterprise'],
       tags: ['opex', 'allocation', 'dashboard', 'finance', 'enterprise', 'amazon', 'verification', 'systems thinking', 'ux', 'product', 'research', 'efficiency', '300b', 'reporting']
     },
     {
+      id: 'alexa', category: 'work', href: 'home/alexa-virtual-assistant.html',
+      img: 'assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/humorphism%20icon%207.gif',
+      title: 'Alexa as a Customer Assistant',
+      desc: 'A tiered voice assistant: a phone call, then a screen, then the room itself.',
+      cats: ['Service Design', 'Voice UX', 'Industrial Design'],
+      metric: '3.1B reachable users',
+      chips: ['3.1B reachable users', 'Works on any phone', '3-tier service model'],
+      tags: ['alexa', 'voice', 'assistant', 'ambient', 'service design', 'tiered', 'conversational', 'ivr', 'phone', 'call', 'rural', 'farmer', 'agriculture', 'amazon', 'aws', 'humorphism', 'bee lamp', 'concept', 'industrial design', 'saas', 'accessibility', 'inclusion', 'next billion', 'business model']
+    },
+    {
       id: 'sous-chef', category: 'work', href: 'home/sous-chef-device.html',
       img: 'images/chef1.gif',
-      title: 'Sous Chef — Countertop Cooking Companion',
+      title: 'AI Sous Chef Assistant',
       desc: 'A countertop friend that turns cooking into confidence.',
       cats: ['UI & UX', 'Product', 'Industrial Design'],
       metric: '72% higher user confidence',
@@ -38,8 +48,8 @@
     {
       id: 'metrics', category: 'work', href: 'home/executive-metrics.html',
       img: 'assets/thumbnails/opening-thumbnail-dashboard.gif',
-      title: 'Executive Product Metrics Dashboard',
-      desc: 'Gave leaders a live pulse on the business, not a month-old snapshot.',
+      title: 'Service Track Tool',
+      desc: 'Monitor, Manage, Maintain and Support every product user.',
       cats: ['UI', 'Dashboard', 'Enterprise'],
       metric: '1 month reporting → 2s live view',
       chips: ['1 month reporting → 2 second live view', 'Amazon', 'Dashboard'],
@@ -79,7 +89,7 @@
     /* ---- ABOUT ---- */
     {
       id: 'about-background', category: 'about', title: 'Background',
-      desc: "Grew up fascinated with sketching and redesigning everyday objects. Bachelor's in Mechanical Engineering (Savitribai Phule Pune University) and a Master's in Industrial Design (Savannah College of Art and Design).",
+      desc: "Grew up fascinated with sketching and redesigning everyday experiences. Bachelor's in Mechanical Engineering (Savitribai Phule Pune University) and a Master's in Industrial Design (Savannah College of Art and Design).",
       chips: ['Curiosity', 'Adaptable', 'SCAD', 'Design', 'Engineer'],
       tags: ['background', 'education', 'mechanical engineering', 'industrial design', 'scad', 'pune', 'masters', 'bachelors', 'about', 'who', 'history', 'story']
     },
@@ -118,6 +128,15 @@
       desc: "Credentials tied to real practice across process, research, design, and engineering: Six Sigma (Green & White Belt), Lextant human-centered research, Amazon Design Inspector & Cognos onboarding, AWS (Cloud Essentials, Cloud First Steps, Intro to AWS, Cloud Computing) and Getting Started with GenAI, plus UX Research (Journey Mapping), Information Architecture, Design Patterns & Principles, Designing Product Interaction, Objectified, Typography & Layout, Project Management (Foundations & Quality), Managing Logistics, Practical GitHub Actions, Excel 365, and Financial Sharing Awareness.",
       chips: ['Six Sigma Green Belt', 'Lextant HCD', 'AWS + GenAI', 'UX Research', 'Design Patterns', 'Project Management', 'GitHub Actions'],
       tags: ['certificates', 'certifications', 'six sigma', 'green belt', 'white belt', 'lextant', 'hcd', 'human centered', 'aws', 'cloud', 'genai', 'generative ai', 'ux research', 'journey mapping', 'information architecture', 'design patterns', 'design principles', 'product interaction', 'objectified', 'typography', 'layout', 'project management', 'quality', 'logistics', 'github actions', 'excel', 'financial', 'credentials', 'qualifications', 'courses', 'learning', 'about', 'skills', 'training']
+    },
+
+    /* ---- STORE ---- */
+    {
+      id: 'chasma', category: 'store', href: 'home/store.html',
+      title: 'CHASHMA — Keyboard Shortcut to Magnify the Search',
+      desc: 'Free Chrome extension. Press Ctrl+Shift+S (or ⌘+Shift+S on Mac) to instantly highlight the active search field on any page. Tab cycles through all search inputs.',
+      chips: ['Chrome Extension', 'Productivity', 'Keyboard Shortcut', 'Free'],
+      tags: ['store', 'chashma', 'chasma', 'chrome extension', 'keyboard shortcut', 'search', 'magnify', 'productivity', 'tool', 'free', 'download']
     },
 
     /* ---- BLOG ---- */
@@ -224,11 +243,11 @@
       .filter(function (x) { return x.s > 0; })
       .sort(function (a, b) { return b.s - a.s; });
 
-    const grouped = { work: [], about: [], blog: [], contact: [] };
+    const grouped = { work: [], about: [], blog: [], store: [], contact: [] };
     scored.forEach(function (x) { grouped[x.r.category].push(x.r); });
 
     // Which overlay view best answers the question?
-    const catScore = { work: 0, about: 0, blog: 0, contact: 0 };
+    const catScore = { work: 0, about: 0, blog: 0, store: 0, contact: 0 };
     scored.forEach(function (x) { catScore[x.r.category] += x.s; });
     let best = 'work', bestVal = -1;
     Object.keys(catScore).forEach(function (c) { if (catScore[c] > bestVal) { bestVal = catScore[c]; best = c; } });
@@ -409,6 +428,16 @@
       whyNot: 'just refreshing furniture and finishes would look nicer but wouldn\u2019t change why nobody wanted to be there',
       impact: 'positive employee response to the redesigned space (in delivery)',
       keys: ['bmw', 'workspace', 'office', 'spatial', 'automotive', 'environment', 'itrc', 'collaboration', 'remote']
+    },
+    alexa: {
+      name: 'Alexa as a Customer Assistant', href: 'home/alexa-virtual-assistant.html',
+      one: 'a tiered voice and ambient assistant that starts as a plain phone call, grows a screen, then moves the interface into the room itself',
+      pain: 'about 3.1 billion people live under mobile coverage but never use the mobile internet \u2014 they skew rural, low-literacy, multilingual and female, and screen-and-app-first products leave them behind',
+      insight: 'the barrier is adoption, not coverage \u2014 so reach people through the simplest technology they already own, a phone call, and add depth not complexity at each tier',
+      decision: 'he designed a three-tier model (phone call \u2192 screen \u2192 ambient), a screenless two-color device language using humorphism and a pixelated logo, and a modeled business case with the assistant as the channel for SaaS apps',
+      whyNot: 'another smartphone app would have been faster to ship but would have missed the exact 3.1 billion people the concept exists to serve',
+      impact: 'a grounded concept \u2014 full BRD, tiered business and cost model (~$0.14 Base-tier cost per user/month), and a working AWS architecture \u2014 ready for a sponsored Base-tier pilot',
+      keys: ['alexa', 'voice', 'assistant', 'ambient', 'tiered', 'service', 'rural', 'farmer', 'agriculture', 'ivr', 'phone', 'call', 'aws', 'humorphism', 'bee lamp', 'next billion', 'accessibility', 'inclusion', 'concept', 'saas']
     }
   };
 
@@ -434,7 +463,8 @@
     opex: ['opex', 'allocation'],
     'sous-chef': ['sous chef', 'sous-chef', 'countertop', 'cooking companion'],
     'comment-panel': ['comment panel', 'comment-panel', 'unified comment', 'design system', 'enterprise design system', 'simplified enterprise'],
-    bmw: ['bmw', 'workspace redesign', 'itrc']
+    bmw: ['bmw', 'workspace redesign', 'itrc'],
+    alexa: ['alexa', 'customer assistant', 'voice assistant', 'tiered service', 'bee lamp', 'ambient assistant']
   };
   function namedProject(text) {
     var found = null, sc = 0;

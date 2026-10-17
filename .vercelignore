@@ -2,6 +2,12 @@
 # Their knowledge is baked into assets/search-data.js, so the AI search
 # still answers about them without publishing the files themselves.
 assets/Certificates/
+# Alexa concept: publish only the images used in the case study. Keep all
+# source/working documents (BRD .docx, .pptx, business-model + branding PDFs)
+# off the public site — nothing about this case study is downloadable.
+assets/Concept_Alexa_Virtual-Cloud-Assistant/*.docx
+assets/Concept_Alexa_Virtual-Cloud-Assistant/*.pptx
+assets/Concept_Alexa_Virtual-Cloud-Assistant/*.pdf
 
 # Dev-only / working files
 edit-server.js

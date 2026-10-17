@@ -13,13 +13,13 @@ window.CASE_STUDY = {
   },
 
   title: {
-    headline: "Sous Chef — Countertop Cooking Companion",
+    headline: "AI Sous Chef Assistant",
     tags: ["UX Research", "UI", "Product Design", "Industrial Design", "Mechanical Engineering"],
     client: "Personal / team product &mdash; originated 2023, UI/UX fully redesigned 2026, live in production",
     result: "From recipe search to pantry-based selection &mdash; a distraction-free cooking experience, physical device shipped"
   },
 
-  hero: { img: "../assets/sous-chef/hero-shot-product.jpg", alt: "Sous Chef countertop device — hero shot", demo: "https://souschef-hvj5-j04xtbdi3-gauravdalbhanjans-projects.vercel.app" },
+  hero: { img: "../assets/sous-chef/hero-shot-product.jpg", alt: "Sous Chef countertop device — hero shot", demo: "https://souschef-hvj5.vercel.app/" },
 
   metrics: [
     { num: "85%", label: "Successful pantry management" },

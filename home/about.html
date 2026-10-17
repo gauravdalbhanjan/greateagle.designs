@@ -24,11 +24,163 @@
     .tl-role { font-size: var(--fs-primary); font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
     .tl-org { font-size: var(--fs-secondary); color: var(--text-tertiary); margin-bottom: 10px; }
     .tl-desc { font-size: var(--fs-secondary); color: var(--text-secondary); line-height: 1.7; }
+
+    /* ═══════════════ PROFILE FLIP CARD (shared with home hero) ═══════════════ */
+    .pcard-stage { display: flex; justify-content: center; padding: 10px 24px 0; }
+    .pcard {
+      position: relative; width: 260px; height: 510px; perspective: 1400px; z-index: 3;
+      will-change: transform;
+    }
+    .pcard::after {
+      content: ''; position: absolute; left: 50%; bottom: -46px; transform: translateX(-50%);
+      width: 78%; height: 60px; border-radius: 50%; pointer-events: none; z-index: -1;
+      background: radial-gradient(ellipse at center, rgba(255,42,0,0.5) 0%, rgba(255,42,0,0.16) 45%, transparent 75%);
+      filter: blur(10px);
+      animation: pcardGlowPulse 3.6s ease-in-out infinite;
+    }
+    @keyframes pcardGlowPulse {
+      0%, 100% { opacity: 0.75; width: 78%; }
+      50%      { opacity: 1;    width: 86%; }
+    }
+    .pcard-inner {
+      position: relative; width: 100%; height: 100%;
+      transition: transform 0.7s cubic-bezier(0.4, 0.15, 0.2, 1);
+      transform-style: preserve-3d;
+      animation: pcardFloat 6s ease-in-out infinite;
+    }
+    @keyframes pcardFloat {
+      0%, 100% { transform: translateY(0) rotateZ(0deg); }
+      50%      { transform: translateY(-12px) rotateZ(0.48deg); }
+    }
+    .pcard.tilting .pcard-inner { animation: none; transition: transform 0.18s ease-out; }
+    .pcard.flipped .pcard-inner { transform: rotateY(180deg) !important; animation: none; }
+    .pcard-face {
+      position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: 22px; padding: 18px 18px 22px;
+      background: linear-gradient(170deg, rgba(40,16,12,0.92), rgba(20,8,6,0.96));
+      border: 1.5px solid rgba(255,42,0,0.6);
+      box-shadow:
+        0 1px 0 rgba(90,40,30,0.9),
+        0 2px 0 rgba(70,30,22,0.9),
+        0 3px 0 rgba(52,22,16,0.9),
+        0 4px 0 rgba(38,16,12,0.95),
+        0 5px 0 rgba(28,12,9,0.95),
+        0 6px 0 rgba(20,9,7,1),
+        0 7px 1px rgba(12,5,4,1),
+        0 0 0 1px rgba(255,42,0,0.25),
+        0 0 22px 2px rgba(255,42,0,0.45),
+        0 0 60px 8px rgba(255,42,0,0.22),
+        0 22px 50px rgba(0,0,0,0.55),
+        inset 0 2px 1px rgba(255,255,255,0.14),
+        inset 0 -3px 6px rgba(0,0,0,0.5);
+      display: flex; flex-direction: column; align-items: center; text-align: center; overflow: hidden;
+    }
+    .pcard-back { transform: rotateY(180deg); padding-top: 16px; padding-bottom: 18px; }
+    .pcard-back .pcard-status { margin-bottom: 10px; }
+    /* LIGHT MODE: white card with black / orange / gray text. */
+    [data-theme="light"] .pcard-face {
+      background: linear-gradient(170deg, #ffffff, #fbf4f2);
+      border-color: rgba(255,42,0,0.55);
+      box-shadow:
+        0 1px 0 rgba(0,0,0,0.06),
+        0 2px 0 rgba(0,0,0,0.05),
+        0 3px 0 rgba(0,0,0,0.05),
+        0 4px 0 rgba(0,0,0,0.04),
+        0 5px 0 rgba(0,0,0,0.04),
+        0 6px 0 rgba(0,0,0,0.03),
+        0 7px 1px rgba(0,0,0,0.06),
+        0 0 0 1px rgba(255,42,0,0.22),
+        0 0 22px 2px rgba(255,42,0,0.30),
+        0 0 60px 8px rgba(255,42,0,0.16),
+        0 22px 50px rgba(0,0,0,0.18),
+        inset 0 2px 1px rgba(255,255,255,0.9),
+        inset 0 -3px 6px rgba(0,0,0,0.06);
+    }
+    [data-theme="light"] .pcard-name,
+    [data-theme="light"] .pcard-surname { color: #111; }
+    [data-theme="light"] .pcard-tags,
+    [data-theme="light"] .pcard-status { color: #4a4a4a; }
+    [data-theme="light"] .pcard-meta,
+    [data-theme="light"] .pcard-skill-row .sk { color: #5a5a5a; }
+    [data-theme="light"] .pcard-skill-row .dur { color: #8a8a8a; }
+    [data-theme="light"] .pcard-stat-btn { color: #111; background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12); }
+    [data-theme="light"] .pcard-photo { background: #f1efec; }
+    [data-theme="light"] .pcard-photo--badge { background: #f1efec; }
+    .pcard-photo {
+      position: relative; width: 150px; height: 150px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+      margin: 6px 0 14px; border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: 0 0 26px rgba(255,42,0,0.35), inset 0 0 20px rgba(0,0,0,0.5);
+      background: #140806;
+    }
+    .pcard-slide {
+      display: flex; width: 200%; height: 100%;
+      transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+      transform: scale(1.18); transform-origin: center center;
+    }
+    .pcard-slide img { width: 50%; height: 100%; object-fit: cover; display: block; flex-shrink: 0; }
+    .pcard-lens {
+      position: absolute; inset: 0; border-radius: 50%; pointer-events: none; z-index: 2;
+      background:
+        radial-gradient(42% 32% at 30% 20%, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.18) 40%, rgba(255,255,255,0) 62%),
+        radial-gradient(70% 60% at 68% 30%, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 55%),
+        radial-gradient(100% 100% at 50% 50%, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 48%, rgba(0,0,0,0.18) 82%, rgba(0,0,0,0.34) 100%);
+      box-shadow:
+        inset 0 3px 8px rgba(255,255,255,0.45),
+        inset 0 -10px 20px rgba(0,0,0,0.42),
+        inset 0 0 0 1px rgba(255,255,255,0.18);
+    }
+    .pcard-photo--badge { width: 104px; height: 104px; margin: 0 0 8px; background: #140806; }
+    .pcard-photo--badge img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .pcard-status { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-secondary); margin-bottom: 14px; }
+    .led-dot {
+      width: 11px; height: 11px; border-radius: 50%; background: #21c063; flex-shrink: 0;
+      box-shadow: 0 0 6px rgba(33,192,99,0.9), 0 0 12px rgba(33,192,99,0.6);
+      animation: ledBlink 1.4s ease-in-out infinite;
+    }
+    @keyframes ledBlink {
+      0%, 100% { opacity: 1;   box-shadow: 0 0 6px rgba(33,192,99,0.95), 0 0 14px rgba(33,192,99,0.7); }
+      50%      { opacity: 0.4; box-shadow: 0 0 3px rgba(33,192,99,0.5),  0 0 6px  rgba(33,192,99,0.3); }
+    }
+    @media (prefers-reduced-motion: reduce) { .led-dot { animation: none; } }
+    .pcard-infopill {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: var(--accent);
+      background: var(--accent-dim); border: 1px solid rgba(255,42,0,0.35);
+      padding: 5px 16px; border-radius: 100px; margin-bottom: 14px;
+    }
+    .pcard-name { font-size: 1.5rem; font-weight: 800; color: var(--text-primary); line-height: 1.05; letter-spacing: -0.02em; }
+    .pcard-surname { font-size: 1.05rem; font-weight: 500; color: var(--text-primary); margin-bottom: 12px; }
+    .pcard-tags { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+    .pcard-meta { font-size: 12.5px; color: var(--text-tertiary); line-height: 1.5; }
+    .pcard-stat-btn {
+      margin-top: auto; display: inline-flex; align-items: center; gap: 12px; cursor: pointer;
+      background: rgba(0,0,0,0.3); color: var(--text-primary); font-family: inherit;
+      font-size: 14px; font-weight: 600; border: 1px solid var(--border);
+      border-radius: 100px; padding: 8px 8px 8px 20px;
+      transition: transform 0.25s var(--hover-ease), box-shadow 0.25s, border-color 0.25s;
+    }
+    .pcard-stat-btn:hover { transform: translateY(-2px); border-color: rgba(255,42,0,0.4); box-shadow: 0 6px 18px rgba(255,42,0,0.25); }
+    .pcard-stat-plus {
+      width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff;
+      display: inline-flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; line-height: 1;
+    }
+    .pcard-skills { width: 100%; margin-bottom: 12px; }
+    .pcard-skills-head {
+      display: flex; justify-content: space-between; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.06em; color: var(--accent); padding-bottom: 6px; margin-bottom: 6px;
+      border-bottom: 1px solid rgba(255,42,0,0.25);
+    }
+    .pcard-skill-row { display: flex; justify-content: space-between; gap: 8px; font-size: 11.5px; padding: 2.5px 0; }
+    .pcard-skill-row .sk { color: var(--text-secondary); text-align: left; }
+    .pcard-skill-row .dur { color: var(--text-tertiary); white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .pcard-back-btn { margin-top: 6px; }
+    @media (prefers-reduced-motion: reduce) { .pcard-inner { transition: none; } }
   </style>
   <style>/* GED-HIDE-LEGACY-NAV */ body > nav.glass { display:none !important; }</style>
 </head>
 <body>
 <svg id="lg-filter-svg" xmlns="http://www.w3.org/2000/svg"><defs id="lg-defs"></defs></svg>
+
+
 
 <nav class="glass liquid-glass">
   <a href="../index.html" class="nav-logo">Gaurav <span>Dalbhanjan</span></a>
@@ -36,6 +188,7 @@
     <li><a href="../index.html#work">Work</a></li>
     <li><a href="blog.html">Blog</a></li>
     <li><a href="about.html" class="active">About</a></li>
+        <li><a href="store.html">Store</a></li>
     <li><a href="contact.html">Contact</a></li>
   </ul>
   <div class="nav-actions">
@@ -53,6 +206,55 @@
   <div class="eyebrow-pill reveal">About</div>
   <h1 class="reveal reveal-delay-1">Hi, I'm <em>Gaurav Dalbhanjan</em></h1>
   <p class="reveal reveal-delay-2">Multidisciplinary product designer bridging engineering logic and human-centered craft.</p>
+</section>
+
+<!-- PROFILE FLIP CARD — badge first, at the top of the About content -->
+<section style="padding-top: 0; padding-bottom: 24px;">
+  <div class="pcard-stage">
+    <div class="pcard reveal" id="profileCard" aria-label="Profile card">
+      <div class="pcard-inner" id="pcardInner">
+
+        <!-- FRONT -->
+        <div class="pcard-face pcard-front">
+          <div class="pcard-photo">
+            <div class="pcard-slide" id="pcardSlide">
+              <img src="../assets/logo/Badge image 1.png" alt="Gaurav Dalbhanjan" />
+              <img src="../assets/logo/Badge image 2.png" alt="GD badge" />
+            </div>
+            <span class="pcard-lens" aria-hidden="true"></span>
+          </div>
+          <div class="pcard-status"><span>Open to work</span><span class="led-dot" aria-hidden="true"></span></div>
+          <div class="pcard-infopill">PROFILE INFO</div>
+          <div class="pcard-name">Gaurav</div>
+          <div class="pcard-surname">Dalbhanjan</div>
+          <div class="pcard-tags">Vision | UX/UI | AI | Ship</div>
+          <div class="pcard-meta">Ex-Amazon, Ex-BMW &amp; Startups</div>
+          <div class="pcard-meta">Seattle, WA, USA</div>
+          <button class="pcard-stat-btn" id="pcardFlip" type="button" aria-label="Show statistics">
+            <span>Statistics</span>
+            <span class="pcard-stat-plus">+</span>
+          </button>
+        </div>
+
+        <!-- BACK -->
+        <div class="pcard-face pcard-back">
+          <div class="pcard-photo pcard-photo--badge">
+            <img src="../assets/logo/Badge image 2.png" alt="GD badge" />
+          </div>
+          <div class="pcard-status"><span>Open to work</span><span class="led-dot" aria-hidden="true"></span></div>
+          <div class="pcard-skills" id="pcardSkills">
+            <div class="pcard-skills-head"><span>SKILL</span><span>EXPERIENCE</span></div>
+            <!-- rows injected by JS (duration computed from start dates) -->
+          </div>
+          <button class="pcard-stat-btn pcard-back-btn" id="pcardFlipBack" type="button" aria-label="Back to profile">
+            <span>Back</span>
+            <span class="pcard-stat-plus">&times;</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
 </section>
 
 <section style="padding-top: 0;">
@@ -105,5 +307,102 @@
 <script defer src="/_vercel/insights/script.js"></script>
 <!-- Cookie consent + deferred Microsoft Clarity (loads only after Accept) -->
 <script defer src="../assets/consent.js"></script>
+
+<script>
+  /* ══ Profile flip card (same behaviour as the home hero card) ══════
+     - Statistics button flips to the skills side; Back flips home.
+     - Front portrait slides between the two badge images.
+     - Skills sorted DESCENDING by experience; durations computed live.
+     - Card faces the mouse pointer anywhere in the viewport. */
+  (function () {
+    var card = document.getElementById('profileCard');
+    if (!card) return;
+    var flipBtn = document.getElementById('pcardFlip');
+    var backBtn = document.getElementById('pcardFlipBack');
+    if (flipBtn) flipBtn.addEventListener('click', function () { card.classList.add('flipped'); });
+    if (backBtn) backBtn.addEventListener('click', function () { card.classList.remove('flipped'); });
+
+    var reduceMo = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var slide = document.getElementById('pcardSlide');
+    if (slide && !reduceMo) {
+      var at = 0;
+      setInterval(function () {
+        at = at === 0 ? -50 : 0;
+        slide.style.transform = 'translateX(' + at + '%)';
+      }, 4000);
+    }
+
+    var inner = document.getElementById('pcardInner');
+    if (inner && !reduceMo && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      var rafT = null, tx = 0, ty = 0;
+      function cardVisible() {
+        var r = card.getBoundingClientRect();
+        return r.bottom > 0 && r.top < window.innerHeight;
+      }
+      function onMove(e) {
+        if (!cardVisible()) {
+          if (card.classList.contains('tilting')) {
+            card.classList.remove('tilting'); inner.style.transform = '';
+          }
+          return;
+        }
+        if (!card.classList.contains('tilting')) card.classList.add('tilting');
+        var r = card.getBoundingClientRect();
+        var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        var nx = Math.max(-1, Math.min(1, (e.clientX - cx) / (window.innerWidth * 0.5)));
+        var ny = Math.max(-1, Math.min(1, (e.clientY - cy) / (window.innerHeight * 0.5)));
+        ty = nx * 14.4;   // +20% again
+        tx = -ny * 11.52; // +20% again
+        if (!rafT) rafT = requestAnimationFrame(apply);
+      }
+      function apply() {
+        rafT = null;
+        if (card.classList.contains('flipped')) return;
+        inner.style.transform = 'rotateX(' + tx.toFixed(2) + 'deg) rotateY(' + ty.toFixed(2) + 'deg) translateZ(6px)';
+      }
+      window.addEventListener('mousemove', onMove, { passive: true });
+      document.addEventListener('mouseleave', function () {
+        card.classList.remove('tilting');
+        inner.style.transform = '';
+      });
+    }
+
+    var SKILLS = [
+      { name: 'Problem-Solving',     since: '2004-12-01' },
+      { name: 'User Research',       since: '2017-10-22' },
+      { name: 'AI Practitioner',     since: '2023-02-21' },
+      { name: 'Product Vision',      since: '2018-10-22' },
+      { name: 'Tech Adaptability',   since: '2011-09-11' },
+      { name: 'Business Strategy',   since: '2019-05-23' },
+      { name: 'Cross-collaboration', since: '2018-10-22' },
+      { name: 'DFM & Prototyping',   since: '2010-05-22' },
+      { name: 'Brand Design',        since: '2011-09-11' }
+    ].sort(function (a, b) { return new Date(a.since) - new Date(b.since); });
+    function durationFrom(iso) {
+      var s = new Date(iso + 'T00:00:00');
+      var n = new Date();
+      var y = n.getFullYear() - s.getFullYear();
+      var m = n.getMonth() - s.getMonth();
+      var d = n.getDate() - s.getDate();
+      if (d < 0) { m -= 1; var prev = new Date(n.getFullYear(), n.getMonth(), 0).getDate(); d += prev; }
+      if (m < 0) { y -= 1; m += 12; }
+      var parts = [];
+      if (y > 0) parts.push(y + 'y');
+      if (m > 0) parts.push(m + 'm');
+      parts.push(d + 'd');
+      return parts.join(' ');
+    }
+    var wrap = document.getElementById('pcardSkills');
+    if (wrap) {
+      var html = '';
+      SKILLS.forEach(function (sk) {
+        html += '<div class="pcard-skill-row"><span class="sk">' + sk.name + '</span>' +
+                '<span class="dur">' + durationFrom(sk.since) + '</span></div>';
+      });
+      wrap.insertAdjacentHTML('beforeend', html);
+    }
+  })();
+</script>
 </body>
 </html>

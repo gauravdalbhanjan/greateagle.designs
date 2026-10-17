@@ -35,9 +35,17 @@
         '<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>' +
         '<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>' +
       '</button>' +
-      '<button class="ged-search-btn ged-tip" data-tip="Got questions?" id="gedSearchOpen" aria-label="Open menu">' +
-        '<span class="ged-btn-label" id="gedBtnLabel">Menu</span><span class="ged-btn-caret" aria-hidden="true"></span>' +
-      '</button>';
+      '<div class="ged-menu-group" id="gedMenuGroup">' +
+        '<button class="ged-search-btn ged-tip" data-tip="Got questions?" id="gedSearchOpen" aria-label="Open menu">' +
+          '<img class="ged-btn-logo" id="gedBtnLogo" src="' + BASE + 'assets/logo/Menu.png" alt="Menu" />' +
+        '</button>' +
+        '<div class="ged-flyout" id="gedFlyout" aria-hidden="true">' +
+          '<div class="ged-fly-item"><span class="ged-fly-label">Explore</span><button class="ged-fly-btn" data-action="explore" aria-label="Explore work"><img src="' + BASE + 'assets/logo/Search.png" alt="" /></button></div>' +
+          '<div class="ged-fly-item"><span class="ged-fly-label">Menu</span><button class="ged-fly-btn" data-action="menu" aria-label="Menu"><img src="' + BASE + 'assets/logo/Menu.png" alt="" /></button></div>' +
+          '<div class="ged-fly-item"><span class="ged-fly-label">Profile</span><button class="ged-fly-btn" data-action="profile" aria-label="Profile"><img src="' + BASE + 'assets/logo/Profile.png" alt="" /></button></div>' +
+          '<div class="ged-fly-item"><span class="ged-fly-label">Store</span><button class="ged-fly-btn" data-action="store" aria-label="Store"><img src="' + BASE + 'assets/logo/Store.png" alt="" /></button></div>' +
+        '</div>' +
+      '</div>';
 
     var overlay = document.createElement('div');
     overlay.className = 'ged-overlay';
@@ -63,6 +71,7 @@
             '<button class="ged-nav-item" data-view="work">Work</button>' +
             '<button class="ged-nav-item" data-view="about">About</button>' +
             '<button class="ged-nav-item" data-view="blog">Blog</button>' +
+            '<button class="ged-nav-item" data-view="store">Store</button>' +
             '<button class="ged-nav-item" data-view="contact">Contact</button>' +
           '</nav>' +
           '<div class="ged-content" id="gedContent"></div>' +
@@ -186,7 +195,25 @@
         '<div class="ged-col">' + infoHtml + '</div>' +
       '</div>';
   }
-  var RENDER = { work: renderWork, about: renderAbout, blog: renderBlog, contact: renderContact };
+  var RENDER = { work: renderWork, about: renderAbout, blog: renderBlog, store: renderStore, contact: renderContact };
+
+  function renderStore() {
+    var base = (typeof GED_BASE !== 'undefined') ? GED_BASE : '';
+    return '<div class="ged-view-label">Store &mdash; <em>Free tools built on the side.</em></div>' +
+      '<a class="ged-res-link" href="' + base + 'home/store.html" style="display:block;text-decoration:none;max-width:452px;">' +
+        '<div class="ged-card" style="display:flex;gap:16px;align-items:flex-start;cursor:pointer;">' +
+          '<div style="width:52px;height:52px;flex-shrink:0;border-radius:12px;background:#180a08;border:1px solid rgba(255,42,0,.35);display:flex;align-items:center;justify-content:center;">' +
+            '<svg viewBox="0 0 80 80" width="38" height="38" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="80" rx="18" fill="#180a08"/><circle cx="32" cy="32" r="15" fill="none" stroke="#ff2a00" stroke-width="5.5"/><line x1="43" y1="43" x2="59" y2="59" stroke="#ff2a00" stroke-width="5.5" stroke-linecap="round"/></svg>' +
+          '</div>' +
+          '<div style="flex:1;min-width:0;">' +
+            '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:4px;">Chrome Extension &middot; Free</div>' +
+            '<h4 style="margin:0 0 6px;font-size:var(--fs-primary);font-weight:700;color:var(--text-primary);">CHASHMA</h4>' +
+            '<p style="margin:0;font-size:var(--fs-secondary);color:var(--text-secondary);line-height:1.55;">Keyboard shortcut that magnifies the search &mdash; so you always know exactly where you are. Press <strong>Ctrl+Shift+S</strong> on any page.</p>' +
+            '<div style="margin-top:10px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--accent);">View &amp; Download &#8599;</div>' +
+          '</div>' +
+        '</div>' +
+      '</a>';
+  }
 
   function setView(view, records) {
     currentView = view;
@@ -317,44 +344,59 @@
 
   openBtn.addEventListener('click', function () { open('work'); });
 
-  /* ── Menu button label cycle: types Chat → Search → Menu with a visible
-     caret, holds 5s, backspaces, retypes the next. 2s after a label finishes
-     typing, a light "shine" sweeps across the button edge. ── */
-  (function () {
-    var labelEl = document.getElementById('gedBtnLabel');
-    if (!labelEl || reduceMotion) return;
-    // Guard: the landing page ships its OWN inline copy of this cycler; don't
-    // run a second one on the same button (that double-types "SearchMenu").
-    if (openBtn.dataset.labelCycle) return;
-    openBtn.dataset.labelCycle = '1';
-    var labels = ['Chat', 'Search', 'Menu'];
-    var li = 0, timers = [];
-    function later(fn, ms) { var t = setTimeout(fn, ms); timers.push(t); return t; }
-    function shine() {
-      openBtn.classList.remove('ged-shine');
-      // reflow so the animation can retrigger
-      void openBtn.offsetWidth;
-      openBtn.classList.add('ged-shine');
-    }
-    function type(text, pos) {
-      openBtn.classList.remove('ged-shine');
-      if (pos > text.length) {
-        later(shine, 2000);                 // shine 2s after the label lands
-        later(function () { erase(text, text.length); }, 5000);  // hold 5s
-        return;
+  /* Hover-flyout bubble buttons:
+       Explore → home page Selected Work section.
+       Profile → About page.
+       Menu    → open the menu overlay. */
+  var flyout = document.getElementById('gedFlyout');
+  if (flyout) {
+    flyout.addEventListener('click', function (e) {
+      var b = e.target.closest('.ged-fly-btn');
+      if (!b) return;
+      var action = b.getAttribute('data-action');
+      if (action === 'explore') {
+        // If we're already on the home page, glide; otherwise navigate to it.
+        var work = document.getElementById('work');
+        if (work) {
+          var s = window.GED && window.GED.scroll;
+          if (s && s.glideTo) s.glideTo(work.getBoundingClientRect().top + window.scrollY - 70);
+          else work.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          window.location.href = BASE + 'index.html#work';
+        }
+      } else if (action === 'profile') {
+        window.location.href = BASE + 'home/about.html';
+      } else if (action === 'store') {
+        window.location.href = BASE + 'home/store.html';
+      } else {
+        open('work');
       }
-      labelEl.textContent = text.slice(0, pos);
-      later(function () { type(text, pos + 1); }, 90);
-    }
-    function erase(text, pos) {
-      openBtn.classList.remove('ged-shine');
-      if (pos < 0) { li = (li + 1) % labels.length; later(function () { type(labels[li], 0); }, 220); return; }
-      labelEl.textContent = text.slice(0, pos);
-      later(function () { erase(text, pos - 1); }, 45);
-    }
-    // Start from the current "Menu" label already shown → begin the cycle.
-    labelEl.textContent = '';
-    later(function () { type(labels[li], 0); }, 400);
+    });
+  }
+
+  /* ── Header button logo cycle: cross-fades Menu → Search → Chat logos every
+     ~2.6s with a shine sweep. ── */
+  (function () {
+    var logoEl = document.getElementById('gedBtnLogo');
+    if (!logoEl) return;
+    if (openBtn.dataset.logoCycle) return;   // don't double-run (inline copy on landing page)
+    openBtn.dataset.logoCycle = '1';
+    if (reduceMotion) return;                 // static logo under reduced motion
+    var logos = [
+      { src: BASE + 'assets/logo/Menu.png',   alt: 'Menu' },
+      { src: BASE + 'assets/logo/Search.png', alt: 'Search' },
+      { src: BASE + 'assets/logo/Chat.png',   alt: 'Chat' }
+    ];
+    var i = 0;
+    setInterval(function () {
+      logoEl.classList.add('ged-logo-swap');
+      setTimeout(function () {
+        i = (i + 1) % logos.length;
+        logoEl.src = logos[i].src; logoEl.alt = logos[i].alt;
+        logoEl.classList.remove('ged-logo-swap');
+        openBtn.classList.remove('ged-shine'); void openBtn.offsetWidth; openBtn.classList.add('ged-shine');
+      }, 450);
+    }, 2600);
   })();
 
   closeBtn.addEventListener('click', close);

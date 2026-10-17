@@ -109,7 +109,7 @@ body {
   -webkit-font-smoothing: antialiased;
   transition: background 0.4s var(--ease), color 0.4s var(--ease);
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
   position: relative;
 }
 
@@ -410,4 +410,55 @@ a.footer-logo:hover { opacity: 0.75; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ged-consent { transition: opacity 0.2s linear; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   GLOBAL RESPONSIVE LADDER  —  phone (≤560) / tablet (561–900) / laptop
+   Shared across every page. Page-specific <style> blocks and
+   case-study.css add finer tuning on top; this layer guarantees the base
+   chrome, typography and common containers behave at every width and that
+   nothing ever forces horizontal scroll.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Never allow sideways scroll from an over-wide child. Use `clip` (not
+   `hidden`) and keep it OFF the root <html> element — `overflow:hidden` on an
+   ancestor of a position:sticky node breaks the pin and makes position:fixed
+   children drift. `clip` on <body> contains width without creating a scroll
+   container, so the "Designing for ___" pinned section keeps working. */
+html { max-width: 100%; }
+body { max-width: 100%; overflow-x: clip; }
+img, video, svg, canvas { max-width: 100%; }
+
+/* ── Tablet (≤900px) ─────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  section { padding: 80px 24px; }
+  .page-hero { padding: 140px 24px 56px; }
+  /* Fluidise any auto-fit/repeat grids that used large min tracks. */
+  .stat-cards { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+}
+
+/* ── Large phone / small tablet (≤700px) ─────────────────────────── */
+@media (max-width: 700px) {
+  :root { --fs-primary: 15px; }
+  section { padding: 64px 18px; }
+  .page-hero { padding: 120px 18px 44px; }
+  .page-hero h1 { font-size: clamp(1.9rem, 7vw, 2.8rem); }
+  footer { flex-direction: column; text-align: center; align-items: center; }
+  .footer-links { flex-wrap: wrap; justify-content: center; gap: 16px; }
+}
+
+/* ── Phone (≤560px) ──────────────────────────────────────────────── */
+@media (max-width: 560px) {
+  section { padding: 56px 16px; }
+  .page-hero { padding: 108px 16px 40px; }
+  .btn { padding: 11px 22px; }
+  .prose { padding: 0; }
+  /* Tables inside prose/pages shouldn't blow out the viewport. */
+  table { display: block; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
+
+/* ── Small phone (≤400px) ────────────────────────────────────────── */
+@media (max-width: 400px) {
+  section { padding: 48px 14px; }
+  .stat-cards { grid-template-columns: 1fr; }
 }

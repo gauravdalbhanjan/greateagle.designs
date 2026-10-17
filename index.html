@@ -24,15 +24,215 @@
   <script defer src="assets/page-transition.js"></script>
   <style>
     .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; text-align: left; padding: 120px 48px 80px; max-width: 1160px; margin: 0 auto; position: relative; overflow: visible; }
-    .hero-title { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.12; color: var(--text-primary); max-width: 880px; margin-bottom: 24px; }
+    .hero-title { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.12; color: var(--text-primary); margin-bottom: 24px; white-space: nowrap; }
+    /* keep hero sub clear of the profile card on wide screens */
+    @media (min-width: 981px) {
+      .hero-sub { max-width: 560px; }
+    }
+    /* On small screens allow the headline to wrap if the viewport is truly narrow */
+    @media (max-width: 560px) { .hero-title { white-space: normal; } }
+
+    /* ═══════════════ PROFILE FLIP CARD ═══════════════ */
+    .pcard {
+      /* Sit higher so the card's vertical centre lines up with the
+         "I'm a creative who" headline rather than the hero's mid-point. */
+      position: absolute; right: 48px; top: 38%; transform: translateY(-50%);
+      width: 260px; height: 510px; perspective: 1400px; z-index: 3;
+      will-change: transform;
+    }
+    /* Orange spotlight cast on the ground below the card. */
+    .pcard::after {
+      content: ''; position: absolute; left: 50%; bottom: -46px; transform: translateX(-50%);
+      width: 78%; height: 60px; border-radius: 50%; pointer-events: none; z-index: -1;
+      background: radial-gradient(ellipse at center, rgba(255,42,0,0.5) 0%, rgba(255,42,0,0.16) 45%, transparent 75%);
+      filter: blur(10px);
+      animation: pcardGlowPulse 3.6s ease-in-out infinite;
+    }
+    @keyframes pcardGlowPulse {
+      0%, 100% { opacity: 0.75; width: 78%; }
+      50%      { opacity: 1;    width: 86%; }
+    }
+    .pcard-inner {
+      position: relative; width: 100%; height: 100%;
+      transition: transform 0.7s cubic-bezier(0.4, 0.15, 0.2, 1);
+      transform-style: preserve-3d;
+      animation: pcardFloat 6s ease-in-out infinite;
+    }
+    /* Gentle idle bob/sway (paused while the JS tilt is actively driving it). */
+    @keyframes pcardFloat {
+      0%, 100% { transform: translateY(0) rotateZ(0deg); }
+      50%      { transform: translateY(-12px) rotateZ(0.48deg); }
+    }
+    .pcard.tilting .pcard-inner { animation: none; transition: transform 0.18s ease-out; } /* JS tilt takes over on hover */
+    .pcard.flipped .pcard-inner { transform: rotateY(180deg) !important; animation: none; }
+    .pcard-face {
+      position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: 22px; padding: 18px 18px 22px;
+      background: linear-gradient(170deg, rgba(40,16,12,0.92), rgba(20,8,6,0.96));
+      border: 1.5px solid rgba(255,42,0,0.6);
+      /* THICK BADGE: a stack of tight dark offsets builds a solid ~7px slab
+         edge, a bevel highlight on top + shadow at the base, then the orange
+         glow + ambient bloom. Reads like a chunky badge, not thin paper. */
+      box-shadow:
+        0 1px 0 rgba(90,40,30,0.9),
+        0 2px 0 rgba(70,30,22,0.9),
+        0 3px 0 rgba(52,22,16,0.9),
+        0 4px 0 rgba(38,16,12,0.95),
+        0 5px 0 rgba(28,12,9,0.95),
+        0 6px 0 rgba(20,9,7,1),
+        0 7px 1px rgba(12,5,4,1),
+        0 0 0 1px rgba(255,42,0,0.25),
+        0 0 22px 2px rgba(255,42,0,0.45),
+        0 0 60px 8px rgba(255,42,0,0.22),
+        0 22px 50px rgba(0,0,0,0.55),
+        inset 0 2px 1px rgba(255,255,255,0.14),
+        inset 0 -3px 6px rgba(0,0,0,0.5);
+      display: flex; flex-direction: column; align-items: center; text-align: center; overflow: hidden;
+    }
+    /* The back face's thickness must project the other way (it's rotated 180°). */
+    .pcard-back { transform: rotateY(180deg); }
+
+    /* ── LIGHT MODE: the badge flips to a WHITE card with black / orange /
+       gray text (dark mode keeps the dark-surfaced card above). ── */
+    [data-theme="light"] .pcard-face {
+      background: linear-gradient(170deg, #ffffff, #fbf4f2);
+      border-color: rgba(255,42,0,0.55);
+      box-shadow:
+        0 1px 0 rgba(0,0,0,0.06),
+        0 2px 0 rgba(0,0,0,0.05),
+        0 3px 0 rgba(0,0,0,0.05),
+        0 4px 0 rgba(0,0,0,0.04),
+        0 5px 0 rgba(0,0,0,0.04),
+        0 6px 0 rgba(0,0,0,0.03),
+        0 7px 1px rgba(0,0,0,0.06),
+        0 0 0 1px rgba(255,42,0,0.22),
+        0 0 22px 2px rgba(255,42,0,0.30),
+        0 0 60px 8px rgba(255,42,0,0.16),
+        0 22px 50px rgba(0,0,0,0.18),
+        inset 0 2px 1px rgba(255,255,255,0.9),
+        inset 0 -3px 6px rgba(0,0,0,0.06);
+    }
+    [data-theme="light"] .pcard-name,
+    [data-theme="light"] .pcard-surname { color: #111; }
+    [data-theme="light"] .pcard-tags,
+    [data-theme="light"] .pcard-status { color: #4a4a4a; }
+    [data-theme="light"] .pcard-meta,
+    [data-theme="light"] .pcard-skill-row .sk { color: #5a5a5a; }
+    [data-theme="light"] .pcard-skill-row .dur { color: #8a8a8a; }
+    /* Buttons + pill stay orange-accented on the white card. */
+    [data-theme="light"] .pcard-stat-btn { color: #111; background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12); }
+    [data-theme="light"] .pcard-photo { background: #f1efec; }
+    [data-theme="light"] .pcard-photo--badge { background: #f1efec; }
+
+    /* circular portrait with a sliding image track + glass lens dome */
+    .pcard-photo {
+      position: relative; width: 150px; height: 150px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+      margin: 6px 0 14px; border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: 0 0 26px rgba(255,42,0,0.35), inset 0 0 20px rgba(0,0,0,0.5);
+      background: #140806;
+    }
+    /* Slide track: two images side-by-side; JS translates -50% to swipe.
+       Magnified a touch so it reads like looking through a lens, but kept
+       perfectly CRISP — no blur/displacement filter. The glass look comes
+       entirely from the .pcard-lens dome highlight sitting on top. */
+    .pcard-slide {
+      display: flex; width: 200%; height: 100%;
+      transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+      transform: scale(1.18);                 /* clean magnification, no blur */
+      transform-origin: center center;
+    }
+    .pcard-slide img { width: 50%; height: 100%; object-fit: cover; display: block; flex-shrink: 0; }
+    /* Glass lens dome over the portrait (Figma 463-8372): a convex bulge with a
+       bright curved specular highlight (light from -45°), a darker lower rim,
+       and a crisp glass edge — like looking through a magnifying lens. */
+    .pcard-lens {
+      position: absolute; inset: 0; border-radius: 50%; pointer-events: none; z-index: 2;
+      background:
+        /* top-left specular hotspot (the -45° light at 80%) */
+        radial-gradient(42% 32% at 30% 20%, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.18) 40%, rgba(255,255,255,0) 62%),
+        /* soft secondary sheen */
+        radial-gradient(70% 60% at 68% 30%, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 55%),
+        /* convex centre brightening to sell the bulge + darker outer rim */
+        radial-gradient(100% 100% at 50% 50%, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 48%, rgba(0,0,0,0.18) 82%, rgba(0,0,0,0.34) 100%);
+      box-shadow:
+        inset 0 3px 8px rgba(255,255,255,0.45),
+        inset 0 -10px 20px rgba(0,0,0,0.42),
+        inset 0 0 0 1px rgba(255,255,255,0.18);
+    }
+    .pcard-photo--badge { width: 104px; height: 104px; margin: 0 0 8px; background: #140806; }
+    .pcard-photo--badge img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    /* Back face sits a touch tighter so the taller skills table + Back button
+       always fit inside the card without the button being clipped. */
+    .pcard-back { padding-top: 16px; padding-bottom: 18px; }
+    .pcard-back .pcard-status { margin-bottom: 10px; }
+
+    /* status row with blinking LED */
+    .pcard-status { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-secondary); margin-bottom: 14px; }
+    .led-dot {
+      width: 11px; height: 11px; border-radius: 50%; background: #21c063; flex-shrink: 0;
+      box-shadow: 0 0 6px rgba(33,192,99,0.9), 0 0 12px rgba(33,192,99,0.6);
+      animation: ledBlink 1.4s ease-in-out infinite;
+    }
+    @keyframes ledBlink {
+      0%, 100% { opacity: 1;   box-shadow: 0 0 6px rgba(33,192,99,0.95), 0 0 14px rgba(33,192,99,0.7); }
+      50%      { opacity: 0.4; box-shadow: 0 0 3px rgba(33,192,99,0.5),  0 0 6px  rgba(33,192,99,0.3); }
+    }
+    @media (prefers-reduced-motion: reduce) { .led-dot { animation: none; } }
+
+    .pcard-infopill {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: var(--accent);
+      background: var(--accent-dim); border: 1px solid rgba(255,42,0,0.35);
+      padding: 5px 16px; border-radius: 100px; margin-bottom: 14px;
+    }
+    .pcard-name { font-size: 1.5rem; font-weight: 800; color: var(--text-primary); line-height: 1.05; letter-spacing: -0.02em; }
+    .pcard-surname { font-size: 1.05rem; font-weight: 500; color: var(--text-primary); margin-bottom: 12px; }
+    .pcard-tags { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+    .pcard-meta { font-size: 12.5px; color: var(--text-tertiary); line-height: 1.5; }
+
+    .pcard-stat-btn {
+      margin-top: auto; display: inline-flex; align-items: center; gap: 12px; cursor: pointer;
+      background: rgba(0,0,0,0.3); color: var(--text-primary); font-family: inherit;
+      font-size: 14px; font-weight: 600; border: 1px solid var(--border);
+      border-radius: 100px; padding: 8px 8px 8px 20px;
+      transition: transform 0.25s var(--hover-ease), box-shadow 0.25s, border-color 0.25s;
+    }
+    .pcard-stat-btn:hover { transform: translateY(-2px); border-color: rgba(255,42,0,0.4); box-shadow: 0 6px 18px rgba(255,42,0,0.25); }
+    .pcard-stat-plus {
+      width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff;
+      display: inline-flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; line-height: 1;
+    }
+
+    /* back: skill / since table */
+    .pcard-skills { width: 100%; margin-bottom: 12px; }
+    .pcard-skills-head {
+      display: flex; justify-content: space-between; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.06em; color: var(--accent); padding-bottom: 6px; margin-bottom: 6px;
+      border-bottom: 1px solid rgba(255,42,0,0.25);
+    }
+    .pcard-skill-row { display: flex; justify-content: space-between; gap: 8px; font-size: 11.5px; padding: 2.5px 0; }
+    .pcard-skill-row .sk { color: var(--text-secondary); text-align: left; }
+    .pcard-skill-row .dur { color: var(--text-tertiary); white-space: nowrap; font-variant-numeric: tabular-nums; }
+    /* Keep the Back button hugging the bottom of the back face. */
+    .pcard-back-btn { margin-top: 6px; }
+
+    /* Below ~980px: card drops under the hero text, centered */
+    @media (max-width: 980px) {
+      .pcard { position: static; transform: none; margin: 40px auto 0; }
+    }
+    @media (prefers-reduced-motion: reduce) { .pcard-inner { transition: none; } }
     .hero-title em { font-style: normal; color: var(--accent); }
-    .hero-sub { font-size: var(--fs-primary); color: var(--text-secondary); max-width: 640px; line-height: 1.75; margin-bottom: 8px; }
+    .hero-sub { font-size: var(--fs-primary); color: var(--text-secondary); max-width: 640px; line-height: 1.9; margin-bottom: 8px; }
+    .hero-sub strong { color: var(--accent); font-weight: 700; }
     /* Rotating word in the hero headline */
     .rotator { font-style: normal; color: var(--accent); display: inline-block; min-width: 4ch; transition: opacity 0.2s var(--ease), transform 0.2s var(--ease); }
     .rotator.swap { opacity: 0; transform: translateY(-8px); }
-    /* On small screens the changing role word sits on its OWN line so the
-       headline alignment doesn't shift as words of different widths cycle. */
-    @media (max-width: 600px) {
+    /* The role word must never break across lines on its own. */
+    .rotator { white-space: nowrap; }
+    /* On small screens the changing role word sits on its OWN line so that,
+       the moment the headline would have to wrap any label onto a new line,
+       the whole rotating word drops down together instead of breaking mid
+       phrase. Triggers at the same point the headline stops being nowrap. */
+    @media (max-width: 760px) {
       .rotator { display: block; min-width: 0; margin-top: 2px; }
     }
     .work-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
@@ -191,6 +391,7 @@
     .wp-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
     .wp-title { font-size: clamp(1.15rem, 2vw, 1.5rem); font-weight: 700; letter-spacing: -0.02em; color: var(--text-primary); line-height: 1.25; }
     .wp-cats { font-size: 14px; color: var(--text-tertiary); font-weight: 500; white-space: nowrap; padding-top: 4px; }
+    .wp-desc { font-size: var(--fs-secondary); color: var(--text-secondary); line-height: 1.6; margin-top: 10px; max-width: 640px; }
     .wp-results { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
     .wp-chip {
       display: inline-flex; align-items: center; gap: 7px;
@@ -339,7 +540,7 @@
     .contact-cta { max-width: 800px; margin: 0 auto; padding: 120px 24px; text-align: center; position: relative; overflow: visible; }
     .cta-ghost {
       position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%) scale(var(--ghost-scale, 0.55));
-      transform-origin: center; font-size: clamp(9rem, 26vw, 22rem); font-weight: 700; letter-spacing: -0.04em;
+      transform-origin: center; font-size: clamp(11rem, 32vw, 28rem); font-weight: 700; letter-spacing: -0.04em;
       line-height: 0.8; color: var(--text-primary); opacity: 0.05; pointer-events: none; user-select: none;
       z-index: 0; white-space: nowrap; text-align: center; will-change: transform; transition: transform 0.15s linear;
     }
@@ -400,7 +601,7 @@
     /* ═══════════════ NEW STICKY GLASS HEADER ═══════════════ */
     .ged-header {
       position: fixed; top: 16px; right: 24px; left: auto; z-index: 200;
-      height: 52px; border-radius: 100px; padding: 6px 6px 6px 8px;
+      height: 52px; border-radius: 100px; padding: 5px 6px 5px 8px;
       display: flex; align-items: center; gap: 8px;
     }
     /* Glass bubble around the logo */
@@ -418,11 +619,25 @@
     .ged-search-btn {
       position: relative; overflow: hidden;
       background: var(--accent); color: #fff; border: 0; cursor: pointer;
-      font-size: 14px; font-weight: 600; padding: 9px 24px; border-radius: 100px;
+      font-size: 14px; font-weight: 600; padding: 8px; border-radius: 100px;
       box-shadow: 0 4px 18px rgba(255,42,0,0.35); transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-      display: inline-flex; align-items: center; justify-content: center; min-width: 92px;
+      display: inline-flex; align-items: center; justify-content: center; min-width: 52px;
     }
     .ged-search-btn:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 8px 26px rgba(255,42,0,0.45); }
+    /* Button shows the actual logo (Menu/Search/Chat). Pixel-dissolve between
+       icons: the leaving icon fades while its bitmap is scaled up with
+       pixelated rendering so it breaks into chunky pixels; the next reverses
+       it. 8px padding on all sides of the button. */
+    .ged-btn-logo {
+      width: 26px; height: 26px; object-fit: contain; display: block;
+      transition: opacity 0.4s var(--ease), transform 0.4s var(--ease), filter 0.4s var(--ease);
+      will-change: opacity, transform, filter;
+    }
+    .ged-btn-logo.ged-logo-swap {
+      opacity: 0; transform: scale(1.55);
+      image-rendering: pixelated; image-rendering: crisp-edges;
+      filter: contrast(1.4) saturate(1.2);
+    }
     .ged-btn-label { white-space: nowrap; }
     .ged-btn-caret { display: inline-block; width: 2px; height: 1em; margin-left: 2px; background: currentColor; border-radius: 1px; vertical-align: -0.12em; animation: gedCaretBlink 1s steps(1) infinite; }
     @keyframes gedCaretBlink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
@@ -430,6 +645,92 @@
     .ged-search-btn.ged-shine::after { animation: gedBtnShine 0.9s ease-out; }
     @keyframes gedBtnShine { 0% { left: -60%; opacity: 0; } 15% { opacity: 1; } 100% { left: 130%; opacity: 0; } }
     @media (prefers-reduced-motion: reduce) { .ged-btn-caret { animation: none; opacity: 0; } .ged-search-btn.ged-shine::after { animation: none; } }
+
+    /* ── Hover flyout: 3 glass bubble icon buttons below the header ── */
+    .ged-menu-group { position: relative; }
+    .ged-flyout {
+      position: absolute; top: calc(100% + 15px); right: 0;   /* 1.5× the old 10px */
+      display: flex; flex-direction: column; align-items: flex-end; gap: 12px;
+      opacity: 0; pointer-events: none;
+      transform: translateY(-8px) scale(0.96); transform-origin: top center;
+      transition: opacity 0.28s var(--hover-ease), transform 0.28s var(--hover-ease);
+    }
+    /* Invisible bridge spanning the gap between the header button and the
+       flyout, so moving the cursor down onto the bubbles never drops hover. */
+    .ged-flyout::before {
+      content: ''; position: absolute; left: 0; right: 0; top: -17px; height: 18px;
+    }
+    /* Reveal while hovering the group (button or flyout), or when focus is within */
+    .ged-menu-group:hover .ged-flyout,
+    .ged-menu-group:focus-within .ged-flyout {
+      opacity: 1; pointer-events: auto; transform: translateY(0) scale(1);
+    }
+    /* Stagger each item in */
+    .ged-menu-group:hover .ged-fly-item:nth-child(1),
+    .ged-menu-group:focus-within .ged-fly-item:nth-child(1) { transition-delay: 0.02s; }
+    .ged-menu-group:hover .ged-fly-item:nth-child(2),
+    .ged-menu-group:focus-within .ged-fly-item:nth-child(2) { transition-delay: 0.07s; }
+    .ged-menu-group:hover .ged-fly-item:nth-child(3),
+    .ged-menu-group:focus-within .ged-fly-item:nth-child(3) { transition-delay: 0.12s; }
+
+    /* Each row: left-side label + the glass bubble */
+    .ged-fly-item {
+      display: flex; align-items: center; gap: 10px; justify-content: flex-end;
+      opacity: 0; transform: translateY(-6px) scale(0.9);
+      transition: opacity 0.28s var(--hover-ease), transform 0.28s var(--hover-ease);
+    }
+    .ged-menu-group:hover .ged-fly-item,
+    .ged-menu-group:focus-within .ged-fly-item { opacity: 1; transform: translateY(0) scale(1); }
+
+    /* Big bold label to the LEFT of the bubble (matches Figma 463-8189). */
+    .ged-fly-label {
+      font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800; letter-spacing: -0.02em;
+      white-space: nowrap; color: var(--text-primary); line-height: 1;
+      text-shadow: 0 2px 18px rgba(0,0,0,0.5);
+      opacity: 0; transform: translateX(14px);
+      transition: opacity 0.22s var(--ease), transform 0.22s var(--hover-ease);
+      pointer-events: none;
+    }
+    /* Label appears when hovering that specific bubble */
+    .ged-fly-item:hover .ged-fly-label { opacity: 1; transform: translateX(0); }
+
+    .ged-fly-btn {
+      width: 58px; height: 58px; border-radius: 50%; cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      /* glass bubble */
+      background: var(--glass-bg);
+      -webkit-backdrop-filter: blur(16px) saturate(1.6); backdrop-filter: blur(16px) saturate(1.6);
+      border: 1px solid rgba(255,42,0,0.35);
+      /* orange glow */
+      box-shadow:
+        0 0 0 1px rgba(255,42,0,0.12),
+        0 0 18px 2px rgba(255,42,0,0.35),
+        0 6px 18px rgba(0,0,0,0.2),
+        inset 0 1px 1px rgba(255,255,255,0.5);
+      transition: box-shadow 0.25s var(--ease), background 0.25s, transform 0.25s var(--hover-ease);
+    }
+    .ged-fly-btn:hover {
+      transform: translateY(-2px) scale(1.08);
+      box-shadow:
+        0 0 0 1px rgba(255,42,0,0.25),
+        0 0 28px 5px rgba(255,42,0,0.6),
+        0 8px 22px rgba(0,0,0,0.25),
+        inset 0 1px 2px rgba(255,255,255,0.6);
+    }
+    /* Light mode: bubbles read as solid orange (the white logos sit on top). */
+    [data-theme="light"] .ged-fly-btn {
+      background: var(--accent);
+      -webkit-backdrop-filter: none; backdrop-filter: none;
+      border-color: rgba(255,42,0,0.55);
+    }
+    [data-theme="light"] .ged-fly-btn:hover { background: var(--accent-hover); }
+    .ged-fly-btn img { width: 30px; height: 30px; object-fit: contain; display: block; pointer-events: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .ged-flyout, .ged-fly-item, .ged-fly-label { transition: opacity 0.15s linear; transform: none; }
+    }
+    /* Touch / coarse pointer: hover flyouts aren't usable — hide it (the button
+       itself still opens the overlay on tap). */
+    @media (hover: none), (pointer: coarse) { .ged-flyout { display: none; } }
 
     /* Reusable hover tooltip */
     .ged-tip { position: relative; }
@@ -611,7 +912,7 @@
     .ged-card h4 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px; letter-spacing: -0.01em; }
     .ged-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.5; margin: 0 0 14px; }
     .ged-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-    .ged-chip { font-size: 13px; font-weight: 600; color: #fff; background: #7d1f14; padding: 6px 13px; border-radius: 100px; }
+    .ged-chip { font-size: 13px; font-weight: 600; color: var(--accent); background: var(--accent-dim); border: 1px solid rgba(255,42,0,0.28); padding: 6px 13px; border-radius: 100px; }
     .ged-line { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #fff; background: #7d1f14; border-radius: 100px; padding: 8px 15px; text-decoration: none; margin: 0 8px 8px 0; transition: transform 0.2s, background 0.2s; }
     .ged-line:hover { background: #9a2619; transform: translateY(-1px); }
     .ged-line svg { width: 15px; height: 15px; }
@@ -873,6 +1174,37 @@
       .ged-cols { grid-template-columns: 1fr; }
       .ged-pc-grid { grid-template-columns: 1fr; }
     }
+
+    /* ═══ HOME-PAGE RESPONSIVE LADDER (tablet → phone) ═══
+       Fills the 601–900px tablet gap the old breakpoints skipped and tunes
+       the hero + profile card for small screens. */
+    @media (max-width: 900px) {
+      .hero { padding: 108px 32px 72px; }
+      /* Work mosaic: 2-up on tablet instead of 1-up-only-at-900. */
+      .case-card--wide, .case-card--tall, .case-card--half { grid-column: span 6; }
+      .case-card--third { grid-column: span 6; }
+      /* What-I-do / How-I-work two-col → tighter gap before they stack. */
+      .loop-wrap, .flow-wrap { gap: 32px; }
+      /* Small project promo row: 2-up on tablet. */
+      .wp-small-row { grid-template-columns: repeat(2, 1fr); }
+      /* Contact details: 2-up on tablet instead of staying 4-up. */
+      .contact-info { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 760px) {
+      .hero { padding: 100px 20px 64px; }
+      /* Stack the mosaic fully. */
+      .case-card--wide, .case-card--tall, .case-card--half, .case-card--third { grid-column: span 12; }
+      .wp-small-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .hero { padding: 96px 16px 56px; }
+      .pcard { width: 240px; height: 496px; }
+      .contact-info { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 400px) {
+      .pcard { width: 220px; }
+      .ql-btn { padding: 10px 14px 10px 12px; }
+    }
   </style>
 </head>
 <body>
@@ -888,7 +1220,36 @@
     <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
   </button>
-  <button class="ged-search-btn ged-tip" data-tip="Got questions?" id="gedSearchOpen" aria-label="Open menu"><span class="ged-btn-label" id="gedBtnLabel">Menu</span><span class="ged-btn-caret" aria-hidden="true"></span></button>
+  <div class="ged-menu-group" id="gedMenuGroup">
+    <button class="ged-search-btn ged-tip" data-tip="Got questions?" id="gedSearchOpen" aria-label="Open menu"><img class="ged-btn-logo" id="gedBtnLogo" src="assets/logo/Menu.png" alt="Menu" /></button>
+    <!-- Hover flyout: 3 glass bubble icon buttons that drop below the header -->
+    <div class="ged-flyout" id="gedFlyout" aria-hidden="true">
+      <div class="ged-fly-item">
+        <span class="ged-fly-label">Explore</span>
+        <button class="ged-fly-btn" data-action="explore" aria-label="Explore work">
+          <img src="assets/logo/Search.png" alt="" />
+        </button>
+      </div>
+      <div class="ged-fly-item">
+        <span class="ged-fly-label">Menu</span>
+        <button class="ged-fly-btn" data-action="menu" aria-label="Menu">
+          <img src="assets/logo/Menu.png" alt="" />
+        </button>
+      </div>
+      <div class="ged-fly-item">
+        <span class="ged-fly-label">Profile</span>
+        <button class="ged-fly-btn" data-action="profile" aria-label="Profile">
+          <img src="assets/logo/Profile.png" alt="" />
+        </button>
+      </div>
+      <div class="ged-fly-item">
+        <span class="ged-fly-label">Store</span>
+        <button class="ged-fly-btn" data-action="store" aria-label="Store">
+          <img src="assets/logo/Store.png" alt="" />
+        </button>
+      </div>
+    </div>
+  </div>
 </header>
 
 <!-- SEARCH / NAV OVERLAY -->
@@ -915,6 +1276,7 @@
         <button class="ged-nav-item" data-view="work">Work</button>
         <button class="ged-nav-item" data-view="about">About</button>
         <button class="ged-nav-item" data-view="blog">Blog</button>
+        <button class="ged-nav-item" data-view="store">Store</button>
         <button class="ged-nav-item" data-view="contact">Contact</button>
       </nav>
       <div class="ged-content" id="gedContent"><!-- rendered by JS --></div>
@@ -928,7 +1290,7 @@
   <div class="blob blob-2"></div>
   <div class="eyebrow-pill reveal">Hi, I'm Gaurav</div>
   <h1 class="hero-title reveal reveal-delay-1">I'm a creative who <em class="rotator" id="heroRotator" aria-live="polite">Researches</em></h1>
-  <p class="hero-sub reveal reveal-delay-2">I create the future of user experiences for <strong style="color:var(--accent);font-weight:700;">digital and physical products</strong>. I just want the things I build to get out of people's way — turning messy, complicated systems into things people can trust without thinking twice.</p>
+  <p class="hero-sub reveal reveal-delay-2">I create <strong>UX</strong> for <strong>services</strong> through <strong>interfaces</strong> and Interaction.<br>User <strong>environment</strong> is not limited to the interfaces.<br>The <strong>medium</strong> of interaction changes, <strong>experience</strong> remains <strong>personal</strong>.</p>
 
   <!-- QUICK LINKS — glass fluidic nav buttons (replaces the stats box) -->
   <div class="ql-nav reveal reveal-delay-4" role="navigation" aria-label="Quick links">
@@ -944,24 +1306,57 @@
     </span>
     <span class="ql-label">About</span>
   </a>
-  <a class="ql-btn glass" href="assets/Gaurav_Dalbhanjan_Resume_CreativeDesigner.pdf" target="_blank" rel="noopener noreferrer">
-    <span class="ql-ico" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6"/></svg>
-    </span>
-    <span class="ql-label">Resume</span>
-  </a>
-  <a class="ql-btn glass" href="https://www.linkedin.com/in/gaurav-dalbhanjan/" target="_blank" rel="noopener noreferrer">
-    <span class="ql-ico" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
-    </span>
-    <span class="ql-label">LinkedIn</span>
-  </a>
   <a class="ql-btn glass" href="https://mail.google.com/mail/?view=cm&fs=1&to=gaurav.dalbhanjan@gmail.com&su=Let's%20talk" target="_blank" rel="noopener noreferrer">
     <span class="ql-ico" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
     </span>
     <span class="ql-label">Email</span>
   </a>
+  </div>
+
+  <!-- PROFILE FLIP CARD (Figma 463-8227 front / 463-7561 back) -->
+  <div class="pcard reveal reveal-delay-3" id="profileCard" aria-label="Profile card">
+    <div class="pcard-inner" id="pcardInner">
+
+      <!-- FRONT -->
+      <div class="pcard-face pcard-front">
+        <div class="pcard-photo">
+          <div class="pcard-slide" id="pcardSlide">
+            <img src="assets/logo/Badge image 1.png" alt="Gaurav Dalbhanjan" />
+            <img src="assets/logo/Badge image 2.png" alt="GD badge" />
+          </div>
+          <span class="pcard-lens" aria-hidden="true"></span>
+        </div>
+        <div class="pcard-status"><span>Open to work</span><span class="led-dot" aria-hidden="true"></span></div>
+        <div class="pcard-infopill">PROFILE INFO</div>
+        <div class="pcard-name">Gaurav</div>
+        <div class="pcard-surname">Dalbhanjan</div>
+        <div class="pcard-tags">Vision | UX/UI | AI | Ship</div>
+        <div class="pcard-meta">Ex-Amazon, Ex-BMW &amp; Startups</div>
+        <div class="pcard-meta">Seattle, WA, USA</div>
+        <button class="pcard-stat-btn" id="pcardFlip" type="button" aria-label="Show statistics">
+          <span>Statistics</span>
+          <span class="pcard-stat-plus">+</span>
+        </button>
+      </div>
+
+      <!-- BACK -->
+      <div class="pcard-face pcard-back">
+        <div class="pcard-photo pcard-photo--badge">
+          <img src="assets/logo/Badge image 2.png" alt="GD badge" />
+        </div>
+        <div class="pcard-status"><span>Open to work</span><span class="led-dot" aria-hidden="true"></span></div>
+        <div class="pcard-skills" id="pcardSkills">
+          <div class="pcard-skills-head"><span>SKILL</span><span>EXPERIENCE</span></div>
+          <!-- rows injected by JS (duration computed from start dates) -->
+        </div>
+        <button class="pcard-stat-btn pcard-back-btn" id="pcardFlipBack" type="button" aria-label="Back to profile">
+          <span>Back</span>
+          <span class="pcard-stat-plus">&times;</span>
+        </button>
+      </div>
+
+    </div>
   </div>
 </section>
 
@@ -1385,6 +1780,125 @@
       }, 200);
     }, 1000);
   })();
+
+  /* ══ Profile flip card ════════════════════════════════════════
+     - Statistics button flips to the skills side; Back flips home.
+     - Portrait cross-fades between the two badge images.
+     - Skill "experience" = live years/months/days from each start date. */
+  (function () {
+    var card = document.getElementById('profileCard');
+    if (!card) return;
+    var flipBtn = document.getElementById('pcardFlip');
+    var backBtn = document.getElementById('pcardFlipBack');
+    if (flipBtn) flipBtn.addEventListener('click', function () { card.classList.add('flipped'); });
+    if (backBtn) backBtn.addEventListener('click', function () { card.classList.remove('flipped'); });
+
+    var reduceMo = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ── Intro flip: once, ~3s after load ────────────────────────────────
+       Simply flip to the back, hold 2s, flip to the front. Normal flip and
+       pointer-tilt behaviour resumes afterwards. Skipped for reduced motion. */
+    if (!reduceMo) {
+      setTimeout(function () {
+        if (card.classList.contains('flipped')) return; // user already flipped
+        card.classList.add('flipped');          // show the BACK view
+        setTimeout(function () {
+          card.classList.remove('flipped');     // flip back to FRONT
+        }, 2000);
+      }, 3000);
+    }
+
+    /* Swipe the front portrait between the two badge images: the slide track
+       holds both side-by-side and we translate between 0 and -50%. */
+    var slide = document.getElementById('pcardSlide');
+    if (slide && !reduceMo) {
+      var at = 0;
+      setInterval(function () {
+        at = at === 0 ? -50 : 0;
+        slide.style.transform = 'translateX(' + at + '%)';
+      }, 4000);
+    }
+
+    /* Floaty tilt: the card rotates slightly toward the mouse pointer. The
+       pointer is tracked across the ENTIRE viewport (listener on window, not
+       the hero) so the card keeps facing the cursor even at the extreme left
+       or right edges. Tilt is applied only while the card is on screen. */
+    var inner = document.getElementById('pcardInner');
+    if (inner && !reduceMo && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      var rafT = null, tx = 0, ty = 0;
+      function cardVisible() {
+        var r = card.getBoundingClientRect();
+        return r.bottom > 0 && r.top < window.innerHeight;
+      }
+      function onMove(e) {
+        if (!cardVisible()) {
+          if (card.classList.contains('tilting')) {
+            card.classList.remove('tilting'); inner.style.transform = '';
+          }
+          return;
+        }
+        if (!card.classList.contains('tilting')) card.classList.add('tilting');
+        var r = card.getBoundingClientRect();
+        var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        // normalized -1..1 offset from card centre (clamped)
+        var nx = Math.max(-1, Math.min(1, (e.clientX - cx) / (window.innerWidth * 0.5)));
+        var ny = Math.max(-1, Math.min(1, (e.clientY - cy) / (window.innerHeight * 0.5)));
+        ty = nx * 14.4;   // rotateY toward pointer (deg) — +20% again
+        tx = -ny * 11.52; // rotateX toward pointer (deg) — +20% again
+        if (!rafT) rafT = requestAnimationFrame(apply);
+      }
+      function apply() {
+        rafT = null;
+        if (card.classList.contains('flipped')) return;  // don't fight the flip
+        inner.style.transform = 'rotateX(' + tx.toFixed(2) + 'deg) rotateY(' + ty.toFixed(2) + 'deg) translateZ(6px)';
+      }
+      window.addEventListener('mousemove', onMove, { passive: true });
+      // resume the idle float when the pointer leaves the document entirely
+      document.addEventListener('mouseleave', function () {
+        card.classList.remove('tilting');
+        inner.style.transform = '';
+      });
+    }
+
+    /* Compute experience duration (years/months/days) from a start date.
+       Skills are sorted by start date (oldest first) so the list reads in
+       DESCENDING order of experience period — longest tenure at the top. */
+    var SKILLS = [
+      { name: 'Problem-Solving',     since: '2004-12-01' },
+      { name: 'User Research',       since: '2017-10-22' },
+      { name: 'AI Practitioner',     since: '2023-02-21' },
+      { name: 'Product Vision',      since: '2018-10-22' },
+      { name: 'Tech Adaptability',   since: '2011-09-11' },
+      { name: 'Business Strategy',   since: '2019-05-23' },
+      { name: 'Cross-collaboration', since: '2018-10-22' },
+      { name: 'DFM & Prototyping',   since: '2010-05-22' },
+      { name: 'Brand Design',        since: '2011-09-11' }
+    ].sort(function (a, b) { return new Date(a.since) - new Date(b.since); });
+    function durationFrom(iso) {
+      var s = new Date(iso + 'T00:00:00');
+      var n = new Date();
+      var y = n.getFullYear() - s.getFullYear();
+      var m = n.getMonth() - s.getMonth();
+      var d = n.getDate() - s.getDate();
+      if (d < 0) { m -= 1; var prev = new Date(n.getFullYear(), n.getMonth(), 0).getDate(); d += prev; }
+      if (m < 0) { y -= 1; m += 12; }
+      var parts = [];
+      if (y > 0) parts.push(y + 'y');
+      if (m > 0) parts.push(m + 'm');
+      parts.push(d + 'd');
+      return parts.join(' ');
+    }
+    var wrap = document.getElementById('pcardSkills');
+    if (wrap) {
+      var html = '';
+      SKILLS.forEach(function (sk) {
+        html += '<div class="pcard-skill-row"><span class="sk">' + sk.name + '</span>' +
+                '<span class="dur">' + durationFrom(sk.since) + '</span></div>';
+      });
+      // append after the head row
+      wrap.insertAdjacentHTML('beforeend', html);
+    }
+  })();
 </script>
 
 <!-- Search dataset + query engine -->
@@ -1401,14 +1915,24 @@
     var PROJECTS = [
       {
         href: 'home/opex-allocation.html', img: 'images/budget-planner2.gif',
-        title: 'From chasing data across tabs to making decisions faster',
+        title: 'OPEX Allocation Tool - Reviewing resources',
+        desc: 'From chasing data across tabs to making decisions faster.',
         cats: ['Saas', 'Product', 'FinTech'],
         chips: ['\u26A1 94% faster', '\u26A1 9.7 hrs to 33 min review time'],
         filters: ['fintech', 'enterprise', 'dashboard', 'product', 'endtoend']
       },
       {
+        href: 'home/alexa-virtual-assistant.html',
+        img: 'assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/humorphism%20icon%207.gif',
+        title: 'Alexa as a Customer Assistant',
+        desc: 'A tiered voice assistant: a phone call, then a screen, then the room itself.',
+        cats: ['Service Design', 'Voice UX', 'Industrial Design'],
+        chips: ['\uD83C\uDF0D 3.1B reachable users', '\u260E\uFE0F Works on any phone', '\uD83E\uDDE9 3-tier model'],
+        filters: ['product', 'industrial', 'endtoend', 'concept']
+      },
+      {
         href: 'home/sous-chef-device.html', img: 'images/chef1.gif',
-        title: 'Sous Chef — a countertop companion that builds cooking confidence',
+        title: 'AI Sous Chef Assistant',
         cats: ['UI and User Experience', 'Product', 'Industrial Design'],
         chips: ['\uD83D\uDCAA 72% higher user confidence', '\u26A1 Eliminated 5x frictions'],
         filters: ['product', 'industrial', 'endtoend']
@@ -1430,7 +1954,8 @@
       },
       {
         href: 'home/executive-metrics.html', img: 'assets/thumbnails/opening-thumbnail-dashboard.gif',
-        title: 'Executive Product Metrics Dashboard',
+        title: 'Service Track Tool',
+        desc: 'Monitor, Manage, Maintain and Support every product user.',
         cats: ['UI', 'Dashboard', 'Enterprise'],
         chips: ['\u26A1 1 month reporting \u2192 2s live view'],
         filters: ['dashboard', 'enterprise', 'product']
@@ -1472,6 +1997,7 @@
         '<div class="wp-body"><div class="wp-head">' +
         '<div class="wp-title">' + esc(p.title) + '</div>' +
         '<div class="wp-cats">' + (p.cats || []).map(esc).join(' \u00b7 ') + '</div></div>' +
+        (p.desc ? '<div class="wp-desc">' + esc(p.desc) + '</div>' : '') +
         (chips ? '<div class="wp-results">' + chips + '</div>' : '') +
         '</div></a>';
     }
@@ -1828,7 +2354,24 @@
         '</div>';
     }
 
-    var RENDER = { work: renderWork, about: renderAbout, blog: renderBlog, contact: renderContact };
+    var RENDER = { work: renderWork, about: renderAbout, blog: renderBlog, store: renderStore, contact: renderContact };
+
+    function renderStore() {
+      return '<div class="ged-view-label">Store &mdash; <em>Free tools built on the side.</em></div>' +
+        '<a class="ged-res-link" href="home/store.html" style="display:block;text-decoration:none;max-width:452px;">' +
+          '<div class="ged-card" style="display:flex;gap:16px;align-items:flex-start;cursor:pointer;">' +
+            '<div style="width:52px;height:52px;flex-shrink:0;border-radius:12px;background:#180a08;border:1px solid rgba(255,42,0,.35);display:flex;align-items:center;justify-content:center;overflow:hidden;">' +
+              '<svg viewBox="0 0 80 80" width="40" height="40" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="80" rx="18" fill="#180a08"/><circle cx="32" cy="32" r="15" fill="none" stroke="#ff2a00" stroke-width="5.5"/><line x1="43" y1="43" x2="59" y2="59" stroke="#ff2a00" stroke-width="5.5" stroke-linecap="round"/></svg>' +
+            '</div>' +
+            '<div style="flex:1;min-width:0;">' +
+              '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:4px;">Chrome Extension &middot; Free</div>' +
+              '<h4 style="margin:0 0 6px;font-size:var(--fs-primary);font-weight:700;color:var(--text-primary);">CHASHMA</h4>' +
+              '<p style="margin:0;font-size:var(--fs-secondary);color:var(--text-secondary);line-height:1.55;">Keyboard shortcut that magnifies the search &mdash; so you always know exactly where you are. Press <strong>Ctrl+Shift+S</strong> on any page.</p>' +
+              '<div style="margin-top:10px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--accent);">View &amp; Download <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>' +
+            '</div>' +
+          '</div>' +
+        '</a>';
+    }
 
     function setView(view, records) {
       currentView = view;
@@ -1966,31 +2509,56 @@
 
     openBtn.addEventListener('click', function () { open('work'); });
 
-    /* Menu button label cycle: types Chat → Search → Menu with a caret, holds
-       5s, backspaces, retypes; a shine sweeps 2s after each label lands. */
+    /* Hover-flyout bubble buttons:
+       Explore → fast-scroll to the Selected Work section on the home page.
+       Profile → go to the About page.
+       Menu    → open the menu overlay. */
+    var flyout = document.getElementById('gedFlyout');
+    if (flyout) {
+      flyout.addEventListener('click', function (e) {
+        var b = e.target.closest('.ged-fly-btn');
+        if (!b) return;
+        var action = b.getAttribute('data-action');
+        if (action === 'explore') {
+          var work = document.getElementById('work');
+          if (work) {
+            var s = window.GED && window.GED.scroll;
+            if (s && s.glideTo) s.glideTo(work.getBoundingClientRect().top + window.scrollY - 70);
+            else work.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        } else if (action === 'profile') {
+          window.location.href = 'home/about.html';
+        } else if (action === 'store') {
+          window.location.href = 'home/store.html';
+        } else {
+          open('work');
+        }
+      });
+    }
+
+    /* Header button logo cycle: cross-fades Menu → Search → Chat logos every
+       ~2.6s with a shine sweep, so the button shows the actual icons. */
     (function () {
-      var labelEl = document.getElementById('gedBtnLabel');
-      if (!labelEl || reduceMotion) return;
-      if (openBtn.dataset.labelCycle) return;   // don't double-run (shared search-menu.js also has this)
-      openBtn.dataset.labelCycle = '1';
-      var labels = ['Chat', 'Search', 'Menu'];
-      var li = 0, timers = [];
-      function later(fn, ms) { var t = setTimeout(fn, ms); timers.push(t); return t; }
-      function shine() { openBtn.classList.remove('ged-shine'); void openBtn.offsetWidth; openBtn.classList.add('ged-shine'); }
-      function type(text, pos) {
-        openBtn.classList.remove('ged-shine');
-        if (pos > text.length) { later(shine, 2000); later(function () { erase(text, text.length); }, 5000); return; }
-        labelEl.textContent = text.slice(0, pos);
-        later(function () { type(text, pos + 1); }, 90);
-      }
-      function erase(text, pos) {
-        openBtn.classList.remove('ged-shine');
-        if (pos < 0) { li = (li + 1) % labels.length; later(function () { type(labels[li], 0); }, 220); return; }
-        labelEl.textContent = text.slice(0, pos);
-        later(function () { erase(text, pos - 1); }, 45);
-      }
-      labelEl.textContent = '';
-      later(function () { type(labels[li], 0); }, 400);
+      var logoEl = document.getElementById('gedBtnLogo');
+      if (!logoEl) return;
+      if (openBtn.dataset.logoCycle) return;    // don't double-run
+      openBtn.dataset.logoCycle = '1';
+      var logos = [
+        { src: 'assets/logo/Menu.png',   alt: 'Menu' },
+        { src: 'assets/logo/Search.png', alt: 'Search' },
+        { src: 'assets/logo/Chat.png',   alt: 'Chat' }
+      ];
+      if (reduceMotion) return;                 // keep a static logo under reduced motion
+      var i = 0;
+      setInterval(function () {
+        logoEl.classList.add('ged-logo-swap');  // dissolve out (opacity only)
+        setTimeout(function () {
+          i = (i + 1) % logos.length;
+          logoEl.src = logos[i].src; logoEl.alt = logos[i].alt;
+          logoEl.classList.remove('ged-logo-swap'); // dissolve back in
+          openBtn.classList.remove('ged-shine'); void openBtn.offsetWidth; openBtn.classList.add('ged-shine');
+        }, 450);
+      }, 2600);
     })();
 
     closeBtn.addEventListener('click', close);
@@ -2062,6 +2630,7 @@
     if (!ghosts.length) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     var MIN = 0.55, MAX = 1.15;
+    var BASE = 0.04;             // the resting opacity of a ghost word
     var ticking = false;
     function update() {
       ticking = false;
@@ -2073,6 +2642,22 @@
         var p = (vh - r.top) / (vh + r.height);
         p = Math.max(0, Math.min(1, p));
         g.style.setProperty('--ghost-scale', (MIN + (MAX - MIN) * p).toFixed(3));
+
+        /* Opacity ramp keyed to the GHOST WORD's own centre vs the middle of
+           the viewport. The label is fully visible while below the midline and
+           starts fading the moment it crosses mid-viewport on the way up,
+           reaching zero by the time it leaves the top. */
+        var gr = g.getBoundingClientRect();
+        var gCenter = gr.top + gr.height / 2;
+        var mid = vh * 0.5;
+        var k;
+        if (gCenter >= mid) {
+          k = 1;                                   // at or below the midline → full
+        } else {
+          // above the midline → fade linearly to 0 as it reaches the top edge
+          k = Math.max(0, gCenter / mid);
+        }
+        g.style.opacity = (BASE * k).toFixed(4);
       });
     }
     window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });

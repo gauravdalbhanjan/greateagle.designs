@@ -36,5 +36,18 @@ _*.js
 .DS_Store
 Thumbs.db
 
-# PII — never publish (content already distilled into search-data.js)
+# PII ï¿½ never publish (content already distilled into search-data.js)
 assets/LinkedIn-data.csv
+
+# Alexa concept â€” keep source docs + unused/heavy working images out of the
+# repo. Only the images actually used by the case study are committed.
+assets/Concept_Alexa_Virtual-Cloud-Assistant/*.docx
+assets/Concept_Alexa_Virtual-Cloud-Assistant/*.pptx
+assets/Concept_Alexa_Virtual-Cloud-Assistant/*.pdf
+assets/Concept_Alexa_Virtual-Cloud-Assistant/Images and context/dont use*
+assets/Concept_Alexa_Virtual-Cloud-Assistant/Images and context/*.jfif
+assets/Concept_Alexa_Virtual-Cloud-Assistant/Images and context/2_mode of connections binary color led screens.jpg
+assets/Concept_Alexa_Virtual-Cloud-Assistant/Images and context/9_keypad design and alphabets arrangement makes calling gesture more natural.jpg
+assets/Concept_Alexa_Virtual-Cloud-Assistant/Images and context/5_alexa as an on-line voice assistant.jpg
+assets/Concept_Alexa_Virtual-Cloud-Assistant/Images and context/Mood boarding for Alexa BEE lamp - beyondaryless edgeless experience.png
+assets/Concept_Alexa_Virtual-Cloud-Assistant/Images and context/Modes of connection*

@@ -6,7 +6,7 @@
 /* ─── Sticky glass header pill (top-right) ─────────────────────── */
 .ged-header {
   position: fixed; top: 16px; right: 24px; left: auto; z-index: 200;
-  height: 52px; border-radius: 100px; padding: 6px 6px 6px 8px;
+  height: 52px; border-radius: 100px; padding: 5px 6px 5px 8px;
   display: flex; align-items: center; gap: 8px;
 }
 .ged-logo-bubble {
@@ -23,10 +23,10 @@
 .ged-search-btn {
   position: relative; overflow: hidden;
   background: var(--accent); color: #fff; border: 0; cursor: pointer;
-  font-size: 14px; font-weight: 600; padding: 9px 24px; border-radius: 100px;
+  font-size: 14px; font-weight: 600; padding: 8px; border-radius: 100px;
   box-shadow: 0 4px 18px rgba(255,42,0,0.35); transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
   display: inline-flex; align-items: center; justify-content: center;
-  min-width: 92px;                 /* stable width across Chat / Search / Menu */
+  min-width: 52px;                 /* compact — shows a logo, 8px padding all round */
 }
 .ged-search-btn:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 8px 26px rgba(255,42,0,0.45); }
 /* Blinking typing caret next to the label */
@@ -53,6 +53,92 @@
   .ged-btn-caret { animation: none; opacity: 0; }
   .ged-search-btn.ged-shine::after { animation: none; }
 }
+
+/* Header button logo (replaces the typed label). Sized so the pill keeps
+   clear padding above and below it inside the 52px header. */
+/* Pixel-dissolve: as one icon leaves, it fades while its bitmap is scaled up
+   with pixelated rendering so it visibly breaks into chunky pixels; the next
+   icon reverses the motion. Feels like a continuous pixel dissolve. */
+.ged-btn-logo {
+  width: 26px; height: 26px; object-fit: contain; display: block;
+  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease), filter 0.4s var(--ease);
+  will-change: opacity, transform, filter;
+}
+.ged-btn-logo.ged-logo-swap {
+  opacity: 0; transform: scale(1.55);
+  image-rendering: pixelated; image-rendering: crisp-edges;
+  filter: contrast(1.4) saturate(1.2);
+}
+
+/* ── Hover flyout: 3 glass bubble icon buttons below the header ── */
+.ged-menu-group { position: relative; }
+.ged-flyout {
+  position: absolute; top: calc(100% + 15px); right: 0;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 12px;
+  opacity: 0; pointer-events: none;
+  transform: translateY(-8px) scale(0.96); transform-origin: top center;
+  transition: opacity 0.28s var(--hover-ease), transform 0.28s var(--hover-ease);
+}
+.ged-flyout::before { content: ''; position: absolute; left: 0; right: 0; top: -17px; height: 18px; }
+.ged-menu-group:hover .ged-flyout,
+.ged-menu-group:focus-within .ged-flyout {
+  opacity: 1; pointer-events: auto; transform: translateY(0) scale(1);
+}
+.ged-menu-group:hover .ged-fly-item:nth-child(1),
+.ged-menu-group:focus-within .ged-fly-item:nth-child(1) { transition-delay: 0.02s; }
+.ged-menu-group:hover .ged-fly-item:nth-child(2),
+.ged-menu-group:focus-within .ged-fly-item:nth-child(2) { transition-delay: 0.07s; }
+.ged-menu-group:hover .ged-fly-item:nth-child(3),
+.ged-menu-group:focus-within .ged-fly-item:nth-child(3) { transition-delay: 0.12s; }
+.ged-fly-item {
+  display: flex; align-items: center; gap: 10px; justify-content: flex-end;
+  opacity: 0; transform: translateY(-6px) scale(0.9);
+  transition: opacity 0.28s var(--hover-ease), transform 0.28s var(--hover-ease);
+}
+.ged-menu-group:hover .ged-fly-item,
+.ged-menu-group:focus-within .ged-fly-item { opacity: 1; transform: translateY(0) scale(1); }
+.ged-fly-label {
+  font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800; letter-spacing: -0.02em;
+  white-space: nowrap; color: var(--text-primary); line-height: 1;
+  text-shadow: 0 2px 18px rgba(0,0,0,0.5);
+  opacity: 0; transform: translateX(14px);
+  transition: opacity 0.22s var(--ease), transform 0.22s var(--hover-ease);
+  pointer-events: none;
+}
+.ged-fly-item:hover .ged-fly-label { opacity: 1; transform: translateX(0); }
+.ged-fly-btn {
+  width: 58px; height: 58px; border-radius: 50%; cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6); backdrop-filter: blur(16px) saturate(1.6);
+  border: 1px solid rgba(255,42,0,0.35);
+  box-shadow:
+    0 0 0 1px rgba(255,42,0,0.12),
+    0 0 18px 2px rgba(255,42,0,0.35),
+    0 6px 18px rgba(0,0,0,0.2),
+    inset 0 1px 1px rgba(255,255,255,0.5);
+  transition: box-shadow 0.25s var(--ease), background 0.25s, transform 0.25s var(--hover-ease);
+}
+.ged-fly-btn:hover {
+  transform: translateY(-2px) scale(1.08);
+  box-shadow:
+    0 0 0 1px rgba(255,42,0,0.25),
+    0 0 28px 5px rgba(255,42,0,0.6),
+    0 8px 22px rgba(0,0,0,0.25),
+    inset 0 1px 2px rgba(255,255,255,0.6);
+}
+/* Light mode: bubbles read as solid orange (the white logos sit on top). */
+[data-theme="light"] .ged-fly-btn {
+  background: var(--accent);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  border-color: rgba(255,42,0,0.55);
+}
+[data-theme="light"] .ged-fly-btn:hover { background: var(--accent-hover); }
+.ged-fly-btn img { width: 30px; height: 30px; object-fit: contain; display: block; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) {
+  .ged-flyout, .ged-fly-item, .ged-fly-label { transition: opacity 0.15s linear; transform: none; }
+}
+@media (hover: none), (pointer: coarse) { .ged-flyout { display: none; } }
 
 /* Reusable hover tooltip */
 .ged-tip { position: relative; }
@@ -226,7 +312,10 @@ body.ged-lock { position: fixed; left: 0; right: 0; width: 100%; overflow: hidde
 /* Result content */
 .ged-view-label { font-size: 14px; color: var(--text-tertiary); margin: 0 0 16px; }
 .ged-view-label em { color: var(--text-secondary); }
-.ged-cols { display: grid; grid-template-columns: 452px 452px; gap: 24px; align-items: start; justify-content: start; }
+.ged-cols { display: grid; grid-template-columns: minmax(0, 452px) minmax(0, 452px); gap: 24px; align-items: start; justify-content: start; }
+/* Below the point where two 452px columns + gap (~928px) stop fitting the
+   expanded panel, let the columns go fluid so nothing overflows on tablet. */
+@media (max-width: 1040px) { .ged-cols { grid-template-columns: minmax(0,1fr) minmax(0,1fr); } }
 .ged-col { display: flex; flex-direction: column; gap: 16px; }
 .ged-heading { font-size: 15px; font-weight: 400; color: var(--text-tertiary); margin: 0 0 4px; }
 .ged-card {
@@ -239,7 +328,7 @@ a.ged-card:hover { transform: translateY(-3px); box-shadow: var(--hover-glow); b
 .ged-card h4 { font-size: 16px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px; letter-spacing: -0.01em; }
 .ged-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.5; margin: 0 0 14px; }
 .ged-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.ged-chip { font-size: 13px; font-weight: 600; color: #fff; background: #7d1f14; padding: 6px 13px; border-radius: 100px; }
+.ged-chip { font-size: 13px; font-weight: 600; color: var(--accent); background: var(--accent-dim); border: 1px solid rgba(255,42,0,0.28); padding: 6px 13px; border-radius: 100px; }
 .ged-line { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #fff; background: #7d1f14; border-radius: 100px; padding: 8px 15px; text-decoration: none; margin: 0 8px 8px 0; transition: transform 0.2s, background 0.2s; }
 .ged-line:hover { background: #9a2619; transform: translateY(-1px); }
 .ged-line svg { width: 15px; height: 15px; }
