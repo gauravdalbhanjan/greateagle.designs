@@ -121,8 +121,9 @@
     [data-theme="light"] .pcard-skill-row .dur { color: #8a8a8a; }
     /* Buttons + pill stay orange-accented on the white card. */
     [data-theme="light"] .pcard-stat-btn { color: #111; background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12); }
-    [data-theme="light"] .pcard-photo { background: #f1efec; }
-    [data-theme="light"] .pcard-photo--badge { background: #f1efec; }
+    /* Keep the circular photo well BLACK in light mode (the badge art reads on dark). */
+    [data-theme="light"] .pcard-photo { background: #140806; }
+    [data-theme="light"] .pcard-photo--badge { background: #140806; }
 
     /* circular portrait with a sliding image track + glass lens dome */
     .pcard-photo {
@@ -1778,7 +1779,7 @@
         el.textContent = words[i];
         el.classList.remove('swap');
       }, 200);
-    }, 1000);
+    }, 2000);
   })();
 
   /* ══ Profile flip card ════════════════════════════════════════
