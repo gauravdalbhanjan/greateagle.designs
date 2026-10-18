@@ -138,7 +138,7 @@
   function richProjectCard(r) {
     var href = r.href ? fixHref(r.href) : '';
     var tag = href ? 'a' : 'div', h = href ? ' href="' + href + '"' : '';
-    var img = r.img ? '<div class="ged-pc-media"><img src="' + fixHref(r.img) + '" alt="" loading="lazy" /></div>' : '';
+    var img = r.img ? '<div class="ged-pc-media"><img src="' + fixHref(r.img) + '" alt="" decoding="async" /></div>' : '';
     var cats = (r.cats && r.cats.length) ? '<div class="ged-pc-cats">' + esc(r.cats.join(' \u00b7 ')) + '</div>' : '';
     var summary = r.desc ? '<p class="ged-pc-summary">' + esc(r.desc) + '</p>' : '';
     var metric = r.metric ? '<div class="ged-pc-metric">' + esc(r.metric) + '</div>' : '';
