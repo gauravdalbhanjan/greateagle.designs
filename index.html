@@ -64,6 +64,57 @@
       50%      { transform: translateY(-12px) rotateZ(0.48deg); }
     }
     .pcard.tilting .pcard-inner { animation: none; transition: transform 0.18s ease-out; } /* JS tilt takes over on hover */
+    /* During a finger-fling the physics loop drives transform every frame, so
+       kill the transition to avoid smearing/lag. */
+    .pcard.spinning .pcard-inner { animation: none !important; transition: none !important; }
+
+    /* ═══ "Swipe me" arrow burst — a quick video-game cue fired when the badge
+       hits the centre of the viewport while scrolling (touch only). Four bright
+       orange glowing arrows shoot from the badge centre to the four edges and
+       fade. Pure CSS animation; JS adds .pcard-burst-go for one shot. ═══ */
+    .pcard-burst {
+      position: fixed; left: 50%; top: 50%; width: 0; height: 0;
+      z-index: 240; pointer-events: none; opacity: 0;
+    }
+    .pcard-burst .pb-arrow {
+      position: absolute; left: 0; top: 0; width: 168px; height: 168px; margin: -84px;
+      opacity: 0; will-change: transform, opacity;
+      filter: drop-shadow(0 0 12px rgba(255,90,0,0.95)) drop-shadow(0 0 28px rgba(255,42,0,0.75));
+    }
+    .pcard-burst .pb-arrow svg { width: 100%; height: 100%; display: block; }
+    /* four directions, each rotated to point outward */
+    .pcard-burst .pb-up    { transform: rotate(-90deg); }
+    .pcard-burst .pb-down  { transform: rotate(90deg); }
+    .pcard-burst .pb-left  { transform: rotate(180deg); }
+    .pcard-burst .pb-right { transform: rotate(0deg); }
+    .pcard-burst.pcard-burst-go { animation: pbFlash 3.04s ease-out forwards; }
+    .pcard-burst.pcard-burst-go .pb-up    { animation: pbUp    2.76s cubic-bezier(0.2,0.7,0.3,1) forwards; }
+    .pcard-burst.pcard-burst-go .pb-down  { animation: pbDown  2.76s cubic-bezier(0.2,0.7,0.3,1) forwards; }
+    .pcard-burst.pcard-burst-go .pb-left  { animation: pbLeft  2.76s cubic-bezier(0.2,0.7,0.3,1) forwards; }
+    .pcard-burst.pcard-burst-go .pb-right { animation: pbRight 2.76s cubic-bezier(0.2,0.7,0.3,1) forwards; }
+    @keyframes pbFlash { 0% { opacity: 1; } 100% { opacity: 1; } }
+    /* travel to just past each edge (50vw/50vh out), scaling up then fading */
+    @keyframes pbUp {
+      0%   { opacity: 0; transform: rotate(-90deg) translateX(10px)   scale(0.5); }
+      25%  { opacity: 1; transform: rotate(-90deg) translateX(10px)   scale(1.15); }
+      100% { opacity: 0; transform: rotate(-90deg) translateX(58vh)   scale(0.8); }
+    }
+    @keyframes pbDown {
+      0%   { opacity: 0; transform: rotate(90deg)  translateX(10px)   scale(0.5); }
+      25%  { opacity: 1; transform: rotate(90deg)  translateX(10px)   scale(1.15); }
+      100% { opacity: 0; transform: rotate(90deg)  translateX(58vh)   scale(0.8); }
+    }
+    @keyframes pbLeft {
+      0%   { opacity: 0; transform: rotate(180deg) translateX(10px)   scale(0.5); }
+      25%  { opacity: 1; transform: rotate(180deg) translateX(10px)   scale(1.15); }
+      100% { opacity: 0; transform: rotate(180deg) translateX(58vw)   scale(0.8); }
+    }
+    @keyframes pbRight {
+      0%   { opacity: 0; transform: rotate(0deg)   translateX(10px)   scale(0.5); }
+      25%  { opacity: 1; transform: rotate(0deg)   translateX(10px)   scale(1.15); }
+      100% { opacity: 0; transform: rotate(0deg)   translateX(58vw)   scale(0.8); }
+    }
+    @media (prefers-reduced-motion: reduce) { .pcard-burst { display: none; } }
     .pcard.flipped .pcard-inner { transform: rotateY(180deg) !important; animation: none; }
     .pcard-face {
       position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
@@ -148,6 +199,10 @@
        and a crisp glass edge — like looking through a magnifying lens. */
     .pcard-lens {
       position: absolute; inset: 0; border-radius: 50%; pointer-events: none; z-index: 2;
+      /* The lens belongs to the FRONT face only. Cull it when the card is
+         turned away (e.g. during the touch finger-fling) so it never bleeds
+         through / misplaces over the back's GD badge. */
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
       background:
         /* top-left specular hotspot (the -45° light at 80%) */
         radial-gradient(42% 32% at 30% 20%, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.18) 40%, rgba(255,255,255,0) 62%),
@@ -160,6 +215,8 @@
         inset 0 -10px 20px rgba(0,0,0,0.42),
         inset 0 0 0 1px rgba(255,255,255,0.18);
     }
+    /* When the card is flipped to the back, hide the front lens outright. */
+    .pcard.flipped .pcard-lens { opacity: 0; }
     .pcard-photo--badge { width: 104px; height: 104px; margin: 0 0 8px; background: #140806; }
     .pcard-photo--badge img { width: 100%; height: 100%; object-fit: cover; display: block; }
     /* Back face sits a touch tighter so the taller skills table + Back button
@@ -273,7 +330,11 @@
     .work-filter-bar {
       display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap;
       background: var(--bg-secondary); border: 1px solid var(--border);
-      border-radius: 100px; padding: 6px; margin-bottom: 40px;
+      /* Rounded-rect (not a full 100px pill): when the filters wrap to a second
+         row the big pill radius curves inward and the corner labels poke
+         outside the border — a moderate radius keeps every label inside. */
+      border-radius: 24px; padding: 6px; margin-bottom: 40px;
+      max-width: 100%; box-sizing: border-box;
     }
     .work-filter {
       background: none; border: 0; cursor: pointer; font-family: inherit;
@@ -729,9 +790,45 @@
     @media (prefers-reduced-motion: reduce) {
       .ged-flyout, .ged-fly-item, .ged-fly-label { transition: opacity 0.15s linear; transform: none; }
     }
-    /* Touch / coarse pointer: hover flyouts aren't usable — hide it (the button
-       itself still opens the overlay on tap). */
-    @media (hover: none), (pointer: coarse) { .ged-flyout { display: none; } }
+    /* Touch / coarse pointer: no hover, so TAP the main button to reveal the
+       bubbles (JS toggles .ged-fly-open + blurs the page behind the header). */
+    @media (hover: none), (pointer: coarse) {
+      .ged-menu-group:hover .ged-flyout,
+      .ged-menu-group:focus-within .ged-flyout { opacity: 0; pointer-events: none; transform: translateY(-8px) scale(0.96); }
+      .ged-menu-group:hover .ged-fly-item,
+      .ged-menu-group:focus-within .ged-fly-item { opacity: 0; transform: translateY(-6px) scale(0.9); }
+      .ged-menu-group.ged-fly-open .ged-flyout { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+      .ged-menu-group.ged-fly-open .ged-fly-item { opacity: 1; transform: translateY(0) scale(1); }
+      .ged-menu-group.ged-fly-open .ged-fly-item:nth-child(1) { transition-delay: 0.02s; }
+      .ged-menu-group.ged-fly-open .ged-fly-item:nth-child(2) { transition-delay: 0.06s; }
+      .ged-menu-group.ged-fly-open .ged-fly-item:nth-child(3) { transition-delay: 0.10s; }
+      .ged-menu-group.ged-fly-open .ged-fly-item:nth-child(4) { transition-delay: 0.14s; }
+      .ged-menu-group.ged-fly-open .ged-fly-label { opacity: 1; transform: translateX(0); }
+    }
+    .ged-fly-blur-layer {
+      position: fixed; inset: 0; z-index: 150; pointer-events: none;
+      opacity: 0; transition: opacity 0.28s var(--ease);
+      -webkit-backdrop-filter: blur(9px) saturate(0.9); backdrop-filter: blur(9px) saturate(0.9);
+      background: rgba(10,6,5,0.18);
+    }
+    [data-theme="light"] .ged-fly-blur-layer { background: rgba(255,255,255,0.22); }
+    html.ged-fly-blur .ged-fly-blur-layer { opacity: 1; pointer-events: auto; }
+
+    /* ═══ TOUCH-ONLY: scroll progress bar + hide the pinned "Designing for" ═══
+       On a phone the pinned word-swap section makes it hard to tell you're
+       scrolling, so on touch we hide it and show a thin top progress line
+       (same look as the case-study indicator) instead. */
+    .home-scroll-progress {
+      display: none;
+      position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+      background: var(--accent); z-index: 250;
+      box-shadow: 0 0 8px rgba(255,42,0,0.5);
+      transition: width 0.08s linear;
+    }
+    @media (hover: none), (pointer: coarse) {
+      .home-scroll-progress { display: block; }
+      #workIntro { display: none; }
+    }
 
     /* Reusable hover tooltip */
     .ged-tip { position: relative; }
@@ -1209,6 +1306,10 @@
   </style>
 </head>
 <body>
+
+<!-- Scroll progress bar — shown only on touch/coarse-pointer devices (matches
+     the case-study indicator). JS drives its width from scroll position. -->
+<div class="home-scroll-progress" id="homeScrollProgress" aria-hidden="true"></div>
 
 <svg id="lg-filter-svg" xmlns="http://www.w3.org/2000/svg"><defs id="lg-defs"></defs></svg>
 
@@ -1765,6 +1866,24 @@
 </footer>
 
 <script>
+  /* Touch-only top scroll-progress bar — fills as the page scrolls. Hooks the
+     momentum scroller's onScroll if present, plus a native scroll listener. */
+  (function () {
+    var bar = document.getElementById('homeScrollProgress');
+    if (!bar) return;
+    if (!window.matchMedia('(hover: none), (pointer: coarse)').matches) return;
+    function update() {
+      var h = document.documentElement;
+      var denom = h.scrollHeight - h.clientHeight;
+      bar.style.width = (denom > 0 ? (window.scrollY / denom) * 100 : 0) + '%';
+    }
+    var s = window.GED && window.GED.scroll;
+    if (s && s.onScroll) s.onScroll(update);
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  })();
+
   /* Hero headline word rotator — cycles every 2s with a soft fade/slide. */
   (function () {
     var el = document.getElementById('heroRotator');
@@ -1859,6 +1978,135 @@
         card.classList.remove('tilting');
         inner.style.transform = '';
       });
+    }
+
+    /* ── Touch physics: fling the badge in any direction with your finger ──
+       The card spins about X/Y proportional to swipe velocity, coasts with
+       friction, then springs back to the resting front pose. Touch only. */
+    if (inner && !reduceMo && window.matchMedia('(hover: none), (pointer: coarse)').matches) {
+      var rx = 0, ry = 0;          // current rotation (deg)
+      var vrx = 0, vry = 0;        // angular velocity (deg/frame)
+      var dragging = false, settling = false;
+      var lastX = 0, lastY = 0, lastT = 0, raf = null;
+      var FRICTION = 0.94;         // coast decay per frame
+      var SPRING = 0.08, DAMP = 0.78; // spring-back toward rest
+      var SENS = 0.6;              // deg of rotation per px of finger travel
+
+      function render() {
+        inner.style.transform = 'rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg) translateZ(8px)';
+      }
+      function loop() {
+        if (dragging) { raf = null; return; }
+        if (settling) {
+          // spring both axes toward the nearest resting pose (0 / 360 multiples)
+          var targetY = Math.round(ry / 360) * 360;
+          var targetX = 0;
+          vry = (vry + (targetY - ry) * SPRING) * DAMP;
+          vrx = (vrx + (targetX - rx) * SPRING) * DAMP;
+          rx += vrx; ry += vry;
+          render();
+          if (Math.abs(vrx) < 0.05 && Math.abs(vry) < 0.05 &&
+              Math.abs(targetX - rx) < 0.2 && Math.abs(targetY - ry) < 0.2) {
+            rx = 0; ry = targetY % 360; render();
+            inner.style.transform = ''; card.classList.remove('tilting', 'spinning');  // hand back to idle float
+            settling = false; raf = null; return;
+          }
+          raf = requestAnimationFrame(loop); return;
+        }
+        // coasting with friction
+        rx += vrx; ry += vry;
+        vrx *= FRICTION; vry *= FRICTION;
+        render();
+        if (Math.abs(vrx) < 0.25 && Math.abs(vry) < 0.25) { settling = true }
+        raf = requestAnimationFrame(loop);
+      }
+      card.addEventListener('touchstart', function (e) {
+        if (e.target.closest('button')) return;   // let the flip/stat buttons work
+        dragging = true; settling = false;
+        if (raf) { cancelAnimationFrame(raf); raf = null; }
+        card.classList.remove('flipped');          // free the inner from the flip !important
+        card.classList.add('tilting', 'spinning');
+        var t = e.touches[0];
+        lastX = t.clientX; lastY = t.clientY; lastT = e.timeStamp;
+        vrx = vry = 0;
+      }, { passive: true });
+      card.addEventListener('touchmove', function (e) {
+        if (!dragging) return;
+        var t = e.touches[0];
+        var dx = t.clientX - lastX, dy = t.clientY - lastY;
+        var dt = Math.max(1, e.timeStamp - lastT);
+        ry += dx * SENS;     // horizontal swipe → spin around Y
+        rx += -dy * SENS;    // vertical swipe → spin around X
+        vry = (dx * SENS) * (16 / dt);   // velocity normalised to ~60fps
+        vrx = (-dy * SENS) * (16 / dt);
+        lastX = t.clientX; lastY = t.clientY; lastT = e.timeStamp;
+        render();
+        if (e.cancelable) e.preventDefault();      // don't scroll the page while spinning the badge
+      }, { passive: false });
+      function endDrag() {
+        if (!dragging) return;
+        dragging = false;
+        // clamp a runaway fling so it stays delightful, not dizzying
+        var cap = 26;
+        vrx = Math.max(-cap, Math.min(cap, vrx));
+        vry = Math.max(-cap, Math.min(cap, vry));
+        raf = requestAnimationFrame(loop);
+      }
+      card.addEventListener('touchend', endDrag, { passive: true });
+      card.addEventListener('touchcancel', endDrag, { passive: true });
+    }
+
+    /* ── "Swipe me" arrow burst: four orange arrows shoot from the badge to the
+       screen edges when the badge hits the viewport centre while scrolling
+       (touch only). Fires once per entry; re-arms when it leaves centre. ── */
+    if (!reduceMo && window.matchMedia('(hover: none), (pointer: coarse)').matches) {
+      var ARROW_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="#ff6a00" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 6l7 6-7 6"/></svg>';
+      var burst = document.createElement('div');
+      burst.className = 'pcard-burst';
+      burst.setAttribute('aria-hidden', 'true');
+      burst.innerHTML =
+        '<span class="pb-arrow pb-up">'    + ARROW_SVG + '</span>' +
+        '<span class="pb-arrow pb-down">'  + ARROW_SVG + '</span>' +
+        '<span class="pb-arrow pb-left">'  + ARROW_SVG + '</span>' +
+        '<span class="pb-arrow pb-right">' + ARROW_SVG + '</span>';
+      document.body.appendChild(burst);
+
+      var armed = true, bursting = false;
+      // Short grace right after load: the badge is already on-screen in the
+      // hero, so ignore the very first checks (which otherwise fire on a bare
+      // reload). A real scroll-to-badge after this fires normally.
+      var ready = false;
+      setTimeout(function () { ready = true; }, 1200);
+      function fireBurst(cx, cy) {
+        if (bursting) return;
+        bursting = true;
+        burst.style.left = cx + 'px';
+        burst.style.top = cy + 'px';
+        burst.classList.remove('pcard-burst-go');
+        void burst.offsetWidth;                 // restart the animation
+        burst.classList.add('pcard-burst-go');
+        setTimeout(function () { burst.classList.remove('pcard-burst-go'); bursting = false; }, 3050);
+      }
+      function checkCenter() {
+        if (!ready) return;                      // skip the initial on-load frames
+        var r = card.getBoundingClientRect();
+        if (r.height === 0) return;
+        var vh = window.innerHeight;
+        // How much of the badge's height is inside the viewport (0..1).
+        var visible = Math.min(r.bottom, vh) - Math.max(r.top, 0);
+        var ratio = Math.max(0, Math.min(1, visible / r.height));
+        // Fire as the badge enters the viewport (~30% visible). The burst
+        // always originates from the CENTRE of the viewport.
+        if (ratio >= 0.30 && armed) {
+          armed = false;
+          fireBurst(window.innerWidth / 2, vh / 2);
+        } else if (ratio < 0.12) {
+          armed = true;                          // re-arm once it's mostly out of view
+        }
+      }
+      var s2 = window.GED && window.GED.scroll;
+      if (s2 && s2.onScroll) s2.onScroll(checkCenter);
+      window.addEventListener('scroll', checkCenter, { passive: true });
     }
 
     /* Compute experience duration (years/months/days) from a start date.
@@ -2508,7 +2756,39 @@
       zap.setAttribute('data-tip', on ? 'AI search on — ask a question' : 'AI-powered search');
     }
 
-    openBtn.addEventListener('click', function () { open('work'); });
+    /* Touch devices: tapping the main button reveals the 4 bubbles + blurs the
+       page (header controls + bubbles stay crisp). Hover devices: opens the
+       full overlay (bubbles still appear on hover). */
+    var menuGroup = document.getElementById('gedMenuGroup');
+    var isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+    function ensureBlurLayer() {
+      var el = document.querySelector('.ged-fly-blur-layer');
+      if (!el) { el = document.createElement('div'); el.className = 'ged-fly-blur-layer'; document.body.appendChild(el); }
+      return el;
+    }
+    function closeTouchFlyout() {
+      if (menuGroup) menuGroup.classList.remove('ged-fly-open');
+      document.documentElement.classList.remove('ged-fly-blur');
+    }
+    function openTouchFlyout() {
+      ensureBlurLayer();
+      if (menuGroup) menuGroup.classList.add('ged-fly-open');
+      document.documentElement.classList.add('ged-fly-blur');
+    }
+    openBtn.addEventListener('click', function (e) {
+      if (isTouch) {
+        e.stopPropagation();
+        if (menuGroup && menuGroup.classList.contains('ged-fly-open')) closeTouchFlyout();
+        else openTouchFlyout();
+        return;
+      }
+      open('work');
+    });
+    document.addEventListener('click', function (e) {
+      if (!menuGroup || !menuGroup.classList.contains('ged-fly-open')) return;
+      if (!menuGroup.contains(e.target)) closeTouchFlyout();
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeTouchFlyout(); });
 
     /* Hover-flyout bubble buttons:
        Explore → fast-scroll to the Selected Work section on the home page.
@@ -2519,6 +2799,7 @@
       flyout.addEventListener('click', function (e) {
         var b = e.target.closest('.ged-fly-btn');
         if (!b) return;
+        closeTouchFlyout();
         var action = b.getAttribute('data-action');
         if (action === 'explore') {
           var work = document.getElementById('work');

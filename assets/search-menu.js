@@ -342,7 +342,45 @@
     zap.setAttribute('data-tip', on ? 'AI search on — ask a question' : 'AI-powered search');
   }
 
-  openBtn.addEventListener('click', function () { open('work'); });
+  /* On touch devices there's no hover, so TAPPING the main button reveals the
+     four bubble buttons and blurs the rest of the page (everything except the
+     header controls + the bubbles). On pointer/hover devices the button still
+     opens the full search overlay (bubbles appear on hover). */
+  var menuGroup = document.getElementById('gedMenuGroup');
+  var isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
+  function ensureBlurLayer() {
+    var el = document.querySelector('.ged-fly-blur-layer');
+    if (!el) { el = document.createElement('div'); el.className = 'ged-fly-blur-layer'; document.body.appendChild(el); }
+    return el;
+  }
+  function closeTouchFlyout() {
+    if (menuGroup) menuGroup.classList.remove('ged-fly-open');
+    document.documentElement.classList.remove('ged-fly-blur');
+  }
+  function openTouchFlyout() {
+    ensureBlurLayer();
+    if (menuGroup) menuGroup.classList.add('ged-fly-open');
+    document.documentElement.classList.add('ged-fly-blur');
+  }
+
+  openBtn.addEventListener('click', function (e) {
+    if (isTouch) {
+      // toggle the bubble flyout + page blur instead of the full overlay
+      e.stopPropagation();
+      if (menuGroup && menuGroup.classList.contains('ged-fly-open')) closeTouchFlyout();
+      else openTouchFlyout();
+      return;
+    }
+    open('work');
+  });
+
+  // Tap anywhere outside the menu group closes the touch flyout.
+  document.addEventListener('click', function (e) {
+    if (!menuGroup || !menuGroup.classList.contains('ged-fly-open')) return;
+    if (!menuGroup.contains(e.target)) closeTouchFlyout();
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeTouchFlyout(); });
 
   /* Hover-flyout bubble buttons:
        Explore → home page Selected Work section.
@@ -353,6 +391,7 @@
     flyout.addEventListener('click', function (e) {
       var b = e.target.closest('.ged-fly-btn');
       if (!b) return;
+      closeTouchFlyout();   // dismiss the touch flyout + blur before acting
       var action = b.getAttribute('data-action');
       if (action === 'explore') {
         // If we're already on the home page, glide; otherwise navigate to it.

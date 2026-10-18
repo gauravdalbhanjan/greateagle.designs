@@ -138,7 +138,40 @@
 @media (prefers-reduced-motion: reduce) {
   .ged-flyout, .ged-fly-item, .ged-fly-label { transition: opacity 0.15s linear; transform: none; }
 }
-@media (hover: none), (pointer: coarse) { .ged-flyout { display: none; } }
+
+/* ── Touch devices: no hover, so TAP the main button to reveal the bubbles.
+   JS adds .ged-fly-open on the group and .ged-fly-blur on <html>. The flyout +
+   its items show just like the hover state; the rest of the page blurs behind
+   a fixed layer that sits below the header (so header + bubbles stay crisp). */
+@media (hover: none), (pointer: coarse) {
+  /* hover no longer reveals it (there is no hover) — only the tapped state does */
+  .ged-menu-group:hover .ged-flyout,
+  .ged-menu-group:focus-within .ged-flyout { opacity: 0; pointer-events: none; transform: translateY(-8px) scale(0.96); }
+  .ged-menu-group:hover .ged-fly-item,
+  .ged-menu-group:focus-within .ged-fly-item { opacity: 0; transform: translateY(-6px) scale(0.9); }
+
+  .ged-menu-group.ged-fly-open .ged-flyout {
+    opacity: 1; pointer-events: auto; transform: translateY(0) scale(1);
+  }
+  .ged-menu-group.ged-fly-open .ged-fly-item { opacity: 1; transform: translateY(0) scale(1); }
+  .ged-menu-group.ged-fly-open .ged-fly-item:nth-child(1) { transition-delay: 0.02s; }
+  .ged-menu-group.ged-fly-open .ged-fly-item:nth-child(2) { transition-delay: 0.06s; }
+  .ged-menu-group.ged-fly-open .ged-fly-item:nth-child(3) { transition-delay: 0.10s; }
+  .ged-menu-group.ged-fly-open .ged-fly-item:nth-child(4) { transition-delay: 0.14s; }
+  /* on touch, show each bubble's label beside it (no hover to trigger it) */
+  .ged-menu-group.ged-fly-open .ged-fly-label { opacity: 1; transform: translateX(0); }
+}
+
+/* Full-screen blur layer — everything except the fixed header blurs while the
+   touch flyout is open. Header (z-index 200) and flyout sit above this (150). */
+.ged-fly-blur-layer {
+  position: fixed; inset: 0; z-index: 150; pointer-events: none;
+  opacity: 0; transition: opacity 0.28s var(--ease);
+  -webkit-backdrop-filter: blur(9px) saturate(0.9); backdrop-filter: blur(9px) saturate(0.9);
+  background: rgba(10,6,5,0.18);
+}
+[data-theme="light"] .ged-fly-blur-layer { background: rgba(255,255,255,0.22); }
+html.ged-fly-blur .ged-fly-blur-layer { opacity: 1; pointer-events: auto; }
 
 /* Reusable hover tooltip */
 .ged-tip { position: relative; }

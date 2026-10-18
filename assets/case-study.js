@@ -158,7 +158,8 @@
   /* Generic numbered-steps section (Problem, Process) — pinnable */
   function stepsSection(num, title, lead, steps, quote) {
     if (!steps || !steps.length) return '';
-    return '<section class="cs-section cs-section--narrow" data-pin>' +
+    // data-accordion: on touch, each pin-step becomes a tap-to-expand row.
+    return '<section class="cs-section cs-section--narrow" data-pin data-accordion>' +
       '<div class="cs-num">' + esc(num) + '</div>' +
       '<h2 class="cs-h2">' + rich(title) + '</h2>' +
       (lead ? '<p class="cs-lead">' + rich(lead) + '</p>' : '') +
@@ -497,7 +498,7 @@
             (s.body ? '<div class="cs-step-body">' + rich(s.body) + '</div>' : '');
         return '<li class="pin-step">' + inner + '</li>';
       }).join('');
-      return '<section class="cs-section cs-process-split" data-pin>' +
+      return '<section class="cs-section cs-process-split" data-pin data-accordion>' +
         '<div class="cs-num">Process</div>' +
         '<h2 class="cs-h2">' + rich(p.title || 'How we got there') + '</h2>' +
         (p.lead ? '<p class="cs-lead">' + rich(p.lead) + '</p>' : '') +
@@ -603,7 +604,7 @@
   /* 11. Design Decisions */
   S.decisions = d => {
     if (!d.decisions || !d.decisions.length) return '';
-    return '<section class="cs-section" data-pin>' +
+    return '<section class="cs-section" data-pin data-accordion>' +
       '<div class="cs-num">Design Decisions</div><h2 class="cs-h2">Why these choices, not the obvious ones</h2>' +
       '<div class="cs-decisions">' + d.decisions.map(dc =>
         '<div class="cs-decision pin-step"><h3>' + rich(dc.title) + '</h3><p>' + rich(dc.body) + '</p>' +
@@ -653,7 +654,7 @@
   /* 13. Impact, segmented */
   S.impact = d => {
     if (!d.impact || !d.impact.length) return '';
-    return '<section class="cs-section" data-pin>' +
+    return '<section class="cs-section" data-pin data-accordion>' +
       '<div class="cs-num">Impact</div><h2 class="cs-h2">Where it moved the needle</h2>' +
       '<div class="cs-impact">' + d.impact.map(im =>
         '<div class="cs-impact-card pin-step"><div class="seg">' + esc(im.segment) + '</div>' +
@@ -733,8 +734,79 @@
     initWalk();
     initGradient();
     initLegacyFlow();
+    initTouchAccordions();
     initTouchSteps();
     initLightbox();
+  }
+
+  /* ─── TOUCH ACCORDIONS ────────────────────────────────────────────
+     On touch devices, [data-accordion] sections (Problem, Process, Design
+     Decisions, Impact) become simple tap-to-expand rows: each card's title is
+     a clickable header with a chevron; the rest collapses until tapped. The
+     pinned scroll engine still drives these sections on desktop unchanged. */
+  function initTouchAccordions() {
+    const touch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+    if (!touch) return;
+    const secs = Array.from(document.querySelectorAll('section[data-accordion]'));
+    if (!secs.length) return;
+
+    // Per structure, the element used as the row TITLE; the rest becomes body.
+    function splitCard(card) {
+      // decision cards: <h3> title; impact cards: .seg + .big headline;
+      // problem/process steps: .cs-step-title (may be absent → use body start).
+      let titleEl = card.querySelector('.cs-step-title') || card.querySelector('h3');
+      let titleHTML, bodyNodes;
+      if (card.classList.contains('cs-impact-card')) {
+        const seg = card.querySelector('.seg');
+        const big = card.querySelector('.big');
+        titleHTML = (seg ? seg.outerHTML : '') + (big ? '<span class="cs-acc-big">' + big.innerHTML + '</span>' : '');
+        bodyNodes = Array.from(card.children).filter(n => n !== seg && n !== big);
+      } else if (titleEl) {
+        titleHTML = titleEl.innerHTML;
+        bodyNodes = Array.from(card.children).filter(n => n !== titleEl);
+      } else {
+        // no explicit title — use the first line of the body as the title
+        titleHTML = card.textContent.trim().split('. ')[0];
+        bodyNodes = Array.from(card.children);
+      }
+      return { titleHTML, bodyNodes };
+    }
+
+    secs.forEach(section => {
+      section.classList.add('cs-acc-on');
+      // find the card list container + the cards
+      const list = section.querySelector('.cs-steps, .cs-decisions, .cs-impact');
+      if (!list) return;
+      const cards = Array.from(list.children);
+      if (cards.length < 1) return;
+      list.classList.add('cs-acc-list');
+
+      cards.forEach((card, i) => {
+        const { titleHTML, bodyNodes } = splitCard(card);
+        card.classList.add('cs-acc-item');
+        card.innerHTML = '';
+        const head = document.createElement('button');
+        head.type = 'button';
+        head.className = 'cs-acc-head';
+        head.innerHTML = '<span class="cs-acc-title">' + titleHTML + '</span>' +
+          '<span class="cs-acc-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>';
+        const body = document.createElement('div');
+        body.className = 'cs-acc-body';
+        const inner = document.createElement('div');
+        inner.className = 'cs-acc-body-inner';
+        bodyNodes.forEach(n => inner.appendChild(n));
+        body.appendChild(inner);
+        card.appendChild(head);
+        card.appendChild(body);
+        // steps/pin-reveal shouldn't hide these — force visible
+        card.classList.add('in');
+        head.addEventListener('click', () => {
+          const open = card.classList.toggle('cs-acc-open');
+          head.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+        head.setAttribute('aria-expanded', 'false');
+      });
+    });
   }
 
   /* ─── IMAGE LIGHTBOX ──────────────────────────────────────────────
@@ -1357,6 +1429,8 @@
 
     // ---- Pin sections (data-pin): reveal one step at a time, swipe to advance
     pinSecs.forEach(section => {
+      // Accordion sections handle their own touch UI — skip the arrow/step nav.
+      if (section.hasAttribute('data-accordion')) return;
       const steps = Array.from(section.querySelectorAll('.pin-step'));
       const dotsWrap = section.querySelector('.pin-dots');
       const n = steps.length;
