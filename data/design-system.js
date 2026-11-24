@@ -31,11 +31,11 @@ window.CASE_STUDY = {
   problem: {
     title: "What was breaking down",
     points: [
-      { title: "Trapped commenting", body: "Commenting features were trapped within specific pages, with no cross-context access." },
-      { title: "No centralized component", body: "Every product team rebuilt commenting from scratch." },
-      { title: "Costly duplication", body: "Duplication caused inconsistent UI, bloated codebases, and wasted budget and hours." },
-      { title: "Dozens of versions", body: "Dozens of disparate comment-panel versions were maintained instead of one scalable solution." },
-      { title: "No shared principle", body: "Component logic was never traced back to \u201Cwhy are we designing this?\u201D &mdash; it was applied per use case instead of on shared principles." }
+      { icon: "lock", title: "Trapped commenting", body: "Commenting features were trapped within specific pages, with no cross-context access." },
+      { icon: "code", title: "No centralized component", body: "Every product team rebuilt commenting from scratch." },
+      { icon: "layers", title: "Costly duplication", body: "Duplication caused inconsistent UI, bloated codebases, and wasted budget and hours." },
+      { icon: "stack", title: "Dozens of versions", body: "Dozens of disparate comment-panel versions were maintained instead of one scalable solution." },
+      { icon: "target", title: "No shared principle", body: "Component logic was never traced back to \u201Cwhy are we designing this?\u201D &mdash; it was applied per use case instead of on shared principles." }
     ]
   },
 
@@ -79,9 +79,9 @@ window.CASE_STUDY = {
   process: {
     title: "How I got there?",
     steps: [
-      { title: "Eagle-eye view", body: "Mapped how annotation, feedback, and comment components were implemented uniquely and repetitively across the product ecosystem." },
-      { title: "Pattern identification", body: "Spotted the \u201Credundancy pattern\u201D of developers rebuilding custom comment panels for every new product instance." },
-      { title: "Invent & simplify", body: "Identified the opportunity to unify the communication panel, along with gaps like missing tooltips and inconsistent modal handling." }
+      { icon: "eye", title: "Eagle-eye view", body: "Mapped how annotation, feedback, and comment components were implemented uniquely and repetitively across the product ecosystem." },
+      { icon: "cluster", title: "Pattern identification", body: "Spotted the \u201Credundancy pattern\u201D of developers rebuilding custom comment panels for every new product instance." },
+      { icon: "bulb", title: "Invent & simplify", body: "Identified the opportunity to unify the communication panel, along with gaps like missing tooltips and inconsistent modal handling." }
     ]
   },
 
@@ -96,9 +96,9 @@ window.CASE_STUDY = {
   },
 
   decisions: [
-    { title: "Developer-ready architecture", body: "Built with Design Tokens and Figma Variables &mdash; Boolean for states, Text for content, Color for themes.", whyNot: "A static graphic would have shipped faster but couldn't be handed to developers as logic. Logic-based components map directly to code." },
-    { title: "Responsive adaptation", body: "Breakpoint logic tailored for laptop and tablet professional environments, reflowing without custom overrides.", whyNot: "Per-device custom layouts would reintroduce the exact duplication we were eliminating." },
-    { title: "Variable-driven theming", body: "Plug-and-play application that reduces cost through ready-to-use, logic-driven components.", whyNot: "Hardcoded themes per product would keep teams rebuilding; variables make theming a config, not a rebuild." }
+    { icon: "code", title: "Developer-ready architecture", body: "Built with Design Tokens and Figma Variables &mdash; Boolean for states, Text for content, Color for themes.", whyNot: "A static graphic would have shipped faster but couldn't be handed to developers as logic. Logic-based components map directly to code." },
+    { icon: "responsive", title: "Responsive adaptation", body: "Breakpoint logic tailored for laptop and tablet professional environments, reflowing without custom overrides.", whyNot: "Per-device custom layouts would reintroduce the exact duplication we were eliminating." },
+    { icon: "palette", title: "Variable-driven theming", body: "Plug-and-play application that reduces cost through ready-to-use, logic-driven components.", whyNot: "Hardcoded themes per product would keep teams rebuilding; variables make theming a config, not a rebuild." }
   ],
 
   gallery: [
@@ -109,9 +109,9 @@ window.CASE_STUDY = {
   ],
 
   impact: [
-    { segment: "User / Developer", stat: "280+ hrs", body: "Saved per project across 4+ projects, per engineering\u2019s own estimate; eliminated redundant workload and wait time." },
-    { segment: "Business", stat: "40% faster", body: "Production accelerated and design-review delay eliminated." },
-    { segment: "Org", stat: "Component-first", body: "Established a component-first, design-system-lens approach for all new feature requests going forward." }
+    { icon: "gauge", segment: "User / Developer", stat: "280+ hrs", body: "Saved per project across 4+ projects, per engineering\u2019s own estimate; eliminated redundant workload and wait time." },
+    { icon: "rocket", segment: "Business", stat: "40% faster", body: "Production accelerated and design-review delay eliminated." },
+    { icon: "layers", segment: "Org", stat: "Component-first", body: "Established a component-first, design-system-lens approach for all new feature requests going forward." }
   ],
 
   reflection: {
@@ -123,5 +123,5 @@ window.CASE_STUDY = {
     ]
   },
 
-  next: { label: "BMW Workspace Redesign", href: "bmw-workspace.html" }
+  next: { label: "Executive Product Metrics Dashboard", href: "executive-metrics.html" }
 };

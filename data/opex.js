@@ -40,11 +40,11 @@ window.CASE_STUDY = {
   problem: {
     title: "What was breaking down",
     points: [
-      { title: "Manual ID lookup", body: "Every CostPool item required a manual ID lookup, with high latency." },
-      { title: "Context scattered across tabs", body: "Multiple tabs and spreadsheets were required to assemble context for one approval." },
-      { title: "Cryptic codes", body: "Codes had no natural-language translation making cognitively heavy." },
-      { title: "Hidden exclusions", body: "Exclusions were buried or invisible until manually cross-checked." },
-      { title: "Experts treated as investigators", body: "The system treated expert users as investigators, not decision-makers causing delay in action." }
+      { icon: "search", title: "Manual ID lookup", body: "Every CostPool item required a manual ID lookup, with high latency." },
+      { icon: "tabs", title: "Context scattered across tabs", body: "Multiple tabs and spreadsheets were required to assemble context for one approval." },
+      { icon: "code", title: "Cryptic codes", body: "Codes had no natural-language translation making cognitively heavy." },
+      { icon: "eyeoff", title: "Hidden exclusions", body: "Exclusions were buried or invisible until manually cross-checked." },
+      { icon: "detective", title: "Experts treated as investigators", body: "The system treated expert users as investigators, not decision-makers causing delay in action." }
     ],
     quote: { text: "You will make our life a lot easier if this puzzle could be solved.", cite: "Finance Manager - Stakeholder" }
   },
@@ -80,9 +80,9 @@ window.CASE_STUDY = {
   process: {
     title: "How we got there?",
     steps: [
-      { title: "Contextual inquiry", body: "Shadowed managers during peak quarterly review, observing where the workflow actually broke down versus where they said it broke down. Interviewed and shadowed 4 finance managers and 2 product managers." },
-      { title: "Friction mapping", body: "Logged every pause, tab-switch, and spreadsheet detour." },
-      { title: "Decision-trigger interviews", body: "Asked stakeholders what specific data points are required to approve or deny a request, defining the minimum viable information surface." }
+      { icon: "detective", title: "Contextual inquiry", body: "Shadowed managers during peak quarterly review, observing where the workflow actually broke down versus where they said it broke down. Interviewed and shadowed 4 finance managers and 2 product managers." },
+      { icon: "route", title: "Friction mapping", body: "Logged every pause, tab-switch, and spreadsheet detour." },
+      { icon: "target", title: "Decision-trigger interviews", body: "Asked stakeholders what specific data points are required to approve or deny a request, defining the minimum viable information surface." }
     ]
   },
 
@@ -97,11 +97,11 @@ window.CASE_STUDY = {
   },
 
   decisions: [
-    { title: "Information architecture", body: "Reorganized the data hierarchy so Channel, Exclusions, Ownership, and Product type appear together.", whyNot: "Keeping separate views felt cleaner per-screen, but it forced toggling between views for a single decision &mdash; the exact friction we were removing." },
-    { title: "Natural-language normalization", body: "Replaced numeric IDs to reduce mental-translation load per row.", whyNot: "Tooltips on hover were considered, but that still leaves a lookup step on every row." },
-    { title: "Proactive exclusion surfacing", body: "Turned a reactive error-catch into a built-in quality check. Color logic modeled on traffic signals \u2014 red, yellow, green \u2014 so status reads instantly without requiring a key.", whyNot: "A validation warning at submit-time catches errors late; surfacing exclusions during review prevents them." },
-    { title: "Audit trail by design", body: "Owner and client on every line as a structural feature, not an add-on &mdash; built-in compliance readiness.", whyNot: "A separate audit export would satisfy compliance but not help the reviewer in the moment." },
-    { title: "Accordion over flat display", body: "Preserves the row-to-data relationship that managers depended on to act \u2014 each number stays anchored to the line item it belongs to.", whyNot: "A separate results window was the original request and would have shipped faster, but it broke the link between each number and the row it belonged to, which managers needed to act on the data at all." }
+    { icon: "layers", title: "Information architecture", body: "Reorganized the data hierarchy so Channel, Exclusions, Ownership, and Product type appear together.", whyNot: "Keeping separate views felt cleaner per-screen, but it forced toggling between views for a single decision &mdash; the exact friction we were removing." },
+    { icon: "tag", title: "Natural-language normalization", body: "Replaced numeric IDs to reduce mental-translation load per row.", whyNot: "Tooltips on hover were considered, but that still leaves a lookup step on every row." },
+    { icon: "traffic", title: "Proactive exclusion surfacing", body: "Turned a reactive error-catch into a built-in quality check. Color logic modeled on traffic signals \u2014 red, yellow, green \u2014 so status reads instantly without requiring a key.", whyNot: "A validation warning at submit-time catches errors late; surfacing exclusions during review prevents them." },
+    { icon: "shield", title: "Audit trail by design", body: "Owner and client on every line as a structural feature, not an add-on &mdash; built-in compliance readiness.", whyNot: "A separate audit export would satisfy compliance but not help the reviewer in the moment." },
+    { icon: "stack", title: "Accordion over flat display", body: "Preserves the row-to-data relationship that managers depended on to act \u2014 each number stays anchored to the line item it belongs to.", whyNot: "A separate results window was the original request and would have shipped faster, but it broke the link between each number and the row it belonged to, which managers needed to act on the data at all." }
   ],
 
   gallery: [
@@ -114,9 +114,9 @@ window.CASE_STUDY = {
   ],
 
   impact: [
-    { segment: "User", stat: "94% faster", body: "Time reduction per cycle; lower decision fatigue." },
-    { segment: "Business", stat: "Higher volume", body: "The same headcount handled higher request volume, with fewer misallocation errors." },
-    { segment: "Org", stat: "Audit-ready", body: "Built-in compliance guardrail via exclusion visibility; audit-ready by default." }
+    { icon: "gauge", segment: "User", stat: "94% faster", body: "Time reduction per cycle; lower decision fatigue." },
+    { icon: "rocket", segment: "Business", stat: "Higher volume", body: "The same headcount handled higher request volume, with fewer misallocation errors." },
+    { icon: "shield", segment: "Org", stat: "Audit-ready", body: "Built-in compliance guardrail via exclusion visibility; audit-ready by default." }
   ],
 
   impactQuote: { text: "We really needed this. This will help us a lot. This is more than what we could have asked for.", cite: "Finance Manager - Stakeholder" },
@@ -131,5 +131,5 @@ window.CASE_STUDY = {
     ]
   },
 
-  next: { label: "Sous Chef &mdash; Countertop Cooking Companion", href: "sous-chef-device.html" }
+  next: { label: "Alexa as a Scalable Customer Assistant", href: "alexa-virtual-assistant.html" }
 };

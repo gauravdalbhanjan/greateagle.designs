@@ -36,3 +36,14 @@ backblue.gif
 fade.gif
 
 assets/LinkedIn-data.csv
+
+# OAuth credentials: never commit or deploy
+client_secret_*.json
+*.apps.googleusercontent.com.json
+.env
+.env.*
+
+
+# Local-only helper scripts (OAuth token setup)
+scripts/
+

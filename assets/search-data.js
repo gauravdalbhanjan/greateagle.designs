@@ -38,12 +38,12 @@
     {
       id: 'sous-chef', category: 'work', href: 'home/sous-chef-device.html',
       img: 'images/chef1.gif',
-      title: 'AI Sous Chef Assistant',
-      desc: 'A countertop friend that turns cooking into confidence.',
-      cats: ['UI & UX', 'Product', 'Industrial Design'],
-      metric: '72% higher user confidence',
-      chips: ['72% higher user confidence', 'Eliminated 5x frictions', 'Industrial Design'],
-      tags: ['sous chef', 'cooking', 'countertop', 'device', 'industrial design', 'product', 'hardware', 'consumer', 'health', 'ux', 'iot', 'appliance']
+      title: 'SousChef Lite',
+      desc: 'A private, pantry-first cooking companion. No sign-up, nothing stored on a server.',
+      cats: ['Product Design', 'UX/UI', 'Front-end Engineering'],
+      metric: '3,090 recipes matched to your pantry',
+      chips: ['3,090 recipes matched to your pantry', '0 accounts or servers', '92 automated tests'],
+      tags: ['sous chef', 'souschef lite', 'cooking', 'pantry', 'recipes', 'web app', 'privacy', 'guardrails', 'food safety', 'countertop', 'device', 'industrial design', 'product', 'consumer', 'health', 'ux']
     },
     {
       id: 'metrics', category: 'work', href: 'home/executive-metrics.html',
@@ -400,13 +400,13 @@
       keys: ['opex', 'allocation', 'finance', 'fintech', 'dashboard', 'amazon', 'verification', 'reporting', 'tabs', 'budget']
     },
     'sous-chef': {
-      name: 'Sous Chef', href: 'home/sous-chef-device.html',
-      one: 'a countertop cooking companion \u2014 a physical device plus app \u2014 that turns cooking into confidence',
+      name: 'SousChef Lite', href: 'home/sous-chef-device.html',
+      one: 'a private, pantry-first cooking companion \u2014 a 2023 countertop-device concept rebuilt in 2026 as a live web app with no sign-up and nothing stored on a server',
       pain: 'people abandon home cooking because searching recipes then checking the pantry is backwards and full of friction',
       insight: 'flip search into select \u2014 show people the meals they can already make with what they have on hand',
-      decision: 'he ranked meals by how much of the recipe the pantry already covers, and moved guidance onto a device so the phone can be put away',
+      decision: 'he removed the login system, the cloud database and the AI, and made tested code and cited sources own every temperature, allergen and nutrition figure',
       whyNot: 'a conventional recipe search hides the one thing users actually need: what they can cook right now',
-      impact: '72% higher user confidence and 5x fewer frictions in the flow',
+      impact: '3,090 recipes matched on the device, 0 accounts or servers holding your data, and 92 automated tests guarding every release (2023 pilot: 85% managed their pantry successfully)',
       keys: ['sous', 'chef', 'cooking', 'countertop', 'device', 'kitchen', 'pantry', 'recipe', 'hardware', 'consumer', 'health', 'iot']
     },
     'comment-panel': {

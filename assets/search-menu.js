@@ -1,4 +1,4 @@
-/* ══════════════════════════════════════════════════════════════
+﻿/* ══════════════════════════════════════════════════════════════
    GREAT EAGLE DESIGNS — Shared sticky search header + overlay menu
    Self-injects the header pill + full-screen overlay, then wires all
    behaviour. Works on the landing page and every case-study page.
@@ -23,21 +23,26 @@
 
   /* ── Inject markup once ──────────────────────────────────────── */
   if (!document.getElementById('gedOverlay')) {
-    var logo = BASE + 'assets/logo/greateagledesigns.png';
+    var logo = BASE + 'assets/logo/GreatEagleDesigns_logo_Nov26.png';
     var home = BASE + 'index.html';
     var header = document.createElement('header');
-    header.className = 'ged-header glass liquid-glass';
+    header.className = 'ged-header glass liquid-glass ged-header--labeled';
     header.id = 'gedHeader';
     header.innerHTML =
-      '<a href="' + home + '" class="ged-logo-bubble ged-tip" data-tip="Home" aria-label="Home">' +
-        '<img src="' + logo + '" alt="" class="ged-logo" /></a>' +
-      '<button class="icon-btn ged-header-theme ged-tip" data-tip="Switch mode" id="themeToggle" aria-label="Switch mode">' +
-        '<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>' +
-        '<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>' +
+      '<a href="' + home + '" class="ged-hctl ged-hctl--stack ged-tip" data-tip="Home" aria-label="Home">' +
+        '<span class="ged-logo-bubble"><img src="' + logo + '" alt="" class="ged-logo" /></span>' +
+        '<span class="ged-hctl-label">Home</span></a>' +
+      '<button class="ged-hctl ged-hctl--stack ged-header-theme ged-tip" data-tip="Switch mode" id="themeToggle" aria-label="Switch mode">' +
+        '<span class="ged-hctl-ico">' +
+          '<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>' +
+          '<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>' +
+        '</span>' +
+        '<span class="ged-hctl-label">Theme</span>' +
       '</button>' +
       '<div class="ged-menu-group" id="gedMenuGroup">' +
-        '<button class="ged-search-btn ged-tip" data-tip="Got questions?" id="gedSearchOpen" aria-label="Open menu">' +
-          '<img class="ged-btn-logo" id="gedBtnLogo" src="' + BASE + 'assets/logo/Menu.png" alt="Menu" />' +
+        '<button class="ged-hctl ged-hctl--stack ged-options-ctl ged-tip" data-tip="Got questions?" id="gedSearchOpen" aria-label="Open menu">' +
+          '<span class="ged-search-btn ged-btn-logo-bubble"><img src="' + BASE + 'assets/logo/Menu.png" alt="" class="ged-btn-logo" id="gedBtnLogo" /></span>' +
+          '<span class="ged-hctl-label">Options</span>' +
         '</button>' +
         '<div class="ged-flyout" id="gedFlyout" aria-hidden="true">' +
           '<div class="ged-fly-item"><span class="ged-fly-label">Explore</span><button class="ged-fly-btn" data-action="explore" aria-label="Explore work"><img src="' + BASE + 'assets/logo/Search.png" alt="" /></button></div>' +
@@ -188,7 +193,8 @@
           '<div class="ged-card"><h4>Contact</h4>' +
             '<p style="margin:0 0 12px">Open to work &middot; Seattle, WA &middot; Mon\u2013Fri, 8am\u20136pm PT.</p>' +
             '<div style="display:flex;flex-wrap:wrap">' +
-              '<a class="ged-line" href="' + gmail + '" target="_blank" rel="noopener noreferrer">' + ICONS.mail + 'Email me</a>' +
+              '<a class="ged-line" href="' + BASE + 'home/contact.html" data-open="contact">' + ICONS.mail + 'Contact</a>' +
+              '<a class="ged-line" href="' + BASE + 'home/contact.html#book" data-open="booking">' + ICONS.mail + 'Book a session</a>' +
               '<a class="ged-line" href="tel:+17373289917">' + ICONS.phone + 'Call</a>' +
             '</div></div>' +
         '</div>' +

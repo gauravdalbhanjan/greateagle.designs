@@ -51,3 +51,10 @@ assets/Concept_Alexa_Virtual-Cloud-Assistant/Images and context/9_keypad design 
 assets/Concept_Alexa_Virtual-Cloud-Assistant/Images and context/5_alexa as an on-line voice assistant.jpg
 assets/Concept_Alexa_Virtual-Cloud-Assistant/Images and context/Mood boarding for Alexa BEE lamp - beyondaryless edgeless experience.png
 assets/Concept_Alexa_Virtual-Cloud-Assistant/Images and context/Modes of connection*
+
+# OAuth credentials: never commit or deploy
+client_secret_*.json
+*.apps.googleusercontent.com.json
+.env
+.env.*
+

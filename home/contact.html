@@ -1,17 +1,17 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contact — Gaurav Dalbhanjan</title>
   <meta name="description" content="Get in touch with Gaurav Dalbhanjan. Let's create possibilities together." />
-  <link rel="icon" type="image/png" href="../assets/logo/greateagledesigns.png" />
-  <link rel="apple-touch-icon" href="../assets/logo/greateagledesigns.png" />
+  <link rel="icon" type="image/png" href="../assets/logo/GreatEagleDesigns_logo_Nov26.png" />
+  <link rel="apple-touch-icon" href="../assets/logo/GreatEagleDesigns_logo_Nov26.png" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Great Eagle Designs" />
-  <meta property="og:image" content="https://greateagledesigns.com/assets/logo/greateagledesigns.png" />
+  <meta property="og:image" content="https://greateagledesigns.com/assets/logo/GreatEagleDesigns_logo_Nov26.png" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:image" content="https://greateagledesigns.com/assets/logo/greateagledesigns.png" />
+  <meta name="twitter:image" content="https://greateagledesigns.com/assets/logo/GreatEagleDesigns_logo_Nov26.png" />
   <link rel="stylesheet" href="../assets/site.css" />
   <link rel="stylesheet" href="../assets/search-menu.css" />
   <script src="../assets/site.js"></script>
@@ -38,7 +38,7 @@
 <svg id="lg-filter-svg" xmlns="http://www.w3.org/2000/svg"><defs id="lg-defs"></defs></svg>
 
 <nav class="glass liquid-glass">
-  <a href="../index.html" class="nav-logo">Gaurav <span>Dalbhanjan</span></a>
+  <a href="../index.html" class="nav-logo" aria-label="Home"><span class="ged-logo-bubble"><img src="../assets/logo/GreatEagleDesigns_logo_Nov26.png" alt="" class="ged-logo" /></span>Gaurav <span>Dalbhanjan</span></a>
   <ul class="nav-links">
     <li><a href="../index.html#work">Work</a></li>
     <li><a href="blog.html">Blog</a></li>
@@ -64,20 +64,14 @@
 
 <section style="padding-top: 0;">
   <div class="contact-wrap">
-    <form class="contact-form glass reveal" style="padding:32px;border-radius:20px;" onsubmit="event.preventDefault(); this.querySelector('.form-status').textContent='Thanks! I\'ll get back to you soon.';">
-      <div class="field"><label for="name">Name</label><input id="name" type="text" placeholder="Your name" required /></div>
-      <div class="field"><label for="email">Email</label><input id="email" type="email" placeholder="you@example.com" required /></div>
-      <div class="field"><label for="msg">Message</label><textarea id="msg" placeholder="Tell me about your project..." required></textarea></div>
-      <button type="submit" class="btn btn-primary" style="align-self:flex-start;">Send Message
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </button>
-      <div class="form-status" style="font-size:var(--fs-secondary);color:var(--accent);font-weight:600;"></div>
-    </form>
+    <div class="contact-form glass reveal" style="padding:32px;border-radius:20px;" data-contact-inline>
+      <noscript><p>The contact form needs JavaScript. You can reach me on <a href="https://www.linkedin.com/in/gaurav-dalbhanjan/">LinkedIn</a>.</p></noscript>
+    </div>
 
     <div class="contact-methods reveal reveal-delay-1">
-      <a href="mailto:gaurav.dalbhanjan@gmail.com" class="contact-pill">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
-        gaurav.dalbhanjan@gmail.com
+      <a href="#book" class="contact-pill" data-open="booking" aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        Book a 30-minute session
       </a>
     </div>
   </div>
@@ -101,7 +95,9 @@
 <!-- Vercel Web Analytics -->
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
 <script defer src="/_vercel/insights/script.js"></script>
-<!-- Cookie consent + deferred Microsoft Clarity (loads only after Accept) -->
+<!-- Contact form + Book a session pop-ups -->
+<script defer src="../assets/connect.js"></script>
+<!-- Microsoft Clarity in cookie-free mode (no banner; see assets/consent.js) -->
 <script defer src="../assets/consent.js"></script>
 </body>
 </html>

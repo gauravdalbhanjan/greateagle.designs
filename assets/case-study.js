@@ -73,9 +73,13 @@
     } else {
       inner = '';
     }
+    // h.plain renders the headline as a styled <p> (keeps the page's single h1
+    // first in the heading outline); h.trust adds a short centred trust line.
+    const hTag = h.plain ? 'p' : 'h2';
     return '<section class="cs-hook reveal">' +
       (h.label ? '<div class="eyebrow-pill cs-hook-label">' + esc(h.label) + '</div>' : '') +
-      (h.headline ? '<h2 class="cs-h2" style="max-width:720px;margin:0 auto 28px;">' + rich(h.headline) + '</h2>' : '') +
+      (h.headline ? '<' + hTag + ' class="cs-h2" style="max-width:720px;margin:0 auto 28px;">' + rich(h.headline) + '</' + hTag + '>' : '') +
+      (h.trust ? '<p class="cs-hook-trust">' + rich(h.trust) + '</p>' : '') +
       (h.summary ? '<p class="cs-hook-summary">' + rich(h.summary) + '</p>' : '') +
       inner +
     '</section>';
@@ -97,6 +101,33 @@
   /* 3. Hero Media */
   S.hero = d => {
     if (!d.hero) return '';
+    const hh = d.hero;
+    // Optional composite hero: app screens in front of a faded backdrop image.
+    // hh.backdrop = {img,alt}; hh.screens = [{img,alt,kind:'phone'|'tablet'}];
+    // hh.actions = [{label,href,primary,external,icon:'arrow'|'down'}].
+    if (hh.screens && hh.screens.length) {
+      const scr = hh.screens.map(function (s, i) {
+        return '<figure class="sc-hero-dev sc-hero-dev--' + esc(s.kind || 'phone') + '" style="--i:' + i + '">' +
+          '<img src="' + esc(s.img) + '" alt="' + esc(s.alt || '') + '"' + (i === 0 ? ' fetchpriority="high"' : '') +
+          ' width="' + (s.w || '') + '" height="' + (s.h || '') + '" /></figure>';
+      }).join('');
+      const DOWN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>';
+      const OUT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>';
+      const acts = (hh.actions || []).map(function (a) {
+        return '<a class="btn ' + (a.primary ? 'btn-primary' : 'btn-ghost') + '" href="' + esc(a.href) + '"' +
+          (a.external ? ' target="_blank" rel="noopener"' : '') + '>' + esc(a.label) +
+          (a.external ? '<span class="sr-only"> (opens in a new tab)</span>' : '') +
+          (a.icon === 'down' ? DOWN : (a.external ? OUT : ARROW)) + '</a>';
+      }).join('');
+      return '<div class="cs-hero-media sc-hero reveal">' +
+        '<div class="sc-hero-stage">' +
+          (hh.backdrop ? '<img class="sc-hero-back" src="' + esc(hh.backdrop.img) + '" alt="' + esc(hh.backdrop.alt || '') + '" />' : '') +
+          scr +
+        '</div>' +
+        (hh.caption ? '<p class="sc-hero-cap">' + rich(hh.caption) + '</p>' : '') +
+        (acts ? '<div class="sc-hero-actions">' + acts + '</div>' : '') +
+      '</div>';
+    }
     return '<div class="cs-hero-media reveal">' + mediaTag(d.hero) +
       (d.hero.demo ? '<div class="cs-hero-demo"><a class="btn btn-primary btn-sm" href="' + esc(d.hero.demo) + '" target="_blank" rel="noopener">View Live Demo ' + ARROW + '</a></div>' : '') +
     '</div>';
@@ -155,9 +186,21 @@
     '</div></section>';
   };
 
-  /* Generic numbered-steps section (Problem, Process) — pinnable */
+  /* Generic numbered-steps section (Problem, Process) — pinnable.
+     When the steps carry `icon` fields, render a STATIC icon card/tile grid
+     (Alexa-style) instead of the scroll-pinned numbered reveal. */
   function stepsSection(num, title, lead, steps, quote) {
     if (!steps || !steps.length) return '';
+    const asTiles = steps.every(function (s) { return s && typeof s === 'object' && s.icon; });
+    if (asTiles) {
+      return '<section class="cs-section">' +
+        '<div class="cs-num">' + esc(num) + '</div>' +
+        '<h2 class="cs-h2">' + rich(title) + '</h2>' +
+        (lead ? '<p class="cs-lead">' + rich(lead) + '</p>' : '') +
+        iconCards(steps, steps.length >= 4 ? 3 : steps.length) +
+        (quote ? quoteCard(quote) : '') +
+      '</section>';
+    }
     // data-accordion: on touch, each pin-step becomes a tap-to-expand row.
     return '<section class="cs-section cs-section--narrow" data-pin data-accordion>' +
       '<div class="cs-num">' + esc(num) + '</div>' +
@@ -234,7 +277,7 @@
         galleryHtml +
       '</section>';
     }
-    return stepsSection('The Problem', p.title || 'What was breaking down', p.lead, p.points, p.quote);
+    return stepsSection(p.num || 'The Problem', p.title || 'What was breaking down', p.lead, p.points, p.quote);
   };
 
   /* 7.5 Legacy lookup workflow — scroll-driven reenactment (OPEX).
@@ -463,9 +506,20 @@
         '<div class="cs-ba-card after"><div class="ba-lbl">After</div><div class="ba-val">' + rich(s.after) + '</div></div>' +
       '</div>';
     }
-    return '<section class="cs-section cs-section--narrow reveal">' +
-      '<div class="cs-num">The Shift</div><h2 class="cs-h2">' + rich(s.title || 'The insight') + '</h2>' +
-      '<div class="cs-shift-insight">' + rich(s.insight) + '</div>' + ba +
+    // Optional multi-row form: s.rows = [{ icon, before, after }].
+    if (s.rows && s.rows.length) {
+      const AR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+      ba = '<ul class="sc-shift-rows">' + s.rows.map(function (r) {
+        return '<li class="sc-shift-row reveal">' +
+          '<div class="cs-ba-card before">' + (r.icon ? csIcon(r.icon) : '') + '<div class="ba-lbl">Before</div><div class="ba-val">' + rich(r.before) + '</div></div>' +
+          '<div class="cs-ba-arrow">' + AR + '</div>' +
+          '<div class="cs-ba-card after"><div class="ba-lbl">After</div><div class="ba-val">' + rich(r.after) + '</div></div>' +
+        '</li>';
+      }).join('') + '</ul>';
+    }
+    return '<section class="cs-section' + (s.rows ? '' : ' cs-section--narrow') + ' reveal">' +
+      '<div class="cs-num">' + esc(s.num || 'The Shift') + '</div><h2 class="cs-h2">' + rich(s.title || 'The insight') + '</h2>' +
+      (s.insight ? '<div class="cs-shift-insight">' + rich(s.insight) + '</div>' : '') + ba +
     '</section>';
   };
 
@@ -490,6 +544,26 @@
   S.process = d => {
     if (!d.process) return '';
     var p = d.process;
+    // Static icon tiles when every step carries an icon. Any `deck` artifacts
+    // render as a static collage below (no scroll engine).
+    var stepsHaveIcons = (p.steps || []).length && p.steps.every(function (s) { return s && typeof s === 'object' && s.icon; });
+    if (stepsHaveIcons) {
+      var deckCollage = '';
+      if (p.deck && p.deck.length) {
+        deckCollage = '<div class="cs-collage cs-process-collage">' + p.deck.map(function (m) {
+          var media = (typeof m === 'string') ? { img: m } : m;
+          return '<figure' + (media.wide ? ' class="span-2"' : '') + '>' + mediaTag(media) +
+            (media.caption ? '<figcaption>' + rich(media.caption) + '</figcaption>' : '') + '</figure>';
+        }).join('') + '</div>';
+      }
+      return '<section class="cs-section">' +
+        '<div class="cs-num">Process</div>' +
+        '<h2 class="cs-h2">' + rich(p.title || 'How we got there') + '</h2>' +
+        (p.lead ? '<p class="cs-lead">' + rich(p.lead) + '</p>' : '') +
+        iconCards(p.steps, p.steps.length >= 4 ? 3 : p.steps.length) +
+        deckCollage +
+      '</section>';
+    }
     if (p.deck && p.deck.length) {
       var steps = (p.steps || []).map(function (s) {
         var inner = (typeof s === 'string')
@@ -522,12 +596,92 @@
     book: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M9 3v10l3-2 3 2V3"/>',
     headphones: '<path d="M4 14a8 8 0 0 1 16 0"/><rect x="2.5" y="14" width="4" height="7" rx="2"/><rect x="17.5" y="14" width="4" height="7" rx="2"/>',
     moon: '<path d="M21 12.8A8 8 0 1 1 11.2 3a6 6 0 0 0 9.8 9.8z"/>',
-    desk: '<rect x="3" y="5" width="18" height="10" rx="1"/><path d="M12 15v3M8 21h8M2 11h20"/>'
+    desk: '<rect x="3" y="5" width="18" height="10" rx="1"/><path d="M12 15v3M8 21h8M2 11h20"/>',
+    /* ── extended set for the info card/tile grids (Problem/Process/Decisions/Impact) ── */
+    search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
+    tabs: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 11h18"/>',
+    code: '<path d="M8 8l-4 4 4 4M16 8l4 4-4 4"/>',
+    eyeoff: '<path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.4 5.3A9.3 9.3 0 0 1 12 5c6 0 9 7 9 7a16 16 0 0 1-3 4M6.1 6.1A16 16 0 0 0 3 12s3 7 9 7a9 9 0 0 0 3-.5"/>',
+    detective: '<circle cx="12" cy="9" r="3"/><path d="M4 20a8 8 0 0 1 16 0"/><path d="M8 4l2 2M16 4l-2 2"/>',
+    route: '<circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h6a4 4 0 0 0 0-8H9a4 4 0 0 1 0-8h5"/>',
+    cluster: '<circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="7" r="2.5"/><circle cx="12" cy="17" r="2.5"/><path d="M7.6 8l3 7M16.5 9l-3.2 6.2"/>',
+    target: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.6" fill="currentColor"/>',
+    layers: '<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5M3 17l9 5 9-5"/>',
+    tag: '<path d="M3 11l8-8 10 10-8 8z"/><circle cx="8" cy="8" r="1.4"/>',
+    shield: '<path d="M12 3l8 3v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/>',
+    traffic: '<rect x="8" y="2" width="8" height="20" rx="4"/><circle cx="12" cy="7" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="17" r="1.5"/>',
+    stack: '<rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="16" width="18" height="4" rx="1"/>',
+    user: '<circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/>',
+    rocket: '<path d="M5 15c-1.5 1.5-2 5-2 5s3.5-.5 5-2M9 11a8 8 0 0 1 8-8c2 0 3 1 3 3a8 8 0 0 1-8 8z"/><circle cx="14.5" cy="9.5" r="1.3"/><path d="M9 11l-3 1 2 2 1-3z"/>',
+    building: '<rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h2M14 7h2M8 11h2M14 11h2M8 15h2M14 15h2M10 21v-3h4v3"/>',
+    gauge: '<path d="M4 18a8 8 0 1 1 16 0"/><path d="M12 18l4-5"/><circle cx="12" cy="18" r="1" fill="currentColor"/>',
+    map: '<path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/>',
+    flag: '<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+    plug: '<path d="M9 2v6M15 2v6M7 8h10v3a5 5 0 0 1-10 0z"/><path d="M12 16v6"/>',
+    responsive: '<rect x="2" y="5" width="13" height="10" rx="1"/><rect x="16" y="8" width="6" height="11" rx="1"/><path d="M6 19h6"/>',
+    palette: '<path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.7-1 1.2-2-.5-1 .1-2 1.3-2H17a4 4 0 0 0 4-4c0-5-4-8-9-8z"/><circle cx="7.5" cy="10.5" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16" cy="10" r="1"/>',
+    doc: '<path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4M9 13h6M9 17h6"/>',
+    chat: '<path d="M4 5h16v11H9l-5 4V5z"/><path d="M8 10h8M8 13h5"/>',
+    swing: '<path d="M4 4h16M8 4v6M16 4v6M6 10h12l-1 5H7z"/><path d="M9 20l2-5M15 20l-2-5"/>',
+    window: '<rect x="4" y="3" width="16" height="18" rx="1"/><path d="M4 9h16M12 3v18"/>',
+    lock: '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+    eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
+    /* ── Sous Chef v2 additions (new keys only) ── */
+    camera: '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+    box: '<path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/>',
+    sparkle: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/>',
+    filter: '<path d="M3 5h18l-7 8v6l-4-2v-4z"/>',
+    recipe: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+    flame: '<path d="M12 3c1 4 5 5.5 5 10a5 5 0 0 1-10 0c0-2.5 1.5-3.5 2-5 1 1.5 1.5 2 2 2 0-2.5 0-4.5 1-7z"/>',
+    calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    cart: '<circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.5 12h11.5l2-8H6.2"/>',
+    gear: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1L7 17M17 7l2.1-2.1"/>',
+    star: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+    thermo: '<path d="M10 14V5a2 2 0 0 1 4 0v9a4 4 0 1 1-4 0z"/><path d="M12 9v7"/>',
+    alert: '<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',
+    leaf: '<path d="M5 19c0-9 6-14 15-14 0 9-5 15-14 15"/><path d="M5 19l8-8"/>',
+    broom: '<path d="M14 3l-4 9"/><path d="M6 12h8l3 9H3z"/><path d="M9 16v5M13 16v5"/>',
+    ban: '<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
+    device: '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',
+    send: '<path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/>',
+    sliders: '<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
+    image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/>',
+    filecheck: '<path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/><path d="M9 14l2 2 4-4"/>',
+    key: '<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M15 8l2 2"/>',
+    check: '<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',
+    cpu: '<rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/>',
+    db: '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
+    wifi: '<path d="M2 9a15 15 0 0 1 20 0M5.5 12.5a10 10 0 0 1 13 0M9 16a5 5 0 0 1 6 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/>',
+    split: '<path d="M6 3v6a6 6 0 0 0 6 6h0a6 6 0 0 1 6 6"/><path d="M18 3v6a6 6 0 0 1-6 6"/>',
+    touch: '<path d="M9 11V5a2 2 0 0 1 4 0v6"/><path d="M13 9a2 2 0 0 1 4 0v4a7 7 0 0 1-7 7h-.5A5.5 5.5 0 0 1 5 16l-1.5-3a1.8 1.8 0 0 1 3-1.8L9 14"/>',
+    home: '<path d="M3 11l9-8 9 8"/><path d="M5 10v11h14V10"/><path d="M10 21v-6h4v6"/>',
+    hand: '<path d="M8 13V5a1.5 1.5 0 0 1 3 0v6M11 10V4a1.5 1.5 0 0 1 3 0v6M14 10V5a1.5 1.5 0 0 1 3 0v8a7 7 0 0 1-7 7 6 6 0 0 1-5-3l-2-4a1.5 1.5 0 0 1 2.5-1.5L8 14"/>'
   };
   function fgIcon(name) {
     const inner = FG_ICONS[name] || FG_ICONS.desk;
     return '<svg class="fg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" ' +
       'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + '</svg>';
+  }
+  /* A larger line icon in a rounded accent tile, for the static info-card grids. */
+  function csIcon(name) {
+    const inner = FG_ICONS[name] || FG_ICONS.doc;
+    return '<span class="cs-card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" ' +
+      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + '</svg></span>';
+  }
+  /* Static icon card/tile grid (Alexa-style) — used for Problem / Process /
+     Decisions / Impact when a data file opts in (d.tiles or per-item icons).
+     Each item: { icon, title, body, meta?, foot? }. Renders a gentle .reveal
+     fade instead of the scroll-pinned one-by-one engine. */
+  function iconCards(items, cols) {
+    return '<div class="cs-cards cs-cards--' + (cols || 3) + '">' + items.map(function (it) {
+      return '<div class="cs-card reveal">' +
+        csIcon(it.icon) +
+        (it.meta ? '<div class="cs-card-meta">' + esc(it.meta) + '</div>' : '') +
+        (it.title ? '<h3 class="cs-card-title">' + rich(it.title) + '</h3>' : '') +
+        (it.body ? '<p class="cs-card-body">' + rich(it.body) + '</p>' : '') +
+        (it.foot ? '<div class="cs-card-foot"><strong>Why not the obvious?</strong> ' + rich(it.foot) + '</div>' : '') +
+      '</div>';
+    }).join('') + '</div>';
   }
 
   /* 9.5 The Focus Gradient — full-bleed, icon-based, scroll-driven zoning.
@@ -575,35 +729,41 @@
     if (!d.walkthrough || !d.walkthrough.steps) return '';
     const w = d.walkthrough;
     const n = w.steps.length;
-    // Static-frame walkthrough: the media window + copy panel stay fixed while
-    // scrolling swaps the ACTIVE step's image and text. Own engine (data-walk).
-    const slides = w.steps.map((st, i) =>
-      '<figure class="cs-walk-slide" data-slide="' + i + '"' + (i === 0 ? ' data-on' : '') + '>' +
-        (st.media ? mediaTag(st.media) : '<div class="cs-walk-ph"></div>') +
+    // Project-style CARDS (like the menu's project cards): each step is a card
+    // with its media on top, then a numbered label, title and body. Static —
+    // no scroll engine. Portrait media keeps a taller aspect ratio.
+    const cards = w.steps.map((st, i) =>
+      '<figure class="cs-walk-card reveal' + (w.portrait ? ' cs-walk-card--portrait' : '') + '">' +
+        '<div class="cs-walk-card-media">' +
+          (st.media ? mediaTag(st.media) : '<div class="cs-walk-ph"></div>') +
+        '</div>' +
+        '<figcaption class="cs-walk-card-body">' +
+          '<span class="cs-walk-card-idx">Step ' + (i + 1) + ' / ' + n + '</span>' +
+          '<h3>' + rich(st.title) + '</h3>' +
+          (st.body ? '<p>' + rich(st.body) + '</p>' : '') +
+        '</figcaption>' +
       '</figure>'
     ).join('');
-    const copies = w.steps.map((st, i) =>
-      '<div class="cs-walk-copy" data-slide="' + i + '"' + (i === 0 ? ' data-on' : '') + '>' +
-        '<div class="idx">Step ' + (i + 1) + ' / ' + n + '</div>' +
-        '<h3>' + rich(st.title) + '</h3>' +
-        (st.body ? '<p>' + rich(st.body) + '</p>' : '') +
-      '</div>'
-    ).join('');
-    const dots = w.steps.map((_, i) => '<span class="pin-dot' + (i === 0 ? ' active' : '') + '"></span>').join('');
 
-    return '<section class="cs-section cs-walk-section" data-walk data-steps="' + n + '">' +
-      '<div class="pin-dots cs-walk-dots">' + dots + '</div>' +
+    return '<section class="cs-section">' +
       '<div class="cs-num">Solution Walkthrough</div><h2 class="cs-h2">' + rich(w.title || 'A tour of the solution') + '</h2>' +
-      '<div class="cs-walk-stage' + (w.portrait ? ' cs-walk-stage--portrait' : '') + '">' +
-        '<div class="cs-walk-frame' + (w.portrait ? ' cs-walk-frame--portrait' : '') + '">' + slides + '</div>' +
-        '<div class="cs-walk-panel">' + copies + '</div>' +
-      '</div>' +
+      '<div class="cs-walk-cards' + (w.portrait ? ' cs-walk-cards--portrait' : '') + '">' + cards + '</div>' +
     '</section>';
   };
 
   /* 11. Design Decisions */
   S.decisions = d => {
     if (!d.decisions || !d.decisions.length) return '';
+    // Static icon tiles when every decision carries an icon.
+    const asTiles = d.decisions.every(function (dc) { return dc && dc.icon; });
+    if (asTiles) {
+      return '<section class="cs-section">' +
+        '<div class="cs-num">Design Decisions</div><h2 class="cs-h2">Why these choices, not the obvious ones</h2>' +
+        iconCards(d.decisions.map(function (dc) {
+          return { icon: dc.icon, title: dc.title, body: dc.body, foot: dc.whyNot };
+        }), 2) +
+      '</section>';
+    }
     return '<section class="cs-section" data-pin data-accordion>' +
       '<div class="cs-num">Design Decisions</div><h2 class="cs-h2">Why these choices, not the obvious ones</h2>' +
       '<div class="cs-decisions">' + d.decisions.map(dc =>
@@ -645,8 +805,9 @@
       '</section>';
     }
 
-    return '<section class="cs-section reveal">' +
-      '<div class="cs-num">Gallery</div><h2 class="cs-h2">' + rich(title) + '</h2>' +
+    return '<section class="cs-section reveal"' + (d.galleryId ? ' id="' + esc(d.galleryId) + '"' : '') + '>' +
+      '<div class="cs-num">' + esc(d.galleryNum || 'Gallery') + '</div><h2 class="cs-h2">' + rich(title) + '</h2>' +
+      (d.galleryLead ? '<p class="cs-lead">' + rich(d.galleryLead) + '</p>' : '') +
       galleryGrid(d.gallery) +
     '</section>';
   };
@@ -654,6 +815,23 @@
   /* 13. Impact, segmented */
   S.impact = d => {
     if (!d.impact || !d.impact.length) return '';
+    // Static icon tiles when every impact row carries an icon. The segment
+    // becomes the eyebrow (meta), the stat the headline title.
+    const asTiles = d.impact.every(function (im) { return im && im.icon; });
+    if (asTiles) {
+      return '<section class="cs-section">' +
+        '<div class="cs-num">' + esc(d.impactNum || 'Impact') + '</div><h2 class="cs-h2">' + rich(d.impactTitle || 'Where it moved the needle') + '</h2>' +
+        '<div class="cs-cards cs-cards--' + (d.impactCols || 3) + '">' + d.impact.map(function (im) {
+          return '<div class="cs-card cs-card--impact reveal">' +
+            csIcon(im.icon) +
+            '<div class="cs-card-meta">' + esc(im.segment) + '</div>' +
+            (im.stat ? '<div class="cs-card-stat">' + rich(im.stat) + '</div>' : '') +
+            '<p class="cs-card-body">' + rich(im.body) + '</p>' +
+          '</div>';
+        }).join('') + '</div>' +
+        (d.impactQuote ? quoteCard(d.impactQuote) : '') +
+      '</section>';
+    }
     return '<section class="cs-section" data-pin data-accordion>' +
       '<div class="cs-num">Impact</div><h2 class="cs-h2">Where it moved the needle</h2>' +
       '<div class="cs-impact">' + d.impact.map(im =>
@@ -671,12 +849,309 @@
     if (!d.reflection) return '';
     const r = d.reflection;
     return '<section class="cs-section cs-section--narrow reveal">' +
-      '<div class="cs-num">Reflection &amp; Handoff</div>' +
-      (r.principle ? '<div class="cs-principle glass"><div class="plbl">Transferable principle</div><p>' + rich(r.principle) + '</p></div>' : '') +
+      '<div class="cs-num">' + (r.num ? esc(r.num) : 'Reflection &amp; Handoff') + '</div>' +
+      (r.title ? '<h2 class="cs-h2">' + rich(r.title) + '</h2>' : '') +
+      (r.principle ? '<div class="cs-principle glass"><div class="plbl">' + esc(r.principleLabel || 'Transferable principle') + '</div><p>' + rich(r.principle) + '</p></div>' : '') +
+      (r.learned && r.learned.length ? '<div class="cs-future sc-learned"><h3>' + esc(r.learnedTitle || 'What I learned') + '</h3><ul>' +
+        r.learned.map(f => '<li>' + rich(f) + '</li>').join('') + '</ul></div>' : '') +
       (r.future && r.future.length ? '<div class="cs-future"><h3>' + esc(r.futureTitle || "What's next") + '</h3><ul>' +
         r.future.map(f => '<li>' + rich(f) + '</li>').join('') + '</ul></div>' : '') +
       (d.next ? '<div class="cs-nextnav"><div><div class="np-label">Next project</div></div>' +
         '<a href="' + esc(d.next.href) + '">' + esc(d.next.label) + ' ' + ARROW + '</a></div>' : '') +
+    '</section>';
+  };
+
+  /* ══ Layered-format sections (Sous Chef v2). Each is opt-in via its own data
+     key and returns '' when absent, so other case studies are unaffected.
+     Summary is always visible; detail sits in a native <details> disclosure
+     (keyboard-operable, announced as expandable, collapsed by default). ══ */
+  const CHEV = '<svg class="sc-more-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+  function scMore(label, bodyHtml, cls) {
+    if (!bodyHtml) return '';
+    return '<details class="sc-more' + (cls ? ' ' + cls : '') + '"><summary><span class="sc-more-lbl">' + esc(label || 'Details') + '</span>' + CHEV + '</summary>' +
+      '<div class="sc-more-body">' + bodyHtml + '</div></details>';
+  }
+  // Rich text that may be a string or an array of paragraphs.
+  function scParas(v) {
+    if (!v) return '';
+    return (Array.isArray(v) ? v : [v]).map(function (p) { return '<p>' + rich(p) + '</p>'; }).join('');
+  }
+  function scHead(o, fallbackTitle) {
+    return (o.num ? '<div class="cs-num">' + esc(o.num) + '</div>' : '') +
+      '<h2 class="cs-h2">' + rich(o.title || fallbackTitle || '') + '</h2>' +
+      (o.lead ? '<p class="cs-lead">' + rich(o.lead) + '</p>' : '');
+  }
+  function scOpen(id, cls) {
+    return '<section class="cs-section sc-sec' + (cls ? ' ' + cls : '') + '"' + (id ? ' id="' + esc(id) + '"' : '') + '>';
+  }
+
+  /* 02 · At a glance — key numbers + snapshot + stack chips. */
+  S.glance = d => {
+    const g = d.glance; if (!g) return '';
+    const nums = (g.metrics || []).map(function (m) {
+      return '<div class="cs-metric glass"><div class="m-num">' + rich(m.num) + '</div><div class="m-lbl">' + rich(m.label) + '</div></div>';
+    }).join('');
+    const snap = g.snapshot ? Object.entries(g.snapshot).map(function (kv) {
+      return '<div class="cs-snap-cell"><div class="k">' + esc(kv[0]) + '</div><div class="v">' + rich(kv[1]) + '</div></div>';
+    }).join('') : '';
+    const stack = (g.stack || []).map(function (s) { return '<li class="cs-comp-chip">' + esc(s) + '</li>'; }).join('');
+    return scOpen(g.id, 'sc-glance') + scHead(g, 'At a glance') +
+      (nums ? '<h3 class="sc-h3">' + esc(g.metricsTitle || 'Key numbers') + '</h3><div class="cs-metrics reveal">' + nums + '</div>' : '') +
+      (snap ? '<h3 class="sc-h3">' + esc(g.snapshotTitle || 'Snapshot') + '</h3><div class="cs-snapshot reveal">' + snap + '</div>' : '') +
+      (stack ? '<h3 class="sc-h3">' + esc(g.stackTitle || 'Stack') + '</h3><ul class="cs-comp-chips sc-chips reveal">' + stack + '</ul>' : '') +
+    '</section>';
+  };
+
+  /* 05 · Principles — numbered icon cards. */
+  S.principles = d => {
+    const p = d.principles; if (!p || !p.items) return '';
+    return scOpen(p.id, 'sc-principles') + scHead(p) +
+      iconCards(p.items.map(function (it, i) {
+        return { icon: it.icon, meta: (i < 9 ? '0' : '') + (i + 1), title: it.title, body: it.body };
+      }), 3) +
+    '</section>';
+  };
+
+  /* 06 · The product — nav chips, a screen strip, then feature cards with
+     summary visible and the detail behind a disclosure. */
+  S.features = d => {
+    const f = d.features; if (!f || !f.items) return '';
+    const nav = f.nav ? '<div class="sc-nav reveal"><span class="sc-nav-lbl">' + esc(f.nav.label || 'Navigation') + '</span>' +
+      '<ul class="sc-chips">' + f.nav.items.map(function (n) { return '<li class="cs-comp-chip">' + esc(n) + '</li>'; }).join('') + '</ul>' +
+      (f.nav.note ? '<p class="sc-nav-note">' + rich(f.nav.note) + '</p>' : '') + '</div>' : '';
+    const strip = (f.screens && f.screens.length) ? '<ul class="sc-strip reveal" aria-label="App screens" tabindex="0">' + f.screens.map(function (s) {
+      return '<li><figure class="sc-phone"><img src="' + esc(s.img) + '" alt="' + esc(s.alt) + '" loading="lazy" decoding="async" width="390" height="844" />' +
+        '<figcaption>' + rich(s.label) + '</figcaption></figure></li>';
+    }).join('') + '</ul>' : '';
+    const cards = '<div class="cs-cards cs-cards--3 sc-feats">' + f.items.map(function (it, i) {
+      return '<article class="cs-card sc-card reveal">' +
+        '<div class="sc-card-top">' + csIcon(it.icon) + '<span class="cs-card-meta">' + (i < 9 ? '0' : '') + (i + 1) + '</span></div>' +
+        '<h3 class="cs-card-title">' + rich(it.name) + '</h3>' +
+        '<p class="cs-card-body">' + rich(it.summary) + '</p>' +
+        scMore('Details', scParas(it.details)) +
+      '</article>';
+    }).join('') + '</div>';
+    return scOpen(f.id, 'sc-features') + scHead(f) + nav + strip + cards + '</section>';
+  };
+
+  /* 07 · How it works — interactive architecture diagram (HTML/CSS + inline
+     SVG connectors; no images, canvas or libraries). Driven entirely by
+     d.architecture. The trust boundary (dashed) is the visual centre; amber
+     connectors that cross it carry a "↗ leaves device" text tag. Every node
+     is a focusable button that opens a three-line detail card. Behaviour
+     lives in initArch(). Styles: .cs-arch namespace in case-study.css. */
+  // Arrow glyph. Base points DOWN; CSS rotates per modifier/breakpoint:
+  // --down, --up, --both, --flowx (right on wide screens, down when stacked).
+  function archArrow(dir) {
+    const heads = dir === 'both' ? '<path d="M7 7l5-5 5 5"/><path d="M7 25l5 5 5-5"/>' : '<path d="M7 25l5 5 5-5"/>';
+    return '<span class="cs-arch-arrow cs-arch-arrow--' + dir + '" aria-hidden="true">' +
+      '<svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">' +
+      '<path class="cs-arch-line" pathLength="1" d="M12 ' + (dir === 'both' ? '3' : '2') + 'v' + (dir === 'both' ? '26' : '27') + '"/>' + heads + '</svg></span>';
+  }
+  function archNode(n, cls, inner) {
+    if (!n) return '';
+    return '<button type="button" class="cs-arch-node' + (cls ? ' ' + cls : '') + '" data-node="' + esc(n.id) + '" aria-haspopup="dialog">' +
+      (n.icon ? csIcon(n.icon) : '') +
+      '<span class="cs-arch-nt"><span class="cs-arch-name">' + esc(n.name) + '</span>' +
+      (n.sub ? '<span class="cs-arch-sub">' + rich(n.sub) + '</span>' : '') + (inner || '') + '</span></button>';
+  }
+  function archConn(dir, label, opts) {
+    opts = opts || {};
+    return '<div class="cs-arch-conn' + (opts.leave ? ' is-leave' : '') + (opts.cls ? ' ' + opts.cls : '') + '">' + archArrow(dir) +
+      (label ? '<span class="cs-arch-lbl">' + rich(label) + '</span>' : '') +
+      (opts.tag ? '<span class="cs-arch-tag">' + esc(opts.tag) + '</span>' : '') + '</div>';
+  }
+  S.architecture = d => {
+    const a = d.architecture; if (!a || !a.device) return '';
+    const dv = a.device, out = a.outside, sh = a.ship, bd = a.build, pk = a.parked;
+    // Flatten every node for the detail-card lookup + the text description.
+    const all = [];
+    const push = (zone, n) => { if (n) all.push({ zone: zone, n: n }); };
+    push('Outside the device', dv.you);
+    push(dv.title, dv.screens); push(dv.title, dv.guardrails); (dv.guardrails.items || []).forEach(n => push(dv.title + ', guardrails', n));
+    push(dv.title, dv.api); (dv.engines || []).forEach(n => push(dv.title + ', engines', n));
+    push(dv.title, dv.storage); push(dv.title, dv.excel);
+    (out.items || []).forEach(it => push(out.title, it.node));
+    (sh.chain || []).forEach(n => push(sh.title, n));
+    (bd.chain || []).forEach(n => Array.isArray(n) ? n.forEach(m => push(bd.title, m)) : push(bd.title, n));
+    (pk.items || []).forEach(n => push(pk.title, n));
+    const info = {};
+    all.forEach(x => { info[x.n.id] = { name: x.n.name, zone: x.zone, what: x.n.what, rule: x.n.rule, test: x.n.test }; });
+
+    const views = (a.views || []).map((v, i) =>
+      '<button type="button" class="cs-arch-view" data-view="' + esc(v.id) + '" aria-pressed="' + (i === 0) + '">' + esc(v.label) + '</button>').join('');
+    const legend = (a.legend || []).map(l =>
+      '<li><span class="cs-arch-key cs-arch-key--' + esc(l.kind) + '" aria-hidden="true"></span>' + esc(l.label) + '</li>').join('');
+
+    // ── Device zone: You (outside) → trust boundary → stacked layers.
+    const chips = (dv.screens.chips || []).map(c => '<span class="cs-arch-chip">' + esc(c) + '</span>').join('');
+    const pair = (downLbl, upLbl) => '<div class="cs-arch-pair">' + archConn('down', downLbl) + archConn('up', upLbl) + '</div>';
+    const device =
+      '<div class="cs-arch-zone cs-arch-zone--device" data-zone="device">' +
+        '<div class="cs-arch-you">' + archNode(dv.you, 'cs-arch-node--you') + archConn('down', dv.youLink) + '</div>' +
+        '<div class="cs-arch-boundary">' +
+          '<div class="cs-arch-bhead"><h3 class="cs-arch-zt">' + esc(dv.title) + '</h3><p class="cs-arch-bnote">' + rich(dv.note) + '</p></div>' +
+          '<div class="cs-arch-inner">' +
+            archNode(dv.screens, 'cs-arch-node--wide', '<span class="cs-arch-chips">' + chips + '</span>') +
+            pair('', dv.guardrails.returnLabel) +
+            '<div class="cs-arch-band">' +
+              archNode(dv.guardrails, 'cs-arch-node--band') +
+              '<ul class="cs-arch-band-list">' + (dv.guardrails.items || []).map(n => '<li>' + archNode(n, 'cs-arch-node--chip') + '</li>').join('') + '</ul>' +
+            '</div>' +
+            pair('', dv.resultsLabel) +
+            archNode(dv.api, 'cs-arch-node--api') +
+            pair('', '') +
+            '<ul class="cs-arch-engines">' + (dv.engines || []).map(n => '<li>' + archNode(n) + '</li>').join('') + '</ul>' +
+            '<div class="cs-arch-links">' +
+              archConn('up', dv.pantryLabel, { cls: 'cs-arch-link--match' }) +
+              archConn('down', dv.confirmedLabel, { cls: 'cs-arch-link--ocr' }) +
+            '</div>' +
+            '<div class="cs-arch-store">' + archNode(dv.storage, 'cs-arch-node--store') + archConn('both', '', { cls: 'cs-arch-conn--side' }) + archNode(dv.excel) + '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+    // ── Outside services: amber arrows leaving the boundary, each tagged.
+    const outside =
+      '<div class="cs-arch-zone cs-arch-zone--out" data-zone="out"><h3 class="cs-arch-zt">' + esc(out.title) + '</h3>' +
+        '<ul class="cs-arch-outlist">' + (out.items || []).map(it =>
+          '<li class="cs-arch-out">' + archConn('flowx', it.label, { leave: true, tag: out.tag }) + archNode(it.node, 'cs-arch-node--svc') + '</li>').join('') +
+        '</ul></div>';
+
+    // ── How it ships: vertical chain ending in the browser.
+    const ship =
+      '<div class="cs-arch-zone cs-arch-zone--ship" data-zone="ship"><h3 class="cs-arch-zt">' + esc(sh.title) + '</h3>' +
+        '<ol class="cs-arch-chain cs-arch-chain--v">' + (sh.chain || []).map((n, i) =>
+          '<li>' + (i ? archConn('down', (sh.links || [])[i - 1]) : '') + archNode(n) + '</li>').join('') + '</ol></div>';
+
+    // ── Build time: horizontal chain on wide screens, vertical when stacked.
+    const build =
+      '<div class="cs-arch-zone cs-arch-zone--build" data-zone="build"><h3 class="cs-arch-zt">' + esc(bd.title) + '</h3>' +
+        '<ol class="cs-arch-chain cs-arch-chain--x">' + (bd.chain || []).map((n, i) =>
+          '<li>' + (i ? archConn('flowx', '') : '') +
+            (Array.isArray(n) ? '<div class="cs-arch-group">' + n.map(m => archNode(m)).join('<span class="cs-arch-plus" aria-hidden="true">+</span>') + '</div>' : archNode(n)) +
+          '</li>').join('') + '</ol>' +
+        archConn('down', bd.into, { cls: 'cs-arch-conn--into' }) + '</div>';
+
+    // ── Parked / future.
+    const parked =
+      '<div class="cs-arch-zone cs-arch-zone--parked" data-zone="parked"><h3 class="cs-arch-zt">' + esc(pk.title) + '</h3>' +
+        '<ul class="cs-arch-parklist">' + (pk.items || []).map(n => '<li>' + archNode(n, 'cs-arch-node--parked') + '</li>').join('') + '</ul></div>';
+
+    // ── Visually hidden text description: every node and every flow.
+    const sr = '<ol class="cs-arch-sr">' +
+      all.map(x => '<li>' + esc(x.zone) + ': ' + esc(x.n.name) + (x.n.sub ? ' (' + esc(x.n.sub.replace(/<[^>]+>/g, '')) + ')' : '') + '. ' + esc(x.n.what || '') + '</li>').join('') +
+      (a.flows || []).map(f => '<li>' + esc(f) + '</li>').join('') + '</ol>';
+
+    const diagram =
+      '<div class="cs-arch reveal" data-arch data-view="' + esc((a.views && a.views[0] && a.views[0].id) || 'flow') + '">' +
+        '<div class="cs-arch-bar">' +
+          '<div class="cs-arch-views" role="group" aria-label="' + esc(a.viewsLabel || 'Diagram view') + '">' + views + '</div>' +
+          '<ul class="cs-arch-legend" aria-label="Legend">' + legend + '</ul>' +
+        '</div>' +
+        '<p class="cs-arch-live cs-arch-sr" aria-live="polite"></p>' +
+        '<div class="cs-arch-fig" role="figure" aria-label="' + esc(a.figLabel) + '">' + sr +
+          '<div class="cs-arch-grid">' + build + ship + device + outside + parked + '</div>' +
+          '<div class="cs-arch-card" role="dialog" aria-modal="false" aria-labelledby="cs-arch-card-t" hidden>' +
+            '<button type="button" class="cs-arch-x" aria-label="Close details"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
+            '<p class="cs-arch-card-z"></p><h4 class="cs-arch-card-t" id="cs-arch-card-t"></h4><dl class="cs-arch-card-dl"></dl>' +
+          '</div>' +
+          '<script type="application/json" class="cs-arch-data">' + JSON.stringify(info).replace(/</g, '\\u003c') + '</script>' +
+        '</div>' +
+      '</div>';
+    const details = (a.details && a.details.length) ? '<h3 class="sc-h3">' + esc(a.detailsTitle || 'Details') + '</h3><div class="sc-acc-list">' +
+      a.details.map(function (x) { return scMore(x.title, scParas(x.body), 'sc-more--row'); }).join('') + '</div>' : '';
+    return scOpen(a.id, 'sc-architecture') +
+      (a.num ? '<div class="cs-num">' + esc(a.num) + '</div>' : '') +
+      '<h2 class="cs-h2">' + rich(a.title) + '</h2>' +
+      (a.intro ? '<p class="cs-lead">' + rich(a.intro) + '</p>' : '') +
+      diagram +
+      (a.summary ? '<p class="cs-lead cs-arch-summary">' + rich(a.summary) + '</p>' : '') +
+      details + '</section>';
+  };
+
+  /* 08–10 · Guardrails / Privacy / Security — card groups, summary + detail.
+     Optional o.figure renders a phone screenshot beside the cards; optional
+     o.callout renders a highlighted statement after them. */
+  function scCardGroup(o, defId) {
+    if (!o || !o.items) return '';
+    const cols = o.cols || 3;
+    const cards = '<div class="cs-cards cs-cards--' + cols + '">' + o.items.map(function (it) {
+      return '<article class="cs-card sc-card reveal">' + csIcon(it.icon) +
+        '<h3 class="cs-card-title">' + rich(it.title) + '</h3>' +
+        '<p class="cs-card-body">' + rich(it.summary) + '</p>' +
+        scMore('Details', scParas(it.details)) +
+      '</article>';
+    }).join('') + '</div>';
+    const fig = o.figure ? '<figure class="sc-phone sc-side-fig reveal"><img src="' + esc(o.figure.img) + '" alt="' + esc(o.figure.alt) + '" loading="lazy" decoding="async" width="390" height="844" />' +
+      (o.figure.caption ? '<figcaption>' + rich(o.figure.caption) + '</figcaption>' : '') + '</figure>' : '';
+    const callout = o.callout ? '<div class="cs-principle glass sc-callout reveal">' + csIcon(o.callout.icon || 'shield') +
+      '<p>' + rich(o.callout.text) + '</p></div>' : '';
+    return scOpen(o.id || defId, 'sc-group') + scHead(o) +
+      (fig ? '<div class="sc-split">' + fig + '<div class="sc-split-main">' + cards + '</div></div>' : cards) +
+      callout + '</section>';
+  }
+  S.guardrails = d => scCardGroup(d.guardrails, 'guardrails');
+  S.privacy = d => scCardGroup(d.privacy, 'privacy');
+  S.security = d => scCardGroup(d.security, 'security');
+
+  /* 11 · Decisions — featured callout + Was → Now → Why table. The first
+     `visible` rows show; the rest sit behind a disclosure. */
+  S.decisionsTable = d => {
+    const t = d.decisionsTable; if (!t || !t.rows) return '';
+    const cols = t.cols || ['Was', 'Now', 'Why'];
+    const AR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+    const table = function (rows, caption) {
+      return '<table class="sc-dt"><caption class="sr-only">' + esc(caption) + '</caption><thead><tr>' +
+        cols.map(function (c) { return '<th scope="col">' + esc(c) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+        rows.map(function (r) {
+          return '<tr><td data-label="' + esc(cols[0]) + '"><span class="sc-dt-was">' + rich(r[0]) + '</span></td>' +
+            '<td data-label="' + esc(cols[1]) + '"><span class="sc-dt-now">' + AR + rich(r[1]) + '</span></td>' +
+            '<td data-label="' + esc(cols[2]) + '">' + rich(r[2]) + '</td></tr>';
+        }).join('') + '</tbody></table>';
+    };
+    const n = t.visible || t.rows.length;
+    const first = t.rows.slice(0, n), rest = t.rows.slice(n);
+    const callout = t.callout ? '<div class="cs-principle glass sc-feature-callout reveal"><div class="plbl">' + esc(t.callout.label || 'Featured') + '</div>' +
+      '<p class="sc-fc-head">' + rich(t.callout.head) + '</p>' + scParas(t.callout.text) + '</div>' : '';
+    return scOpen(t.id, 'sc-decisions') + scHead(t) + callout +
+      '<div class="sc-dt-wrap reveal">' + table(first, (t.title || 'Decisions') + ', part 1') +
+        (rest.length ? scMore('Show ' + rest.length + ' more decisions', table(rest, (t.title || 'Decisions') + ', part 2'), 'sc-more--wide') : '') +
+      '</div></section>';
+  };
+
+  /* 12 · Trade-offs — honest cost list as icon cards. */
+  S.tradeoffs = d => {
+    const t = d.tradeoffs; if (!t || !t.items) return '';
+    return scOpen(t.id, 'sc-tradeoffs') + scHead(t) + iconCards(t.items, 3) + '</section>';
+  };
+
+  /* 13 · Lite → Pro — two-column tier comparison. */
+  S.tiers = d => {
+    const t = d.tiers; if (!t || !t.lite || !t.pro) return '';
+    const tier = function (x, cls, ico) {
+      return '<article class="sc-tier ' + cls + ' reveal"><div class="sc-tier-head"><h3>' + esc(x.name) + '</h3>' +
+        (x.badge ? '<span class="sc-badge">' + esc(x.badge) + '</span>' : '') + '</div>' +
+        '<ul class="sc-tier-list">' + x.items.map(function (i) { return '<li>' + csIcon(ico) + '<span>' + rich(i) + '</span></li>'; }).join('') + '</ul></article>';
+    };
+    return scOpen(t.id, 'sc-tiers') + scHead(t) +
+      '<div class="sc-tier-grid">' + tier(t.lite, 'sc-tier--lite', 'check') + tier(t.pro, 'sc-tier--pro', 'lock') + '</div>' +
+      (t.summary ? '<p class="cs-lead sc-tier-sum reveal">' + rich(t.summary) + '</p>' : '') +
+    '</section>';
+  };
+
+  /* 14 · Built for every screen — responsive points + device figures. */
+  S.everyScreen = d => {
+    const s = d.everyScreen; if (!s) return '';
+    const figs = (s.figures || []).map(function (f) {
+      return '<figure class="sc-es-fig sc-es-fig--' + esc(f.kind || 'tablet') + '"><img src="' + esc(f.img) + '" alt="' + esc(f.alt) + '" loading="lazy" decoding="async" width="' + (f.w || '') + '" height="' + (f.h || '') + '" />' +
+        (f.caption ? '<figcaption>' + rich(f.caption) + '</figcaption>' : '') + '</figure>';
+    }).join('');
+    const pts = (s.points || []).map(function (p) {
+      return '<li class="reveal">' + csIcon(p.icon) + '<p>' + rich(p.text) + '</p></li>';
+    }).join('');
+    return scOpen(s.id, 'sc-every') + scHead(s) +
+      '<div class="sc-es"><div class="sc-es-figs reveal">' + figs + '</div><ul class="sc-es-pts">' + pts + '</ul></div>' +
     '</section>';
   };
 
@@ -702,7 +1177,12 @@
       ['shift', S.shift], ['process', S.process], ['gradient', S.gradient],
       ['walkthrough', S.walkthrough],
       ['decisions', S.decisions], ['gallery', S.gallery], ['impact', S.impact],
-      ['reflection', S.reflection]
+      ['reflection', S.reflection],
+      // Opt-in layered sections (render nothing unless their data key exists).
+      ['glance', S.glance], ['principles', S.principles], ['features', S.features],
+      ['architecture', S.architecture], ['guardrails', S.guardrails], ['privacy', S.privacy],
+      ['security', S.security], ['decisionsTable', S.decisionsTable], ['tradeoffs', S.tradeoffs],
+      ['tiers', S.tiers], ['everyScreen', S.everyScreen]
     ];
     // A data file may reorder sections for its own page via d.sectionOrder
     // (an array of section keys). Listed keys are emitted in that sequence
@@ -737,6 +1217,87 @@
     initTouchAccordions();
     initTouchSteps();
     initLightbox();
+    initArch();
+  }
+
+  /* ─── ARCHITECTURE DIAGRAM (views, detail cards, arrow-key focus) ───
+     No-op unless a [data-arch] diagram is on the page. */
+  function initArch() {
+    document.querySelectorAll('[data-arch]').forEach(function (root) {
+      const fig = root.querySelector('.cs-arch-fig');
+      const card = root.querySelector('.cs-arch-card');
+      const live = root.querySelector('.cs-arch-live');
+      let info = {};
+      try { info = JSON.parse(root.querySelector('.cs-arch-data').textContent); } catch (e) {}
+      const nodes = Array.from(root.querySelectorAll('.cs-arch-node'));
+      let openFor = null;
+
+      // View switcher (Data flow / What leaves your device / How it ships).
+      root.querySelectorAll('.cs-arch-view').forEach(function (b) {
+        b.addEventListener('click', function () {
+          root.setAttribute('data-view', b.dataset.view);
+          root.querySelectorAll('.cs-arch-view').forEach(function (o) { o.setAttribute('aria-pressed', String(o === b)); });
+          if (live) live.textContent = 'Showing: ' + b.textContent;
+          if (openFor) closeCard(false);
+        });
+      });
+
+      function place(btn) {
+        const f = fig.getBoundingClientRect(), r = btn.getBoundingClientRect();
+        const w = Math.min(320, f.width - 16);
+        card.style.width = w + 'px';
+        let left = r.left - f.left + r.width / 2 - w / 2;
+        left = Math.max(8, Math.min(left, f.width - w - 8));
+        card.style.left = left + 'px';
+        const h = card.offsetHeight;
+        let top = r.bottom - f.top + 8;
+        if (top + h > f.height - 8 && r.top - f.top - h - 8 > 0) top = r.top - f.top - h - 8;   // flip above
+        card.style.top = top + 'px';
+      }
+      function openCard(btn) {
+        const d = info[btn.dataset.node]; if (!d) return;
+        nodes.forEach(function (n) { n.setAttribute('aria-expanded', String(n === btn)); });
+        card.querySelector('.cs-arch-card-z').textContent = d.zone || '';
+        card.querySelector('.cs-arch-card-t').textContent = d.name || '';
+        const rows = [['What it does', d.what], ['Key rule', d.rule], ['Test / source', d.test]].filter(function (r) { return r[1]; });
+        card.querySelector('.cs-arch-card-dl').innerHTML = rows.map(function (r) {
+          return '<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>';
+        }).join('');
+        card.hidden = false;
+        openFor = btn;
+        place(btn);
+        card.querySelector('.cs-arch-x').focus({ preventScroll: true });
+      }
+      function closeCard(restore) {
+        card.hidden = true;
+        nodes.forEach(function (n) { n.removeAttribute('aria-expanded'); });
+        const b = openFor; openFor = null;
+        if (restore !== false && b) b.focus({ preventScroll: true });
+      }
+
+      nodes.forEach(function (btn, i) {
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          if (openFor === btn) closeCard(); else openCard(btn);
+        });
+        // Arrow keys move between nodes (DOM order); Home/End jump.
+        btn.addEventListener('keydown', function (e) {
+          let j = null;
+          if (e.key === 'ArrowRight' || e.key === 'ArrowDown') j = i + 1;
+          else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') j = i - 1;
+          else if (e.key === 'Home') j = 0;
+          else if (e.key === 'End') j = nodes.length - 1;
+          if (j === null) return;
+          e.preventDefault();
+          nodes[(j + nodes.length) % nodes.length].focus();
+        });
+      });
+      card.querySelector('.cs-arch-x').addEventListener('click', function () { closeCard(); });
+      card.addEventListener('click', function (e) { e.stopPropagation(); });
+      document.addEventListener('click', function () { if (openFor) closeCard(false); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && openFor) { e.preventDefault(); closeCard(); } });
+      window.addEventListener('resize', function () { if (openFor) place(openFor); }, { passive: true });
+    });
   }
 
   /* ─── TOUCH ACCORDIONS ────────────────────────────────────────────

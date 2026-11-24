@@ -1,0 +1,202 @@
+/* ══════════════════════════════════════════════════════════════
+   Contact + "Book a session" pop-ups (assets/connect.js).
+   Every rule is scoped to .gc-* classes. Uses the site's theme tokens.
+   Text colours are tuned for AA contrast in both themes.
+   ══════════════════════════════════════════════════════════════ */
+/* Shared tokens for the pop-ups and the inline contact form. */
+.gc-dialog, [data-contact-inline] {
+  --gc-accent-text: #b01c00;  /* AA on light surfaces */
+  --gc-btn: #cf2200;          /* white text on this clears AA */
+  --gc-busy: rgba(0, 0, 0, 0.07);
+  --gc-busy-text: #555;
+}
+/* Browser-native colours for scrollbars and form controls, per theme. */
+.gc-dialog, [data-contact-inline] { color-scheme: light; }
+[data-theme="dark"] .gc-dialog, [data-theme="dark"] [data-contact-inline] { color-scheme: dark; }
+[data-theme="dark"] [data-contact-inline] { --gc-accent-text: #ff7a5c; --gc-busy: rgba(255, 255, 255, 0.07); --gc-busy-text: rgba(255, 255, 255, 0.7); }
+.gc-dialog {
+  padding: 0; border: 0; background: transparent; color: var(--text-primary);
+  width: min(520px, calc(100vw - 24px)); max-width: none; max-height: calc(100dvh - 24px);
+  margin: auto; overflow: visible;
+}
+[data-theme="dark"] .gc-dialog { --gc-accent-text: #ff7a5c; --gc-busy: rgba(255, 255, 255, 0.07); --gc-busy-text: rgba(255, 255, 255, 0.7); }
+.gc-dialog--wide { width: min(760px, calc(100vw - 24px)); }
+.gc-dialog::backdrop { background: rgba(10, 6, 5, 0.45); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+html.gc-lock { overflow: hidden; }
+.gc-panel {
+  position: relative; max-height: calc(100dvh - 24px); overflow: auto; overscroll-behavior: contain;
+  padding: 28px 28px 24px; border-radius: 22px;
+  background: var(--bg); border: 1px solid var(--border);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 42, 0, 0.12);
+  animation: gcIn 0.22s var(--ease, ease) both;
+}
+@keyframes gcIn { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: none; } }
+.gc-x {
+  position: absolute; top: 10px; right: 10px; width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text-secondary); cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.gc-x:hover { color: var(--text-primary); background: var(--surface-hover); }
+.gc-x svg { width: 16px; height: 16px; }
+.gc-x:focus-visible, .gc-btn:focus-visible, .gc-nav:focus-visible, .gc-link:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+
+.gc-eyebrow { margin: 0 0 6px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gc-accent-text); }
+.gc-title { margin: 0 52px 8px 0; font-size: clamp(1.4rem, 3.2vw, 1.8rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+.gc-lead { margin: 0 0 18px; font-size: 15px; line-height: 1.6; color: var(--text-secondary); }
+.gc-lead strong { color: var(--text-primary); }
+.gc-link { font: inherit; color: var(--gc-accent-text); font-weight: 700; background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ── Form ── */
+.gc-form { display: flex; flex-direction: column; gap: 14px; }
+.gc-field { display: flex; flex-direction: column; gap: 6px; }
+.gc-field label { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+.gc-opt { font-weight: 400; color: var(--text-secondary); }
+.gc-field input, .gc-field textarea {
+  font: inherit; font-size: 16px; color: var(--text-primary);
+  min-height: 44px; padding: 10px 14px; border-radius: 12px;
+  border: 1px solid var(--border); background: var(--bg-secondary);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.gc-field textarea { resize: vertical; min-height: 110px; line-height: 1.5; }
+.gc-field input:focus, .gc-field textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255, 42, 0, 0.18); }
+.gc-field [aria-invalid="true"] { border-color: #c42000; }
+.gc-row { display: flex; justify-content: space-between; gap: 12px; }
+.gc-err { margin: 0; min-height: 0; font-size: 13px; font-weight: 600; color: #b01c00; }
+[data-theme="dark"] .gc-err { color: #ff8a70; }
+.gc-count { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+.gc-status { margin: 0; font-size: 14px; color: var(--text-secondary); }
+.gc-status:empty { display: none; }
+.gc-status.is-error { color: #b01c00; font-weight: 600; }
+[data-theme="dark"] .gc-status.is-error { color: #ff8a70; }
+.gc-hp { position: absolute !important; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+.gc-fine { margin: 0; font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; }
+.gc-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.gc-btn {
+  font: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
+  min-height: 46px; padding: 0 22px; border-radius: 100px; border: 1px solid transparent;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+.gc-btn--primary { align-self: flex-start; color: #fff; background: var(--gc-btn); box-shadow: 0 4px 18px rgba(255, 42, 0, 0.3); }
+.gc-btn--primary:hover { background: #b01d00; transform: translateY(-1px); }
+.gc-btn--primary:disabled { opacity: 0.7; cursor: progress; transform: none; }
+.gc-btn--ghost { color: var(--text-primary); background: var(--surface); border-color: var(--border); min-height: 44px; padding: 0 16px; font-size: 14px; }
+.gc-btn--ghost:hover { background: var(--surface-hover); }
+
+.gc-done { text-align: center; padding: 18px 6px 6px; outline: none; }
+.gc-done-ico { display: inline-flex; width: 56px; height: 56px; border-radius: 50%; align-items: center; justify-content: center; color: #fff; background: var(--gc-btn); margin-bottom: 12px; }
+.gc-done-ico svg { width: 26px; height: 26px; }
+.gc-done h3 { margin: 0 0 8px; font-size: 1.3rem; }
+.gc-done p { margin: 0 0 6px; color: var(--text-secondary); line-height: 1.6; }
+.gc-done strong { color: var(--text-primary); }
+.gc-empty { padding: 18px 0 4px; display: flex; flex-direction: column; gap: 14px; align-items: flex-start; color: var(--text-secondary); }
+.gc-empty p { margin: 0; }
+
+/* ── Scheduler ── */
+.gc-loading { margin: 24px 0; color: var(--text-secondary); }
+.gc-demo { margin: -6px 0 14px; padding: 10px 14px; border-radius: 12px; font-size: 13.5px; line-height: 1.5;
+  color: var(--text-primary); background: rgba(255, 176, 0, 0.14); border: 1px dashed rgba(200, 120, 0, 0.6); }
+/* Month calendar (left) + times (right), modelled on MUI's date calendar
+   and Google Calendar's appointment booking. */
+.gc-book { display: grid; grid-template-columns: 332px minmax(0, 1fr); gap: 28px; align-items: start; }
+.gc-cal { min-width: 0; }
+.gc-cal-h { display: flex; align-items: center; gap: 4px; margin: 0 0 6px; padding-left: 8px; }
+.gc-cal-t { flex: 1; margin: 0; font-size: 16px; font-weight: 700; color: var(--text-primary); }
+.gc-nav { flex: 0 0 44px; width: 44px; height: 44px; border-radius: 50%; border: 0; background: transparent; color: var(--text-primary); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.gc-nav:hover:not(:disabled) { background: var(--bg-secondary); }
+.gc-nav:disabled { opacity: 0.3; cursor: default; }
+.gc-nav svg { width: 18px; height: 18px; }
+.gc-wds, .gc-days { display: grid; grid-template-columns: repeat(7, 44px); gap: 2px; justify-content: space-between; }
+.gc-wd { height: 32px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+.gc-cell { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
+.gc-dbtn {
+  font: inherit; font-size: 14px; font-weight: 400; width: 44px; height: 44px; border-radius: 50%; cursor: pointer;
+  border: 1px solid transparent; background: transparent; color: var(--text-secondary);
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+.gc-dbtn:disabled { cursor: default; color: var(--text-secondary); opacity: 0.45; }
+.gc-dbtn.is-avail { font-weight: 700; color: var(--gc-accent-text); background: rgba(255, 42, 0, 0.08); }
+.gc-dbtn.is-avail:hover { background: rgba(255, 42, 0, 0.16); }
+.gc-dbtn.is-today { border-color: var(--text-secondary); }
+.gc-dbtn.is-sel, .gc-dbtn.is-sel:hover { color: #fff; background: var(--gc-btn); border-color: var(--gc-btn); }
+.gc-dbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* position: relative keeps the screen-reader-only labels inside this column, so they can't stretch the pop-up. */
+.gc-side { position: relative; min-width: 0; border-left: 1px solid var(--border); padding-left: 24px; }
+.gc-side-h { margin: 8px 0 2px; font-size: 16px; font-weight: 700; color: var(--text-primary); }
+.gc-side-s { margin: 0 0 12px; font-size: 13px; color: var(--text-secondary); }
+.gc-times { list-style: none; margin: 0; padding: 0 4px 2px 0; display: flex; flex-direction: column; gap: 8px; }
+/* Wide layout: ONE scroll area. The pop-up sizes to the window and only the
+   right column (times, or the booking form) scrolls. */
+@media (min-width: 720px) {
+  .gc-dialog--wide .gc-panel { display: flex; flex-direction: column; }
+  .gc-dialog--wide .gc-body { display: flex; flex-direction: column; flex: 0 1 auto; min-height: 0; }
+  .gc-dialog--wide .gc-book { flex: 0 1 auto; min-height: 0; grid-template-rows: minmax(0, 1fr); }
+  .gc-dialog--wide .gc-side { min-height: 0; max-height: 100%; overflow-y: auto; overscroll-behavior: contain; padding-right: 4px; }
+}
+.gc-slot {
+  font: inherit; font-size: 14px; font-weight: 700; width: 100%; min-height: 44px; cursor: pointer; border-radius: 10px;
+  color: var(--gc-accent-text); background: var(--bg); border: 1px solid rgba(255, 42, 0, 0.45);
+  transition: background 0.15s, color 0.15s;
+}
+.gc-slot:hover { color: #fff; background: var(--gc-btn); border-color: var(--gc-btn); }
+.gc-slot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.gc-side .gc-pick { margin-top: 8px; }
+.gc-side .gc-form { max-width: none; }
+/* Short windows (e.g. laptops with the browser not maximised): tighten the
+   header and calendar so the pop-up fits and only the times column scrolls. */
+@media (min-width: 720px) and (max-height: 700px) {
+  .gc-dialog--wide .gc-panel { padding: 18px 24px 16px; }
+  .gc-dialog--wide .gc-eyebrow { margin-bottom: 2px; }
+  .gc-dialog--wide .gc-title { font-size: 1.3rem; margin-bottom: 4px; }
+  .gc-dialog--wide .gc-lead { margin-bottom: 10px; font-size: 14px; }
+  .gc-dialog--wide .gc-demo { margin: 0 0 10px; padding: 6px 12px; font-size: 12.5px; }
+  .gc-cal-h { margin-bottom: 0; }
+  .gc-wd { height: 24px; }
+  .gc-wds, .gc-days { grid-template-columns: repeat(7, 40px); }
+  .gc-cell, .gc-dbtn { width: 40px; height: 38px; }
+  .gc-dbtn { border-radius: 19px; }
+  .gc-book { grid-template-columns: 300px minmax(0, 1fr); }
+}
+@media (max-width: 719px) {
+  .gc-book { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .gc-cal { max-width: 332px; margin: 0 auto; width: 100%; }
+  .gc-side { border-left: 0; padding-left: 0; border-top: 1px solid var(--border); padding-top: 14px; }
+}
+@media (max-width: 360px) {
+  .gc-wds, .gc-days { grid-template-columns: repeat(7, 40px); }
+  .gc-cell, .gc-dbtn { width: 40px; height: 40px; }
+}
+/* Generic busy block: height grows with its length (--u = number of 30-min units). */
+.gc-busy { position: relative;
+  min-height: calc(26px * var(--u, 1) + 8px * (var(--u, 1) - 1)); padding: 4px 0;
+  display: flex; align-items: center; justify-content: center; border-radius: 10px;
+  font-size: 13px; font-weight: 600; color: var(--gc-busy-text);
+  background: repeating-linear-gradient(135deg, var(--gc-busy) 0 8px, transparent 8px 14px), var(--bg-secondary);
+  border: 1px dashed var(--border);
+}
+.gc-legend { list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 13px; color: var(--text-secondary); }
+.gc-legend li { display: flex; align-items: center; gap: 8px; }
+.gc-key { width: 22px; height: 14px; border-radius: 4px; display: inline-block; }
+.gc-key--free { border: 1px solid rgba(255, 42, 0, 0.55); background: var(--bg); }
+.gc-key--busy { border: 1px dashed var(--border); background: repeating-linear-gradient(135deg, var(--gc-busy) 0 4px, transparent 4px 7px), var(--bg-secondary); }
+
+.gc-pick { display: flex; align-items: center; gap: 14px; padding: 14px 16px; margin: 0 0 18px; border-radius: 14px; border: 1px solid rgba(255, 42, 0, 0.35); background: rgba(255, 42, 0, 0.06); }
+.gc-pick-ico { flex: 0 0 auto; color: var(--gc-accent-text); }
+.gc-pick-ico svg { width: 26px; height: 26px; display: block; }
+.gc-pick div { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.gc-pick span { font-size: 13px; color: var(--text-secondary); }
+
+@media (max-width: 599px) {
+  .gc-panel { padding: 22px 16px 18px; border-radius: 18px; }
+  .gc-pick { flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gc-panel { animation: none; }
+  .gc-btn, .gc-slot { transition: none; }
+  .gc-btn--primary:hover { transform: none; }
+}

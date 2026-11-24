@@ -80,9 +80,9 @@ window.CASE_STUDY = {
   process: {
     title: "How we got there",
     steps: [
-      { title: "Journey mapping", body: "Mapped how employees moved through and experienced the existing space \u2014 where energy gathered, where it died." },
-      { title: "Research affinitizing", body: "Synthesized stakeholder and customer voices into insight clusters, so patterns rose out of the noise." },
-      { title: "Mission definition", body: "Distilled the research into a mission statement that framed every subsequent design decision." }
+      { icon: "map", title: "Journey mapping", body: "Mapped how employees moved through and experienced the existing space \u2014 where energy gathered, where it died." },
+      { icon: "cluster", title: "Research affinitizing", body: "Synthesized stakeholder and customer voices into insight clusters, so patterns rose out of the noise." },
+      { icon: "flag", title: "Mission definition", body: "Distilled the research into a mission statement that framed every subsequent design decision." }
     ],
     deck: [
       { img: "../assets/BMW/bmw-journey-mapping.jpg", caption: "Journey mapping \u2014 how employees move through the space" },
@@ -92,35 +92,6 @@ window.CASE_STUDY = {
       { img: "../assets/BMW/bmw-sketches-and-ideation-innovation-lab.jpg", caption: "Sketching in the innovation lab" },
       { img: "../assets/BMW/bmw-ideation-sketches.jpg", caption: "Concept ideation" },
       { img: "../assets/BMW/bmw-mission-statement.jpg", caption: "The mission statement that framed every decision" }
-    ]
-  },
-
-  /* 9.5 The Focus Gradient — full-bleed, icon-based, scroll-driven zoning.
-     One framing line only; icons + colour shift carry the rest. Each space
-     is keyed to a minimal line icon (rendered site-style, accent outline). */
-  gradient: {
-    framing: "Loud to quiet, by design.",
-    beats: [
-      {
-        spaces: [
-          { label: "Innovation lab", icon: "bulb" },
-          { label: "Cafeteria", icon: "coffee" },
-          { label: "Modular arena", icon: "group" }
-        ]
-      },
-      {
-        spaces: [
-          { label: "Meeting rooms", icon: "presentation" },
-          { label: "Training rooms", icon: "book" }
-        ]
-      },
-      {
-        spaces: [
-          { label: "Call rooms", icon: "headphones" },
-          { label: "Rest spaces", icon: "moon" },
-          { label: "Focus desks", icon: "desk" }
-        ]
-      }
     ]
   },
 
@@ -139,16 +110,19 @@ window.CASE_STUDY = {
   /* 11. Design Decisions — each traceable to a research finding. */
   decisions: [
     {
+      icon: "swing",
       title: "Window-adjacent swing seating with natural light",
       body: "Directly addresses \u201Cspaces feel dark\u201D while building on \u201Cwindows provide natural light\u201D \u2014 the layout pulls workspaces toward existing light sources, and takes advantage of the lush greenery just outside that employees already gravitated to at lunch.",
       whyNot: "Fighting the darkness with more artificial lighting would have added cost and ignored the daylight and outdoor view the building already had."
     },
     {
+      icon: "coffee",
       title: "BMW-iconic cafeteria + communal eating space",
       body: "Resolves both \u201Clacks BMW and departmental branding\u201D and \u201Cemployees lack communal eating spaces\u201D in a single design move.",
       whyNot: "Treating branding and social space as separate problems would have doubled the footprint and diluted both."
     },
     {
+      icon: "group",
       title: "Modular arena space \u2014 cross-team collision by design",
       body: "Built specifically to invite other teams and organizations in, creating a venue for spontaneous cross-team brainstorming instead of confining collaboration to each team's own zone.",
       whyNot: "The obvious move is a self-contained space per team. Instead, a shared modular arena forces different teams to physically overlap, increasing the odds of unplanned idea collisions."
@@ -192,9 +166,9 @@ window.CASE_STUDY = {
 
   /* 13. Impact, segmented — status: in delivery. */
   impact: [
-    { segment: "User / Employee", stat: "Positive", body: "Positive response from BMW employees to the redesigned space." },
-    { segment: "Business", stat: "3 concepts", body: "Three concepts tested, approved, and developed; currently in active build / delivery." },
-    { segment: "Org", stat: "In delivery", body: "Increased innovation, productivity, and workplace appeal \u2014 a direct resolution of documented research pain points: branding, communal space, acoustic balance, and color / light." }
+    { icon: "user", segment: "User / Employee", stat: "Positive", body: "Positive response from BMW employees to the redesigned space." },
+    { icon: "building", segment: "Business", stat: "3 concepts", body: "Three concepts tested, approved, and developed; currently in active build / delivery." },
+    { icon: "rocket", segment: "Org", stat: "In delivery", body: "Increased innovation, productivity, and workplace appeal \u2014 a direct resolution of documented research pain points: branding, communal space, acoustic balance, and color / light." }
   ],
 
   /* 14. Reflection & Handoff */
@@ -207,5 +181,5 @@ window.CASE_STUDY = {
     ]
   },
 
-  next: { label: "Origami Chair", href: "origami-chair.html" }
+  next: { label: "FP&amp;A Design System", href: "design-system-comment-panel.html" }
 };

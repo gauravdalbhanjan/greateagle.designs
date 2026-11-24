@@ -3,18 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sous Chef — Countertop Cooking Companion — Gaurav Dalbhanjan</title>
-  <meta name="description" content="Flip search to select — a distraction-free countertop cooking companion, physical device shipped and live in production." />
-  <link rel="icon" type="image/png" href="../assets/logo/greateagledesigns.png" />
-  <link rel="apple-touch-icon" href="../assets/logo/greateagledesigns.png" />
+  <title>SousChef Lite — Gaurav Dalbhanjan</title>
+  <meta name="description" content="SousChef Lite: a private, pantry-first cooking companion. No sign-up, nothing stored on a server, and it never guesses about food safety. A 2023 countertop-device concept rebuilt in 2026 as a live web app." />
+  <link rel="icon" type="image/png" href="../assets/logo/GreatEagleDesigns_logo_Nov26.png" />
+  <link rel="apple-touch-icon" href="../assets/logo/GreatEagleDesigns_logo_Nov26.png" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Great Eagle Designs" />
-  <meta property="og:image" content="https://greateagledesigns.com/assets/logo/greateagledesigns.png" />
+  <meta property="og:image" content="https://greateagledesigns.com/assets/logo/GreatEagleDesigns_logo_Nov26.png" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:image" content="https://greateagledesigns.com/assets/logo/greateagledesigns.png" />
+  <meta name="twitter:image" content="https://greateagledesigns.com/assets/logo/GreatEagleDesigns_logo_Nov26.png" />
   <link rel="stylesheet" href="../assets/site.css" />
   <link rel="stylesheet" href="../assets/search-menu.css" />
   <link rel="stylesheet" href="../assets/case-study.css" />
+  <link rel="stylesheet" href="../assets/sous-chef-v2.css" />
   <link rel="stylesheet" href="../assets/page-transition.css" />
   <script>try{if(sessionStorage.getItem('ged:ptx')==='1'){sessionStorage.removeItem('ged:ptx');var h=document.documentElement;h.classList.add('ptx-arriving');setTimeout(function(){h.classList.remove('ptx-arriving','ptx-ready','ptx-resolve');},4500);}}catch(e){}</script>
   <script src="../assets/accents.js"></script>
@@ -22,12 +23,12 @@
   <script defer src="../assets/page-transition.js"></script>
   <style>/* GED-HIDE-LEGACY-NAV */ body > nav.glass { display:none !important; }</style>
 </head>
-<body class="cs-page">
+<body class="cs-page sc-v2">
 <div class="scroll-progress" id="scrollProgress"></div>
 <svg id="lg-filter-svg" xmlns="http://www.w3.org/2000/svg"><defs id="lg-defs"></defs></svg>
 
 <nav class="glass liquid-glass">
-  <a href="../index.html" class="nav-logo">Gaurav <span>Dalbhanjan</span></a>
+  <a href="../index.html" class="nav-logo" aria-label="Home"><span class="ged-logo-bubble"><img src="../assets/logo/GreatEagleDesigns_logo_Nov26.png" alt="" class="ged-logo" /></span>Gaurav <span>Dalbhanjan</span></a>
   <ul class="nav-links">
     <li><a href="../index.html#work" class="active">Work</a></li>
     <li><a href="blog.html">Blog</a></li>
@@ -44,6 +45,10 @@
   </div>
 </nav>
 
+<a href="../index.html#work" class="cs-back glass liquid-glass" aria-label="Back to Work">
+  <span class="cs-back-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></span>
+  <span class="cs-back-label">Back</span>
+</a>
 <main id="cs-root"></main>
 
 <footer>
@@ -66,7 +71,9 @@
 <!-- Vercel Web Analytics -->
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
 <script defer src="/_vercel/insights/script.js"></script>
-<!-- Cookie consent + deferred Microsoft Clarity (loads only after Accept) -->
+<!-- Contact form + Book a session pop-ups -->
+<script defer src="../assets/connect.js"></script>
+<!-- Microsoft Clarity in cookie-free mode (no banner; see assets/consent.js) -->
 <script defer src="../assets/consent.js"></script>
 </body>
 </html>

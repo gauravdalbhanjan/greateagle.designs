@@ -5,9 +5,41 @@
 
 /* ─── Sticky glass header pill (top-right) ─────────────────────── */
 .ged-header {
-  position: fixed; top: 16px; right: 24px; left: auto; z-index: 200;
+  position: fixed; top: 16px; right: 24px; left: auto; z-index: 260;
   height: 52px; border-radius: 100px; padding: 5px 6px 5px 8px;
   display: flex; align-items: center; gap: 8px;
+}
+/* Labeled header: icon + label + short description per control. */
+.ged-header--labeled { height: auto; border-radius: 20px; padding: 8px 10px; gap: 6px; align-items: stretch; }
+.ged-hctl {
+  display: flex; align-items: center; gap: 9px; cursor: pointer;
+  background: none; border: 0; font-family: inherit; text-decoration: none;
+  padding: 7px 12px; border-radius: 14px; transition: background 0.2s var(--ease);
+}
+.ged-hctl:hover { background: var(--surface-hover); }
+.ged-hctl-ico, .ged-hctl .ged-logo-bubble, .ged-btn-logo-bubble { flex-shrink: 0; }
+.ged-hctl-ico {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text-secondary);
+  display: flex; align-items: center; justify-content: center;
+}
+.ged-hctl-ico svg { width: 18px; height: 18px; }
+.ged-header-theme:hover .ged-hctl-ico { color: var(--text-primary); }
+.ged-hctl-label { font-size: 14px; font-weight: 700; color: var(--text-secondary); white-space: nowrap; }
+.ged-hctl--stack { flex-direction: column; gap: 7px; padding: 6px 10px; }
+.ged-options-ctl { padding: 6px 10px; }
+.ged-header--labeled .ged-search-btn.ged-btn-logo-bubble {
+  width: 74px; height: 40px; border-radius: 20px; padding: 0;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+  background: var(--accent); border: 0;
+  box-shadow: 0 4px 18px rgba(255,42,0,0.35);
+}
+.ged-header--labeled .ged-search-btn.ged-btn-logo-bubble:hover {
+  background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 8px 26px rgba(255,42,0,0.45);
+}
+@media (max-width: 760px) {
+  .ged-hctl--stack .ged-hctl-label { display: none; }
+  .ged-hctl { padding: 6px; }
 }
 .ged-logo-bubble {
   width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
@@ -16,7 +48,19 @@
   border: 1px solid rgba(255,255,255,0.14);
   box-shadow: inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.35);
 }
-.ged-logo { width: 24px; height: 27px; object-fit: contain; }
+/* Header Home control — EXACTLY matches the homepage header Home icon in both
+   themes (no dark disc). Keep in sync with index.html .ged-hctl .ged-logo-bubble. */
+.ged-hctl .ged-logo-bubble {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: radial-gradient(circle at 36% 30%, rgba(255,255,255,0.10), rgba(0,0,0,0) 62%), rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.14); box-shadow: inset 0 1px 1px rgba(255,255,255,0.12);
+}
+[data-theme="light"] .ged-hctl .ged-logo-bubble {
+  background: radial-gradient(circle at 36% 30%, #ffffff, #f1efec 70%);
+  border: 1px solid rgba(0,0,0,0.12); box-shadow: inset 0 1px 1px rgba(255,255,255,0.8), 0 2px 8px rgba(0,0,0,0.1);
+}
+.ged-hctl .ged-logo { width: 24px; height: 24px; }
+.ged-logo { width: 22px; height: 22px; object-fit: contain; }
 .ged-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
 .ged-name { font-size: 16px; font-weight: 500; letter-spacing: -0.01em; color: var(--text-primary); white-space: nowrap; }
 .ged-name span { color: var(--accent); }
@@ -60,7 +104,7 @@
    with pixelated rendering so it visibly breaks into chunky pixels; the next
    icon reverses the motion. Feels like a continuous pixel dissolve. */
 .ged-btn-logo {
-  width: 26px; height: 26px; object-fit: contain; display: block;
+  width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; padding: 2px;
   transition: opacity 0.4s var(--ease), transform 0.4s var(--ease), filter 0.4s var(--ease);
   will-change: opacity, transform, filter;
 }
@@ -492,4 +536,31 @@ a.ged-pc:hover .ged-pc-title { color: var(--accent); }
   .ged-content { margin-right: 0; }
   .ged-cols { grid-template-columns: 1fr; }
   .ged-pc-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── Case-study back button (fixed, top-left) ────────────────────
+   Matches the header's circular icon controls (theme / options): a 40px
+   glass circle with the surface fill, border ring and secondary icon
+   colour, inside a liquid-glass pill so it reads on any page/theme. */
+.cs-back {
+  position: fixed; top: 16px; left: 24px; z-index: 260;
+  display: inline-flex; align-items: center; gap: 10px;
+  height: 52px; padding: 5px 16px 5px 6px; border-radius: 100px;
+  text-decoration: none; cursor: pointer;
+}
+.cs-back .cs-back-ico {
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text-secondary);
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+.cs-back .cs-back-ico svg { width: 18px; height: 18px; }
+.cs-back .cs-back-label { font-size: 14px; font-weight: 700; color: var(--text-secondary); white-space: nowrap; transition: color 0.2s var(--ease); }
+.cs-back:hover .cs-back-ico { color: #fff; background: var(--accent); border-color: var(--accent); transform: translateX(-2px); box-shadow: 0 4px 14px rgba(255,42,0,0.35); }
+.cs-back:hover .cs-back-label { color: var(--accent); }
+.cs-back:focus-visible { outline: none; }
+.cs-back:focus-visible .cs-back-ico { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (max-width: 760px) {
+  .cs-back { left: 12px; padding: 5px; }
+  .cs-back .cs-back-label { display: none; }
 }

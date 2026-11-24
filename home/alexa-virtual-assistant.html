@@ -1,19 +1,19 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Alexa as a Customer Assistant — Gaurav Dalbhanjan</title>
   <meta name="description" content="A tiered voice and ambient assistant concept for the Alexa ecosystem — reaching the 3.1 billion people who live under mobile coverage but don't use the mobile internet. From a plain phone call to an edgeless, environment-native interface." />
-  <link rel="icon" type="image/png" href="../assets/logo/greateagledesigns.png" />
-  <link rel="apple-touch-icon" href="../assets/logo/greateagledesigns.png" />
+  <link rel="icon" type="image/png" href="../assets/logo/GreatEagleDesigns_logo_Nov26.png" />
+  <link rel="apple-touch-icon" href="../assets/logo/GreatEagleDesigns_logo_Nov26.png" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Great Eagle Designs" />
   <meta property="og:title" content="Alexa as a Customer Assistant — a tiered service concept" />
   <meta property="og:description" content="A voice-first, three-tier assistant concept: reach anyone on any phone, then add a screen, then move the interface into the environment itself." />
-  <meta property="og:image" content="https://greateagledesigns.com/assets/logo/greateagledesigns.png" />
+  <meta property="og:image" content="https://greateagledesigns.com/assets/logo/GreatEagleDesigns_logo_Nov26.png" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:image" content="https://greateagledesigns.com/assets/logo/greateagledesigns.png" />
+  <meta name="twitter:image" content="https://greateagledesigns.com/assets/logo/GreatEagleDesigns_logo_Nov26.png" />
   <link rel="stylesheet" href="../assets/site.css" />
   <link rel="stylesheet" href="../assets/search-menu.css" />
   <link rel="stylesheet" href="../assets/page-transition.css" />
@@ -78,6 +78,134 @@
     .av-tier p { font-size: var(--fs-secondary); color: var(--text-secondary); line-height: 1.55; margin: 0; }
     .av-tier--1 { --tc: #21c063; } .av-tier--2 { --tc: #ff8a00; } .av-tier--3 { --tc: #ff2a00; }
 
+    /* Problem — two donut dials (English on the web vs. English speakers). */
+    .av-pies { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; margin: 24px 0 8px; }
+    .av-pie { margin: 0; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .av-pie-dial { width: 150px; height: 150px; border-radius: 50%; position: relative;
+      background: conic-gradient(var(--pie) calc(var(--pct) * 1%), var(--border) 0);
+    }
+    .av-pie-dial::after { content: ''; position: absolute; inset: 16px; border-radius: 50%; background: var(--bg); }
+    .av-pie-num { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 1.9rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text-primary); z-index: 1; }
+    .av-pie figcaption { font-size: var(--fs-secondary); color: var(--text-secondary); line-height: 1.4; max-width: 190px; }
+    .av-pie figcaption strong { color: var(--text-primary); }
+
+    /* Secondary subheading inside a section (plain, not an accent eyebrow). */
+    .av-subhead { font-size: 1.05rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.01em; margin: 0 0 14px; }
+    /* Problem — four barrier cards (readable in light AND dark). Neutral
+       styling so the group reads as part of the Problem section, not its own. */
+    .av-barriers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 14px 0 4px; }
+    .av-barrier { padding: 20px 18px; border-radius: 16px; background: var(--bg-secondary); border: 1px solid var(--border); text-align: left; }
+    .av-barrier-ico { font-size: 1.7rem; line-height: 1; display: block; margin-bottom: 10px; }
+    .av-barrier h3 { font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin: 0 0 4px; }
+    .av-barrier p { font-size: var(--fs-secondary); color: var(--text-secondary); line-height: 1.5; margin: 0; }
+
+    /* How it works — numbered flow steps. */
+    .av-flow { list-style: none; margin: 18px 0 8px; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .av-flow li { display: flex; align-items: flex-start; gap: 14px; padding: 18px; border-radius: 16px;
+      background: var(--bg-secondary); border: 1px solid var(--border); }
+    .av-flow-n { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 14px; color: #fff; background: var(--accent); }
+    .av-flow li div { display: flex; flex-direction: column; gap: 3px; }
+    .av-flow li strong { font-size: var(--fs-secondary); color: var(--text-primary); }
+    .av-flow li span { font-size: var(--fs-tertiary); color: var(--text-secondary); line-height: 1.5; }
+
+    /* Two variants with service chips. */
+    .av-variants { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 20px 0 8px; }
+    .av-variant { padding: 24px 22px; border-radius: 18px; background: var(--bg-secondary); border: 1px solid var(--border);
+      border-top: 4px solid var(--tc, #21c063); }
+    .av-variant--lamp { --tc: #ff2a00; }
+    .av-variant:not(.av-variant--lamp) { --tc: #21c063; }
+    .av-variant-emoji { font-size: 1.9rem; line-height: 1; display: block; margin-bottom: 10px; }
+    .av-variant .av-k { font-size: var(--fs-tertiary); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tc); margin-bottom: 4px; }
+    .av-variant h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 0 0 8px; }
+    .av-variant > p { font-size: var(--fs-secondary); color: var(--text-secondary); line-height: 1.55; margin: 0 0 14px; }
+    .av-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .av-chip { font-size: 12px; font-weight: 600; color: var(--text-primary); background: var(--accent-dim, rgba(255,42,0,0.1));
+      border: 1px solid rgba(255,42,0,0.28); border-radius: 100px; padding: 6px 12px; line-height: 1.3; }
+
+    /* Applications — two cards side by side (Rural + Precision, At home + Students). */
+    .av-apps { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 14px 0 4px; align-items: start; }
+    .av-app { padding: 22px 22px 18px; border-radius: 18px; background: var(--bg-secondary); border: 1px solid var(--border); }
+    .av-app h4 { font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin: 0 0 8px; }
+    .av-app > p { font-size: var(--fs-secondary); color: var(--text-secondary); line-height: 1.55; margin: 0 0 10px; }
+    .av-app .av-list { margin: 0 0 14px; }
+    .av-app img { width: 100%; border-radius: 12px; display: block; border: 1px solid var(--border); margin-top: auto; }
+
+    /* Technology + mood board — two cards side by side. */
+    .av-techrow { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 18px; margin: 14px 0 4px; align-items: stretch; }
+    .av-techcard { padding: 22px; border-radius: 18px; background: var(--bg-secondary); border: 1px solid var(--border); margin: 0; }
+    .av-techcard h4 { font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin: 0 0 10px; }
+    .av-techcard .av-list { margin: 0; }
+    .av-techcard--mood { display: flex; flex-direction: column; padding: 14px; }
+    .av-techcard--mood img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; display: block; border: 1px solid var(--border); }
+    .av-techcard--mood figcaption { font-size: var(--fs-tertiary); color: var(--text-tertiary); line-height: 1.5; padding: 10px 2px 0; }
+
+    /* Image-at-top app cards + equal-height row. */
+    .av-app--imgtop img { margin-top: 0; margin-bottom: 14px; }
+    .av-app--imgtop { display: flex; flex-direction: column; }
+    .av-apps--even { align-items: stretch; }
+    .av-apps--even .av-app { height: 100%; }
+    .av-apps--even .av-app .av-list { margin-bottom: 0; }
+
+    /* Accordion inside tier / flow cards (collapsible detail to cut noise). */
+    .av-acc { border: 0; }
+    .av-acc > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .av-acc > summary::-webkit-details-marker { display: none; }
+    .av-acc > summary h3 { margin: 0; }
+    .av-acc > summary .av-acc-chev { margin-left: auto; color: var(--accent); font-weight: 700; transition: transform 0.25s var(--hover-ease); }
+    .av-acc[open] > summary .av-acc-chev { transform: rotate(90deg); }
+    /* Tier cards: reserve space + pin a PLUS toggle to the bottom-right corner
+       so it sits at the same spot on all three regardless of title length. */
+    .av-tier { padding-bottom: 54px; }
+    .av-acc--tier > summary h3 { margin-right: 4px; }
+    .av-acc-plus { position: absolute; right: 16px; bottom: 16px; width: 30px; height: 30px; border-radius: 50%;
+      border: 1px solid var(--tc, var(--accent)); color: var(--tc, var(--accent)); display: flex; align-items: center; justify-content: center;
+      transition: transform 0.25s var(--hover-ease), background 0.2s; }
+    .av-acc-plus::before { content: '+'; font-size: 20px; font-weight: 400; line-height: 1; }
+    .av-acc--tier[open] .av-acc-plus { transform: rotate(45deg); }   /* + becomes × */
+    .av-acc--tier > summary:hover .av-acc-plus { background: var(--accent-dim, rgba(255,42,0,0.12)); }
+    @media (prefers-reduced-motion: reduce) { .av-acc-plus { transition: none; } }
+    .av-acc > p { margin: 10px 0 0; animation: avAccIn 0.25s var(--ease); }
+    .av-tier .av-acc > p { font-size: var(--fs-secondary); color: var(--text-secondary); line-height: 1.55; }
+    @keyframes avAccIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .av-acc > summary .av-acc-chev, .av-acc > p { transition: none; animation: none; } }
+
+    /* Flow steps rendered as an accordion stack. */
+    .av-flowacc { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 18px 0 8px; }
+    .av-acc--flow { padding: 16px 18px; border-radius: 16px; background: var(--bg-secondary); border: 1px solid var(--border); }
+    .av-acc--flow > summary strong { font-size: var(--fs-secondary); color: var(--text-primary); font-weight: 700; }
+    .av-acc--flow > summary .av-flow-n { width: 26px; height: 26px; flex-shrink: 0; }
+    .av-acc--flow > p { font-size: var(--fs-tertiary); color: var(--text-secondary); line-height: 1.5; }
+
+    /* Pricing comparison — US vs India, three tier columns. */
+    .av-price { margin: 20px 0 8px; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; background: var(--bg-secondary); }
+    .av-price-head, .av-price-row { display: grid; grid-template-columns: 1.1fr 1fr 1fr 1fr; }
+    .av-price-head { background: var(--surface, rgba(255,42,0,0.04)); border-bottom: 1px solid var(--border); }
+    .av-price-head > div { padding: 14px 16px; font-size: var(--fs-tertiary); font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+    .av-price-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .av-price-row { border-top: 1px solid var(--border); }
+    .av-price-row:first-of-type { border-top: 0; }
+    .av-price-row > div { padding: 16px; border-left: 1px solid var(--border); }
+    .av-price-row > div:first-child { border-left: 0; }
+    .av-price-rowlabel { font-weight: 700; color: var(--text-primary); font-size: var(--fs-secondary); display: flex; align-items: center; }
+    .av-price-row > [role="cell"] { display: flex; flex-direction: column; gap: 3px; }
+    .av-price-row > [role="cell"] strong { font-size: 1.05rem; font-weight: 800; color: var(--accent); letter-spacing: -0.01em; }
+    .av-price-row > [role="cell"] span { font-size: var(--fs-tertiary); color: var(--text-secondary); line-height: 1.4; }
+
+    /* Click-to-enlarge affordance on case-study images. */
+    .av-zoom { cursor: zoom-in; transition: filter 0.2s var(--hover-ease); }
+    .av-zoom:hover { filter: brightness(1.04); }
+    /* Lightbox overlay (opened by JS). */
+    .av-lightbox { position: fixed; inset: 0; z-index: 999; display: none; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.85); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); padding: 24px; cursor: zoom-out; }
+    .av-lightbox.open { display: flex; }
+    .av-lightbox img { max-width: 96vw; max-height: 92vh; border-radius: 10px; box-shadow: 0 24px 80px rgba(0,0,0,0.6); }
+    .av-lightbox-close { position: fixed; top: 20px; right: 24px; width: 44px; height: 44px; border-radius: 50%; border: 0; cursor: pointer;
+      background: rgba(255,255,255,0.12); color: #fff; font-size: 22px; line-height: 1; display: flex; align-items: center; justify-content: center; }
+    .av-lightbox-close:hover { background: rgba(255,255,255,0.22); }
+    @media (prefers-reduced-motion: reduce) { .av-zoom { transition: none; } .av-lightbox { backdrop-filter: none; } }
+
     /* Two opportunities cards. */
     .av-opps { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0 4px; }
     .av-opp { padding: 24px 22px; border-radius: 18px; border: 1px solid rgba(255,42,0,0.25); background: var(--accent-dim, rgba(255,42,0,0.06)); }
@@ -100,7 +228,13 @@
     .av-legend b { color: var(--text-primary); }
 
     /* Device strip — side-by-side image + caption. */
-    .av-figrow { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 24px 0; }
+    /* AWS architecture diagram (white artwork; keep it on a white card in both themes). */
+.av-arch { margin: 20px 0 8px; }
+.av-arch img { display: block; width: 100%; height: auto; border-radius: 14px; border: 1px solid var(--border); background: #fff; }
+.av-arch figcaption { font-size: var(--fs-tertiary); color: var(--text-secondary); line-height: 1.6; padding: 10px 2px 0; }
+.av-arch figcaption a { color: inherit; text-decoration: underline; text-underline-offset: 2px; display: inline-block; padding: 4px 0; }
+.av-arch figcaption a:hover { color: var(--accent); }
+.av-figrow { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 24px 0; }
     .av-figrow figure { margin: 0; }
     .av-figrow img { width: 100%; border-radius: 14px; display: block; border: 1px solid var(--border); }
     .av-figrow figcaption { font-size: var(--fs-tertiary); color: var(--text-tertiary); line-height: 1.5; padding: 10px 2px 0; }
@@ -120,6 +254,20 @@
       .av-notes, .av-wedge, .av-bigstats, .av-tiers, .av-opps { grid-template-columns: 1fr; }
       .av-figrow { grid-template-columns: 1fr; }
       .av-chart { justify-content: center; text-align: left; }
+      .av-barriers { grid-template-columns: 1fr 1fr; }
+      .av-flow { grid-template-columns: 1fr; }
+      .av-variants { grid-template-columns: 1fr; }
+      .av-pies { gap: 28px; }
+      .av-apps { grid-template-columns: 1fr; }
+      .av-techrow { grid-template-columns: 1fr; }
+      .av-flowacc { grid-template-columns: 1fr; }
+      .av-price-head { display: none; }
+      .av-price-row { grid-template-columns: 1fr; }
+      .av-price-row > div { border-left: 0; border-top: 1px solid var(--border); }
+      .av-price-row > div:first-child { border-top: 0; background: var(--surface, rgba(255,42,0,0.04)); }
+    }
+    @media (max-width: 460px) {
+      .av-barriers { grid-template-columns: 1fr; }
     }
   </style>
   <style>/* GED-HIDE-LEGACY-NAV */ body > nav.glass { display:none !important; }</style>
@@ -128,7 +276,7 @@
 <svg id="lg-filter-svg" xmlns="http://www.w3.org/2000/svg"><defs id="lg-defs"></defs></svg>
 
 <nav class="glass liquid-glass">
-  <a href="../index.html" class="nav-logo">Gaurav <span>Dalbhanjan</span></a>
+  <a href="../index.html" class="nav-logo" aria-label="Home"><span class="ged-logo-bubble"><img src="../assets/logo/GreatEagleDesigns_logo_Nov26.png" alt="" class="ged-logo" /></span>Gaurav <span>Dalbhanjan</span></a>
   <ul class="nav-links">
     <li><a href="../index.html#work" class="active">Work</a></li>
     <li><a href="blog.html">Blog</a></li>
@@ -149,14 +297,17 @@
   <div class="blob blob-1"></div>
   <div class="blob blob-2"></div>
   <div class="eyebrow-pill reveal">🧩 Concept · Service Design · Voice &amp; Ambient UX</div>
-  <h1 class="reveal reveal-delay-1">Alexa as a <em>Customer Assistant</em></h1>
-  <p class="reveal reveal-delay-2"><strong>One assistant, three tiers 📞 → 🖥️ → 🏠.</strong> A voice-first service that starts as a plain phone call, grows a screen, then dissolves into the room itself.</p>
+  <h1 class="reveal reveal-delay-1">Alexa as a <em>Scalable Customer Assistant</em></h1>
+  <p class="reveal reveal-delay-2"><strong>A tiered service model: Physical → Digital → Spatial 📞 → 🖥️ → 🏠.</strong> Audio-first access for every user, from a basic phone call to a screen to the interface living in your room. Amazon Quick is an enterprise product within the Alexa ecosystem.</p>
 </section>
+
+<a href="../index.html#work" class="cs-back glass liquid-glass" aria-label="Back to Work">
+  <span class="cs-back-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></span>
+  <span class="cs-back-label">Back</span>
+</a>
 
 <section style="padding-top:0;">
   <div class="prose">
-    <a href="../index.html#work" class="back-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back to Work</a>
-
     <div class="case-meta" style="justify-content:flex-start;">
       <span class="case-tag">🧭 Service Design</span>
       <span class="case-tag">🗣️ Voice &amp; Conversational UX</span>
@@ -168,49 +319,12 @@
 
     <img src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/1_New%20hero%20shot%20Alexa%20lamp.jpg" alt="The Alexa BEE lamp concept — a tiered voice and ambient assistant" class="reveal" />
 
-    <!-- ═══ 1 · THE HOOK ═══ -->
+    <!-- ═══ WHO IT IS FOR ═══ -->
+    <div class="av-kicker reveal">Who it is for</div>
     <div class="av-hook reveal">
       <div class="n">3.1B</div>
       <div class="l">people left out of the internet</div>
       <div class="s">The usage gap — covered by a network, but not online. (GSMA, 2024)</div>
-    </div>
-
-    <!-- ═══ 2 · THE PROBLEM ═══ -->
-    <div class="av-kicker reveal">The problem</div>
-    <h2 class="reveal av-h"><span class="av-ico">🚧</span> Not coverage. Use.</h2>
-    <p class="reveal">90%+ of the unconnected already live under coverage. What stops them is literacy, language, cost and app skills — <strong>a phone call sidesteps all of it.</strong></p>
-    <div class="av-notes reveal">
-      <div class="av-note av-note--y"><span class="e">🗣️</span><span class="t">English: ~19% of speakers, ~61% of the web.</span></div>
-      <div class="av-note av-note--p"><span class="e">🔤</span><span class="t">Reading &amp; typing assumed — SMS fails where literacy is low.</span></div>
-      <div class="av-note av-note--b"><span class="e">💸</span><span class="t">Data plans &amp; smartphones cost more than many can spend.</span></div>
-      <div class="av-note av-note--g"><span class="e">👩🏽‍🌾</span><span class="t">The excluded skew rural, female, older, less-educated.</span></div>
-    </div>
-
-    <!-- ═══ 3 · THE WEDGE ═══ -->
-    <div class="av-kicker reveal">The wedge</div>
-    <h2 class="reveal av-h"><span class="av-ico">↔️</span> The opposite of a premium bundle</h2>
-    <div class="av-wedge reveal">
-      <div class="av-vs">
-        <span class="e">💳</span>
-        <h3>Google AI Plus</h3>
-        <div class="price">₹399<span style="font-size:.9rem;font-weight:600;color:var(--text-tertiary);">/mo</span></div>
-        <p>For people who are <strong>already online</strong>.</p>
-      </div>
-      <div class="av-vs win">
-        <span class="e">📞</span>
-        <h3>Call-based Alexa</h3>
-        <div class="price">~Zero</div>
-        <p>A free or sponsored call, for people who are <strong>not</strong>.</p>
-      </div>
-    </div>
-
-    <!-- ═══ 4 · WHY A CALL WINS ═══ -->
-    <div class="av-kicker reveal">Why a call wins</div>
-    <h2 class="reveal av-h"><span class="av-ico">✅</span> Any phone. Any language. No reading.</h2>
-    <div class="av-bigstats reveal">
-      <div class="av-bigstat"><div class="n">24M</div><div class="l">reached by phone call 📞<br>(Viamo)</div></div>
-      <div class="av-bigstat"><div class="n">99%</div><div class="l">trust the advice 💯<br>(FarmerChat)</div></div>
-      <div class="av-bigstat"><div class="n">9:1–15:1</div><div class="l">benefit-cost ratio 📈<br>(World Bank)</div></div>
     </div>
     <details class="av-more reveal">
       <summary>📖 Read the full problem evidence <span class="chev">›</span></summary>
@@ -224,42 +338,317 @@
       </div>
     </details>
 
-    <!-- ═══ 5 · THE TIERS ═══ -->
-    <div class="av-kicker reveal">The tiers</div>
+    <!-- ═══ THE PROBLEM ═══ -->
+    <div class="av-kicker reveal">The problem</div>
+    <h2 class="reveal av-h"><span class="av-ico">🚧</span> Not coverage, but skill and infrastructure.</h2>
+    <p class="reveal">90%+ of the unconnected already live under coverage. Four barriers keep people offline — and <strong>a phone call sidesteps all of it.</strong></p>
+
+    <!-- English on the web vs. English speakers — two donut dials -->
+    <div class="av-pies reveal">
+      <figure class="av-pie">
+        <div class="av-pie-dial" style="--pct:61; --pie:var(--accent);">
+          <div class="av-pie-num">~61%</div>
+        </div>
+        <figcaption>🌐 of web content is in <strong>English</strong></figcaption>
+      </figure>
+      <figure class="av-pie">
+        <div class="av-pie-dial" style="--pct:19; --pie:#3b9cff;">
+          <div class="av-pie-num">~19%</div>
+        </div>
+        <figcaption>🗣️ of people actually <strong>speak English</strong></figcaption>
+      </figure>
+    </div>
+    <p class="reveal" style="text-align:center;color:var(--text-tertiary);font-size:var(--fs-tertiary);margin-top:-4px;">Most of the web speaks a language most of the world doesn't.</p>
+
+    <!-- Four barriers — a secondary subheading INSIDE the problem section -->
+    <h3 class="reveal av-subhead" style="margin-top:32px;">Four barriers keep people offline</h3>
+    <div class="av-barriers reveal">
+      <div class="av-barrier"><span class="av-barrier-ico">🔤</span><h3>Literacy</h3><p>Reading menus and apps.</p></div>
+      <div class="av-barrier"><span class="av-barrier-ico">🗣️</span><h3>Language</h3><p>Content not in their language.</p></div>
+      <div class="av-barrier"><span class="av-barrier-ico">💸</span><h3>Cost</h3><p>Data and devices.</p></div>
+      <div class="av-barrier"><span class="av-barrier-ico">📲</span><h3>App skills</h3><p>Installing and navigating apps.</p></div>
+    </div>
+
+    <!-- ═══ THE EXPERIENCE WE ARE CREATING ═══ -->
+    <div class="av-kicker reveal">The experience we're creating</div>
+    <h2 class="reveal av-h"><span class="av-ico">✨</span> Beyond infrastructure. Beyond device limits.</h2>
+    <p class="reveal">Like immersive installation art, the assistant <strong>dissolves the boundary between interface and room</strong>. Work and home aren't windows trapped in a screen — they live in the user's environment, projected and ambient, free of the device's edges.</p>
+    <img class="av-zoom reveal" src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/12_Interface%20interaction%20competitor%20analysis%202by2%20matrics%20from%20passive%20interaction%20to%20complex%20interface%20active%20interaction%20scale.jpg" alt="Competitor analysis 2×2 matrix — from passive interaction to complex, active interface interaction" loading="lazy" />
+    <p class="reveal" style="text-align:center;color:var(--text-tertiary);font-size:var(--fs-tertiary);margin-top:-8px;">Infrastructure vs Interface</p>
+
+    <!-- ═══ 01 · A TIERED SERVICE MODEL ═══ -->
+    <div class="av-kicker reveal">01 · A tiered service model</div>
     <h2 class="reveal av-h"><span class="av-ico">🧩</span> Depth, not complexity</h2>
-    <p class="reveal">One channel, three tiers — each contains the one below it.</p>
+    <p class="reveal">Each tier adds depth, not complexity — Physical, Digital and Spatial build on one another.</p>
     <div class="av-tiers reveal">
       <div class="av-tier av-tier--1">
         <span class="av-emoji">📞</span>
-        <div class="av-k">1 · Base</div>
-        <h3>Audio only, over a call</h3>
-        <p>Any basic phone. Weather, news, scheme advice &amp; alerts — by voice, in the caller's language.</p>
+        <div class="av-k">1 · Physical</div>
+        <details class="av-acc av-acc--tier">
+          <summary><h3>Audio only, over a call</h3><span class="av-acc-plus" aria-hidden="true"></span></summary>
+          <p>Audio-only over standard phone calls on any basic phone — weather reports, news &amp; audio entertainment, by voice in the caller's language.</p>
+        </details>
       </div>
       <div class="av-tier av-tier--2">
         <span class="av-emoji">🖥️</span>
-        <div class="av-k">2 · Intermediate</div>
-        <h3>A screen &amp; a work window</h3>
-        <p>Launch SaaS apps by voice; a home window beside work; extend a laptop onto the big screen.</p>
+        <div class="av-k">2 · Digital</div>
+        <details class="av-acc av-acc--tier">
+          <summary><h3>A screen &amp; a work window, now business-capable</h3><span class="av-acc-plus" aria-hidden="true"></span></summary>
+          <p>Hybrid voice-screen. On big screens, step into the business environment — SaaS apps (Amazon Quick is one example) with live workflows, beside the home window (chores, ordering, news, CCTV briefing, Alexa &amp; Alexa Plus).</p>
+        </details>
       </div>
       <div class="av-tier av-tier--3">
         <span class="av-emoji">🏠</span>
-        <div class="av-k">3 · Premium</div>
-        <h3>The interface in your room</h3>
-        <p>Projected and ambient, powered by SaaS apps. Beyondaryless, edgeless — the experience, not the device.</p>
+        <div class="av-k">3 · Spatial</div>
+        <details class="av-acc av-acc--tier">
+          <summary><h3>The interface in your environment</h3><span class="av-acc-plus" aria-hidden="true"></span></summary>
+          <p>Environment-native, powered by SaaS apps. The same business + home experience, but the interface leaves the screen and lives in the user's space — projected and ambient, not bound to a device.</p>
+        </details>
       </div>
     </div>
+    <p class="reveal" style="color:var(--text-tertiary);font-size:var(--fs-tertiary);">Alexa ecosystem products — including Sous Chef, Weather, Prime Video and others — are delivered across all three tiers.</p>
     <img src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/15_the%20product%20tiering%20and%20features%20services.jpg" alt="Product tiering and feature services across the three tiers" class="reveal" />
 
-    <!-- ═══ 6 · THE BUSINESS MODEL ═══ -->
-    <div class="av-kicker reveal">The business model</div>
+    <!-- ═══ 02 · THE TWO VARIANTS + WHAT EACH PROVIDES ═══ -->
+    <div class="av-kicker reveal">02 · Two variants, two service sets</div>
+    <h2 class="reveal av-h"><span class="av-ico">🧩</span> The call tier &amp; the Alexa Lamp</h2>
+    <p class="reveal">The same assistant shows up as two products. The entry variant is a plain audio call; the Alexa Lamp variant projects the experience into the room — each unlocking a different set of services.</p>
+    <div class="av-variants reveal">
+      <div class="av-variant">
+        <span class="av-variant-emoji">📞</span>
+        <div class="av-k">Physical tier · the call</div>
+        <h3>Audio-first, on any phone</h3>
+        <p>For users who are not yet online — a free or sponsored call, no reading, in their language.</p>
+        <div class="av-chips">
+          <span class="av-chip">🗣️ Voice AI assistance</span>
+          <span class="av-chip">🏛️ Free, tiered government services</span>
+          <span class="av-chip">🌦️ Weather reports</span>
+          <span class="av-chip">📰 News &amp; audio entertainment</span>
+        </div>
+      </div>
+      <div class="av-variant av-variant--lamp">
+        <span class="av-variant-emoji">💡</span>
+        <div class="av-k">Spatial tier · the Alexa Lamp</div>
+        <h3>Voice + visual, into the room</h3>
+        <p>For users ready for more — the lamp projects an ambient, edgeless interface you act on with your hands.</p>
+        <div class="av-chips">
+          <span class="av-chip">🗣️ Voice + visual interface</span>
+          <span class="av-chip">🪄 Immersive, projected experience</span>
+          <span class="av-chip">🛒 Broader Alexa services (Prime, shopping, smart home)</span>
+          <span class="av-chip">💼 Business + home windows (SaaS, Amazon Quick)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 03 · PHYSICAL INTERFACE, LIMITED SCREEN ═══ -->
+    <div class="av-kicker reveal">03 · Physical interface, limited screen</div>
+    <h2 class="reveal av-h"><span class="av-ico">🎧</span> An audio interface</h2>
+    <p class="reveal"><strong>Any phone. Any language. No reading.</strong> The whole Physical tier rides on the one piece of tech people already own and already know how to use — a phone call.</p>
+    <div class="av-bigstats reveal">
+      <div class="av-bigstat"><div class="n">24M</div><div class="l">reached by phone call 📞<br>(Viamo)</div></div>
+      <div class="av-bigstat"><div class="n">99%</div><div class="l">trust the advice 💯<br>(FarmerChat)</div></div>
+      <div class="av-bigstat"><div class="n">9:1–15:1</div><div class="l">benefit-cost ratio 📈<br>(World Bank)</div></div>
+    </div>
+
+    <!-- How the interface actually works: call → AI → spoken services -->
+    <h3 class="reveal av-h" style="margin-top:32px;"><span class="av-ico">🔄</span> How it works — call in, services out</h3>
+    <p class="reveal">No app, no login. The user dials a number; everything else happens on the cloud and comes back as a spoken (or two-color-light) answer.</p>
+    <div class="av-flowacc reveal">
+      <details class="av-acc av-acc--flow">
+        <summary><span class="av-flow-n">1</span><strong>📞 Dial the number</strong><span class="av-acc-chev">›</span></summary>
+        <p>On any basic phone — a normal call, in the user's own language.</p>
+      </details>
+      <details class="av-acc av-acc--flow">
+        <summary><span class="av-flow-n">2</span><strong>🗣️ Speak the request</strong><span class="av-acc-chev">›</span></summary>
+        <p>Speech-to-text turns the caller's words into a query; the device shows status in two colors of light.</p>
+      </details>
+      <details class="av-acc av-acc--flow">
+        <summary><span class="av-flow-n">3</span><strong>🧠 AI finds the answer</strong><span class="av-acc-chev">›</span></summary>
+        <p>A language model + the right SaaS service (weather, schemes, irrigation) resolve the request, scoped to what the user is allowed to see 🔒.</p>
+      </details>
+      <details class="av-acc av-acc--flow">
+        <summary><span class="av-flow-n">4</span><strong>🔊 Hear it back</strong><span class="av-acc-chev">›</span></summary>
+        <p>Amazon Polly speaks the answer aloud — the whole loop runs 24/7, no screen required.</p>
+      </details>
+    </div>
+    <p class="reveal">The constraint that made it scalable: the Physical device speaks and shows <strong>two colors of light</strong> — nothing more. Two moves kept it expressive and on-brand.</p>
+    <div class="av-figrow reveal">
+      <figure>
+        <img src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/3_applied%20humorphism%20replacing%20traditional%20interface%20for%20scalability.jpg" alt="Humorphism replacing a traditional interface for scalability" />
+        <figcaption>🙂 <strong>Humorphism</strong> — human warmth in place of a UI, so it scales without a screen.</figcaption>
+      </figure>
+      <figure>
+        <img class="av-zoom" src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/farmer%20calling%20alexa%20through%20voice%20call.jfif" alt="A farmer calling Alexa through a voice call" loading="lazy" />
+        <figcaption>📞 A farmer reaching the assistant with a plain voice call — no app, no reading.</figcaption>
+      </figure>
+    </div>
+
+    <!-- Brand identity — collapsible deep-dive -->
+    <details class="av-more reveal" style="margin-top:24px;">
+      <summary>🔲 Know more about brand identity <span class="chev">›</span></summary>
+      <div class="av-more-body">
+        <p>A <strong>pixelated Alexa logo</strong> that stays readable even rendered by a handful of LEDs — identity that degrades gracefully.</p>
+        <div class="av-figrow" style="margin-top:16px;">
+          <figure>
+            <img class="av-zoom" src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/6_logo%20and%20pixels%20-%20idea%20behind%20pixelated%20amazon%20logo.jpg" alt="The idea behind the pixelated Amazon logo" loading="lazy" />
+            <figcaption>💭 The thinking — identity that survives a low-resolution light grid.</figcaption>
+          </figure>
+          <figure>
+            <img class="av-zoom" src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/8_pixelated%20alexa%20logo.jpg" alt="The resulting pixelated Alexa logo" loading="lazy" />
+        <figcaption>✅ The resulting mark, built for the two-color display.</figcaption>
+      </figure>
+        </div>
+      </div>
+    </details>
+
+    <!-- Base applications — sub-point under Physical interface (two cards side by side) -->
+    <h3 class="reveal av-h" style="margin-top:36px;"><span class="av-ico">🚀</span> Base applications</h3>
+    <p class="reveal">Where this audio-first service is already expanding — the same phone call, new use cases.</p>
+    <div class="av-apps reveal">
+      <article class="av-app av-app--imgtop">
+        <img class="av-zoom" src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/13_solution%20use%20case%20weather%20forecast%20and%20local%20load%20shedding.jpg" alt="Solution use case — weather forecast and local load-shedding alerts by voice" loading="lazy" />
+        <h4>🌾 Rural agriculture</h4>
+        <p>A Physical-tier call in action — the farmer never leaves the phone call:</p>
+        <ul class="av-list">
+          <li><span class="b">🌦️</span>Asks about the week's <strong>weather</strong> and hears a trusted spoken forecast.</li>
+          <li><span class="b">⚡</span>Checks the local <strong>load-shedding schedule</strong> for when power will be on.</li>
+          <li><span class="b">💧</span>Gets a <strong>smart-irrigation alert</strong> before the next watering window.</li>
+          <li><span class="b">🗣️</span>All <strong>by voice, in the caller's own language</strong> — no app, no reading.</li>
+        </ul>
+      </article>
+      <article class="av-app av-app--imgtop">
+        <img class="av-zoom" src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/14_the%20aws%20cloud%20infrastructure%20for%20concept%20exists%20at%20the%20AWS%20skill%20center%20-%20this%20is%20architectural%20diagram.jpg" alt="The AWS cloud architecture diagram for the concept" loading="lazy" />
+        <h4>☁️ Precision farming on AWS</h4>
+        <p>A working <strong>AWS architecture</strong> at the AWS Skill Center turns field data into watering schedules:</p>
+        <ul class="av-list">
+          <li><span class="b">☎️</span><strong>Telephony</strong> takes the call on any basic phone.</li>
+          <li><span class="b">🗣️</span><strong>Speech-to-text</strong> turns the caller's words into a query.</li>
+          <li><span class="b">🧠</span>A <strong>language model</strong> resolves it against field &amp; weather data.</li>
+          <li><span class="b">🔊</span><strong>Amazon Polly</strong> speaks the answer back — one pipeline, 24/7.</li>
+          <li><span class="b">🔒</span>Data is <strong>scoped</strong> so users only see what they're allowed to.</li>
+        </ul>
+      </article>
+    </div>
+
+    <!-- Value-based applications — sub-point under Physical interface -->
+    <h3 class="reveal av-h" style="margin-top:36px;"><span class="av-ico">🎵</span> Value-based applications</h3>
+    <p class="reveal">Beyond essentials, the same call carries everyday value — all by voice:</p>
+    <ul class="av-list reveal">
+      <li><span class="b">🎶</span><strong>Audio entertainment</strong></li>
+      <li><span class="b">📻</span><strong>Radio</strong></li>
+      <li><span class="b">📰</span><strong>News</strong></li>
+      <li><span class="b">🎙️</span><strong>Podcasts</strong></li>
+      <li><span class="b">🏏</span><strong>Sports commentary</strong></li>
+    </ul>
+
+    <!-- ═══ 04 · SPATIAL INTERFACE, LIMITLESS SCREEN ═══ -->
+    <div class="av-kicker reveal">04 · Spatial interface, limitless screen</div>
+    <h2 class="reveal av-h">The Alexa Lamp — the interface beyond screen</h2>
+    <p class="reveal">The Spatial tier is the Alexa Lamp: a lamp-shaped object that projects an ambient, edgeless interface into the room, so work and home live in the user's space rather than trapped on a device.</p>
+    <img class="av-zoom reveal" src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/multicolor%20alexa%20lamps.jpg" alt="Alexa BEE lamp CMF variants — inspired from a flower to a bee" loading="lazy" />
+    <p class="reveal" style="text-align:center;color:var(--text-tertiary);font-size:var(--fs-tertiary);margin-top:-8px;">🎨 CMF variants — inspired from a flower to a bee.</p>
+
+    <!-- Applications — sub-point under Spatial interface (moved above technology) -->
+    <h3 class="reveal av-h" style="margin-top:32px;"><span class="av-ico">🚀</span> Applications</h3>
+    <h4 class="reveal av-subhead" style="margin-top:8px;">Virtual location for employee and for students</h4>
+    <p class="reveal">With the interface in the room, one assistant serves the whole family — and the learner:</p>
+    <div class="av-apps av-apps--even reveal">
+      <article class="av-app av-app--imgtop">
+        <img class="av-zoom" src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/Alexa%20experience%20at%20home.jfif" alt="Alexa experience projected in the home" loading="lazy" />
+        <h4>💼 At home</h4>
+        <ul class="av-list">
+          <li><span class="b">🖥️</span>Link a laptop to the home screen as an <strong>extension display</strong> — no new hardware.</li>
+          <li><span class="b">📊</span>Amazon Quick dashboards, QuickSight analytics &amp; SaaS workflows move onto the big screen.</li>
+          <li><span class="b">🏠</span>A <strong>home window</strong> beside work: chores, ordering, news, CCTV briefing &amp; entertainment.</li>
+          <li><span class="b">👨‍👩‍👧</span>The family's day never leaves view (Alexa &amp; Alexa Plus).</li>
+        </ul>
+      </article>
+      <article class="av-app av-app--imgtop">
+        <img class="av-zoom" src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/Alexa%20lamp%20experience%20projected.jfif" alt="Alexa lamp experience projected onto a wall for a student" loading="lazy" />
+        <h4>🎓 For students</h4>
+        <ul class="av-list">
+          <li><span class="b">🛏️</span>A <strong>dorm lamp</strong> projects onto the wall, past the screen into the room.</li>
+          <li><span class="b">💭</span>Visualize your thoughts and plans in the space around you.</li>
+          <li><span class="b">🎓</span>Campus labs (College of Engineering, Pune) support <strong>AWS training &amp; verification</strong>.</li>
+          <li><span class="b">📡</span>Learning spills past the screen, into the environment.</li>
+        </ul>
+      </article>
+    </div>
+
+    <!-- Technology + mood board — two cards side by side (moved below applications) -->
+    <h3 class="reveal av-h" style="margin-top:36px;"><span class="av-ico">🛠️</span> The technology and the mood</h3>
+    <div class="av-techrow reveal">
+      <article class="av-techcard av-techcard--tech">
+        <h4>🛠️ Technology</h4>
+        <ul class="av-list">
+          <li><span class="b">📽️</span><strong>Step 1 — projector:</strong> casts the interface onto any surface in the room.</li>
+          <li><span class="b">📡</span><strong>Infrared depth sensing:</strong> tracks the hand so users act on the projected image directly.</li>
+          <li><span class="b">🎙️</span><strong>On-device mic &amp; speaker:</strong> voice in, spoken + visual out, same as the audio tier.</li>
+          <li><span class="b">☁️</span><strong>Wi-Fi + cloud link:</strong> the same SaaS layer (Amazon Quick, QuickSight) that powers the Digital tier.</li>
+        </ul>
+      </article>
+      <figure class="av-techcard av-techcard--mood">
+        <img class="av-zoom" src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/Mood%20board%20%E2%80%94%20soft%2C%20edgeless%2C%20part%20of%20the%20environment%20V2.png" alt="Mood board — soft, edgeless, part of the environment" loading="lazy" />
+        <figcaption>🧵 Mood board</figcaption>
+      </figure>
+    </div>
+
+    <!-- ═══ UNDER THE HOOD · AWS ARCHITECTURE ═══ -->
+    <div class="av-kicker reveal">Under the hood · AWS architecture</div>
+    <h2 class="reveal av-h"><span class="av-ico">🏗️</span> Three tiers, one AWS backend</h2>
+    <p class="reveal">A phone call, a screen and a projected room all reach the same shared core: AWS Lambda orchestrates, Amazon Bedrock (Amazon Nova Micro) answers, and one catalog of SaaS apps serves every tier. On the spatial device, raw infrared and depth data never leaves the room. Only short event messages (presence, fall, hazard) reach the cloud.</p>
+    <figure class="av-arch reveal">
+      <img class="av-zoom" src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/architecture/alexa_tiered_architecture.webp" width="2560" height="1440" loading="lazy" decoding="async"
+        alt="AWS architecture for the Alexa tiered service. Three swimlanes run left to right from users to an entry layer to a shared AWS core to a SaaS app catalog. Physical tier: a caller on a basic phone reaches Amazon Connect, Amazon Transcribe and Amazon Lex, and hears replies from Amazon Polly. Digital tier: Echo Show uses the Alexa Skills Kit; apps go through AWS WAF to Amazon CloudFront and AWS Amplify, and to Amazon API Gateway with Amazon Cognito sign-in. Spatial tier: a device on the customer's premises processes infrared and depth data on the device with AWS IoT Greengrass and sends only event messages to AWS IoT Core. All tiers reach the shared core: AWS Lambda, Amazon Bedrock with Amazon Nova Micro, Amazon DynamoDB, Amazon S3, Amazon EventBridge, Amazon SNS, Amazon Location Service, AWS KMS and Amazon CloudWatch, which connects through API Gateway to the SaaS app catalog. A dashed orange emergency path runs from the battery-powered device through the user's phone and the cellular network to IoT Core, EventBridge, Lambda and Location Service, and back to the device." />
+      <figcaption>Click to enlarge · 17 numbered flows · dashed orange = emergency path ·
+        <a href="../assets/Concept_Alexa_Virtual-Cloud-Assistant/architecture/alexa_tiered_architecture.png" target="_blank" rel="noopener">PNG 3840×2160</a> ·
+        <a href="../assets/Concept_Alexa_Virtual-Cloud-Assistant/architecture/alexa_tiered_architecture.svg" target="_blank" rel="noopener">SVG</a> ·
+        <a href="../assets/Concept_Alexa_Virtual-Cloud-Assistant/architecture/alexa_tiered_architecture.drawio" download>draw.io file</a> ·
+        <a href="../assets/Concept_Alexa_Virtual-Cloud-Assistant/architecture/alexa_tiered_architecture.md" target="_blank" rel="noopener">service list</a></figcaption>
+    </figure>
+
+    <!-- ═══ 05 · THE WEDGE ═══ -->
+    <div class="av-kicker reveal">05 · The wedge</div>
+    <h2 class="reveal av-h"><span class="av-ico">↔️</span> The local competitors</h2>
+    <div class="av-wedge reveal">
+      <div class="av-vs">
+        <span class="e">💳</span>
+        <h3>Local voice AI assistant</h3>
+        <div class="price">₹1–₹18<span style="font-size:.9rem;font-weight:600;color:var(--text-tertiary);">/min</span></div>
+        <p style="margin-bottom:6px;">Depending on the model.</p>
+        <p>For people who are <strong>already online</strong>.</p>
+      </div>
+      <div class="av-vs win">
+        <span class="e">📞</span>
+        <h3>Call-based Alexa</h3>
+        <div class="price">~Zero</div>
+        <p>A free or sponsored call, for people who are <strong>not</strong>.</p>
+      </div>
+    </div>
+
+    <!-- ═══ 05 · THE BUSINESS MODEL ═══ -->
+    <div class="av-kicker reveal">05 · The business model</div>
     <h2 class="reveal av-h"><span class="av-ico">💰</span> The call is the channel. Apps are the business.</h2>
-    <p class="reveal">A catalog of SaaS apps — built from Amazon's startup-cluster tools (Amazon Quick is one) — earns through subscription &amp; revenue share. Base is sponsored; the return is <strong>reach, language data, and demand discovery.</strong></p>
-    <div class="av-chart reveal">
-      <div class="av-donut" role="img" aria-label="Revenue model split by tier"></div>
-      <div class="av-legend">
-        <div class="row"><span class="dot" style="background:#21c063"></span><span><b>📞 Base — Sponsored / grants.</b> No user revenue; ~$0.14/user/mo modeled cost. Return = reach &amp; data.</span></div>
-        <div class="row"><span class="dot" style="background:#ff8a00"></span><span><b>🖥️ Intermediate — Telco revenue share.</b> A Rs 30–50 add-on ≈ 10–25% of Indian ARPU.</span></div>
-        <div class="row"><span class="dot" style="background:#ff2a00"></span><span><b>🏠 Premium &amp; SaaS — Subscription + platform share.</b> Per-seat for business apps.</span></div>
+    <p class="reveal">A catalog of SaaS apps — built from Amazon's startup-cluster tools (Amazon Quick is one example) — earns through subscription &amp; revenue share. The <strong>Physical (audio) tier is sponsored</strong>; the real return is <strong>reach, accent &amp; language data, and discovery of what services these users need.</strong></p>
+    <!-- Pricing by tier — US vs India, three columns -->
+    <div class="av-price reveal" role="table" aria-label="Pricing by tier: US vs India">
+      <div class="av-price-head" role="row">
+        <div role="columnheader"></div>
+        <div role="columnheader"><span class="av-price-dot" style="background:#21c063"></span>📞 Physical</div>
+        <div role="columnheader"><span class="av-price-dot" style="background:#ff8a00"></span>🖥️ Digital</div>
+        <div role="columnheader"><span class="av-price-dot" style="background:#ff2a00"></span>🏠 Spatial &amp; SaaS</div>
+      </div>
+      <div class="av-price-row" role="row">
+        <div class="av-price-rowlabel" role="rowheader">🇺🇸 United States</div>
+        <div role="cell"><strong>~$0.14</strong><span>per user / mo (modeled cost)</span></div>
+        <div role="cell"><strong>$19.99</strong><span>per mo — standalone Alexa Plus</span></div>
+        <div role="cell"><strong>$10–$50</strong><span>per seat / mo</span></div>
+      </div>
+      <div class="av-price-row" role="row">
+        <div class="av-price-rowlabel" role="rowheader">🇮🇳 India</div>
+        <div role="cell"><strong>Sponsored</strong><span>grant-funded, no direct user cost</span></div>
+        <div role="cell"><strong>₹1,499 / yr</strong><span>no standalone Alexa Plus; Prime (incl. digital content)</span></div>
+        <div role="cell"><strong>₹200–₹1,000+</strong><span>per seat / mo (rough, localized)</span></div>
       </div>
     </div>
     <div class="av-opps reveal">
@@ -277,10 +666,10 @@
       </div>
     </div>
 
-    <!-- ═══ 7 · THE ASK ═══ -->
-    <div class="av-kicker reveal">The ask</div>
-    <h2 class="reveal av-h"><span class="av-ico">🙋</span> Fund a Base-tier pilot</h2>
-    <p class="reveal"><strong>One Indian region, one sponsor.</strong> Measured on verified containment, cost per resolved call, and demand signals — before building the upper tiers.</p>
+    <!-- ═══ 05 · THE ASK ═══ -->
+    <div class="av-kicker reveal">05 · The ask</div>
+    <h2 class="reveal av-h"><span class="av-ico">🙋</span> Fund a Physical-tier pilot</h2>
+    <p class="reveal"><strong>One Indian region, one sponsor.</strong> Measured on verified containment, cost per resolved call, and demand signals — before we build the upper tiers.</p>
     <details class="av-more reveal">
       <summary>📖 What we still need to validate <span class="chev">›</span></summary>
       <div class="av-more-body">
@@ -288,101 +677,42 @@
           <li><span class="b">🤝</span>Which sponsor funds the pilot, and which languages launch first?</li>
           <li><span class="b">💸</span>Toll-free or on-device delivery — the single biggest cost lever.</li>
           <li><span class="b">📈</span>Rural willingness to pay, plus retention and upgrade targets.</li>
-          <li><span class="b">⚠️</span>Can Premium be built affordably? (Samsung's shelved Ballie says: keep it software-first.)</li>
+          <li><span class="b">⚠️</span>Can the Spatial tier be built affordably? (Samsung's shelved Ballie says: keep it software-first.)</li>
         </ul>
       </div>
     </details>
 
-    <!-- ═══ 8 · THE EXPERIENCE ═══ -->
-    <div class="av-kicker reveal">The experience we're creating</div>
-    <h2 class="reveal av-h"><span class="av-ico">✨</span> Beyond the screen's edges</h2>
-    <p class="reveal">Like immersive installation art, the assistant <strong>dissolves the boundary between interface and room</strong>. Work and home aren't windows trapped in a screen — they live in your environment, projected and ambient. Beyond infrastructure. Beyond device limits.</p>
-    <img src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/Mood%20board%20%E2%80%94%20soft%2C%20edgeless%2C%20part%20of%20the%20environment%20V2.png" alt="Mood board for the Alexa BEE lamp — a beyondaryless, edgeless experience" class="reveal" />
-    <p class="reveal" style="text-align:center;color:var(--text-tertiary);font-size:var(--fs-tertiary);margin-top:-8px;">🧵 Mood board — soft, edgeless, part of the environment.</p>
-    <img src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/multicolor%20alexa%20lamps.jpg" alt="Multicolor Alexa BEE lamp CMF variants — the object as furniture, not hardware" class="reveal" />
-    <p class="reveal" style="text-align:center;color:var(--text-tertiary);font-size:var(--fs-tertiary);margin-top:-8px;">🎨 CMF variants — the object as furniture, not hardware.</p>
-
-    <!-- ═══ 9 · DESIGN — interface with almost no interface ═══ -->
-    <div class="av-kicker reveal">The design</div>
-    <h2 class="reveal av-h"><span class="av-ico">💡</span> An interface with (almost) no interface</h2>
-    <p class="reveal">The best constraint: the Base device speaks and shows <strong>two colors of light</strong> — nothing more. Three moves kept it expressive and on-brand.</p>
-
-    <div class="av-figrow reveal">
-      <figure>
-        <img src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/3_applied%20humorphism%20replacing%20traditional%20interface%20for%20scalability.jpg" alt="Humorphism replacing a traditional interface for scalability" />
-        <figcaption>🙂 <strong>Humorphism</strong> — human warmth in place of a UI, so it scales without a screen.</figcaption>
-      </figure>
-      <figure>
-        <img src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/4_led%20screen%20with%20just%202%20colors%20technical%20and%20infrastructure%20restrictions.jpg" alt="A two-color LED screen driven by technical and infrastructure restrictions" />
-        <figcaption>🔴🟢 A deliberate two-color LED language — working with the infrastructure limits, not against them.</figcaption>
-      </figure>
-    </div>
-
-    <h3 class="reveal av-h" style="margin-top:32px;"><span class="av-ico">🔲</span> Brand, pixel by pixel</h3>
-    <p class="reveal">A <strong>pixelated Alexa logo</strong> that stays readable even rendered by a handful of LEDs — identity that degrades gracefully.</p>
-    <div class="av-figrow reveal">
-      <figure>
-        <img src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/6_logo%20and%20pixels%20-%20idea%20behind%20pixelated%20amazon%20logo.jpg" alt="The idea behind the pixelated Amazon logo" />
-        <figcaption>💭 The thinking — identity that survives a low-resolution light grid.</figcaption>
-      </figure>
-      <figure>
-        <img src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/8_pixelated%20alexa%20logo.jpg" alt="The resulting pixelated Alexa logo" />
-        <figcaption>✅ The resulting mark, built for the two-color display.</figcaption>
-      </figure>
-    </div>
-
-    <h3 class="reveal av-h" style="margin-top:32px;"><span class="av-ico">🔢</span> Dialing as muscle memory</h3>
-    <p class="reveal">The <strong>keypad &amp; alphabet layout</strong> are shaped around the physical gesture of dialing — so calling feels natural, not taught.</p>
-    <div class="av-figrow reveal">
-      <figure>
-        <img src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/Keypad%20and%20alphabet%20arrangement%20tuned%20so%20the%20calling%20gesture%20is%20natural%2C%20not%20taught..png" alt="Keypad and alphabet arrangement that makes the calling gesture more natural" />
-        <figcaption>⌨️ Keypad &amp; alphabet arrangement tuned so the calling gesture is natural, not taught.</figcaption>
-      </figure>
-      <figure>
-        <img src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/7_inspiration%20for%20numbers%20were%20taken%20from%20the%20genture%20while%20dialing%20these%20numbers%20and%20to%20enable%20muscle%20memory%20in%20target%20users.gif" alt="The dialing gesture that inspired the number layout, animated" />
-        <figcaption>👆 The dialing gesture itself inspired the layout — building on existing muscle memory.</figcaption>
-      </figure>
-    </div>
-    <img src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/10_name%20and%20number%20that%20user%20dials.jpg" alt="The name and number a user dials to reach the assistant" class="reveal" />
-
-    <!-- ═══ 10 · USE CASES ═══ -->
-    <div class="av-kicker reveal">In the real world</div>
-    <h2 class="reveal av-h"><span class="av-ico">🌾</span> Rural agriculture</h2>
-    <p class="reveal">A Base-tier call: a farmer asks about 🌦️ the week's weather and ⚡ the local load-shedding schedule, hears a trusted spoken answer, and gets a 💧 smart-irrigation alert before the next watering window.</p>
-    <img src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/13_solution%20use%20case%20weather%20forecast%20and%20local%20load%20shedding.jpg" alt="Solution use case — weather forecast and local load-shedding alerts by voice" class="reveal" />
-
-    <h3 class="reveal av-h" style="margin-top:32px;"><span class="av-ico">☁️</span> Precision farming on AWS</h3>
-    <p class="reveal">Not just slides — a working <strong>AWS architecture</strong> at the AWS Skill Center turns field data into watering schedules. Telephony ☎️ + speech-to-text + a language model 🧠 + Amazon Polly 🔊, one pipeline, 24/7, with data scoped so users only see what they're allowed to 🔒.</p>
-    <img src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/14_the%20aws%20cloud%20infrastructure%20for%20concept%20exists%20at%20the%20AWS%20skill%20center%20-%20this%20is%20architectural%20diagram.jpg" alt="The AWS cloud architecture diagram for the concept" class="reveal" />
-
-    <h2 class="reveal av-h"><span class="av-ico">🏡</span> At home &amp; for students</h2>
-    <div class="av-opps reveal">
-      <div class="av-opp" style="background:var(--bg-secondary);border-color:var(--border);">
-        <span class="av-opp-emoji">💼</span>
-        <span class="tag">At home</span>
-        <h3>Work &amp; home, one glance</h3>
-        <p>Link a laptop to the home screen as an extension display — dashboards &amp; SaaS workflows beside a home window for chores, ordering, news, CCTV briefing &amp; entertainment.</p>
-      </div>
-      <div class="av-opp" style="background:var(--bg-secondary);border-color:var(--border);">
-        <span class="av-opp-emoji">🎓</span>
-        <span class="tag">Students</span>
-        <h3>Learning anywhere</h3>
-        <p>A dorm lamp projects onto the wall, past the screen into the room; campus labs (College of Engineering, Pune) support AWS training.</p>
-      </div>
-    </div>
-
-    <!-- ═══ 11 · TAKEAWAYS ═══ -->
-    <div class="av-kicker reveal">Key takeaways</div>
+    <!-- ═══ 06 · KEY TAKEAWAYS ═══ -->
+    <div class="av-kicker reveal">06 · Key takeaways</div>
     <h2 class="reveal av-h"><span class="av-ico">🎯</span> Three things to take away</h2>
     <ul class="av-list reveal">
-      <li><span class="b">1️⃣</span><strong>Audio opens the service to everyone</strong> — voice reaches any phone, no screen needed.</li>
-      <li><span class="b">2️⃣</span><strong>Each tier adds depth, not complexity</strong> — Base, Intermediate &amp; Premium build on one another.</li>
-      <li><span class="b">3️⃣</span><strong>Premium is powered by SaaS apps</strong> — Amazon Quick and countless start-ups are services waiting to be monetized.</li>
+      <li><span class="b">1️⃣</span><strong>Audio opens the service to everyone</strong> — voice reaches users on any phone, with no screen needed.</li>
+      <li><span class="b">2️⃣</span><strong>Each tier adds depth, not complexity</strong> — Physical, Digital &amp; Spatial build on one another.</li>
+      <li><span class="b">3️⃣</span><strong>Digital &amp; Spatial are powered by SaaS apps</strong> — Amazon Quick and countless start-ups are services waiting for monetization, equipping users in their daily ecosystem regardless of interface.</li>
     </ul>
+
+    <!-- ═══ APPENDIX ═══ -->
+    <details class="av-more reveal" style="margin-top:44px;">
+      <summary>🗂️ Appendix · Dialing as muscle memory <span class="chev">›</span></summary>
+      <div class="av-more-body">
+        <p>The <strong>keypad &amp; alphabet layout</strong> are shaped around the physical gesture of dialing — so calling feels natural, not taught.</p>
+        <div class="av-figrow" style="margin-top:16px;">
+          <figure>
+            <img src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/Keypad%20and%20alphabet%20arrangement%20tuned%20so%20the%20calling%20gesture%20is%20natural%2C%20not%20taught..png" alt="Keypad and alphabet arrangement that makes the calling gesture more natural" />
+            <figcaption>⌨️ Keypad &amp; alphabet arrangement tuned so the calling gesture is natural, not taught.</figcaption>
+          </figure>
+          <figure>
+            <img src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/7_inspiration%20for%20numbers%20were%20taken%20from%20the%20genture%20while%20dialing%20these%20numbers%20and%20to%20enable%20muscle%20memory%20in%20target%20users.gif" alt="The dialing gesture that inspired the number layout, animated" />
+            <figcaption>👆 The dialing gesture itself inspired the layout — building on existing muscle memory.</figcaption>
+          </figure>
+        </div>
+        <img src="../assets/Concept_Alexa_Virtual-Cloud-Assistant/Images%20and%20context/10_name%20and%20number%20that%20user%20dials.jpg" alt="The name and number a user dials to reach the assistant" style="width:100%;border-radius:14px;margin-top:16px;" />
+      </div>
+    </details>
 
     <div class="cs-nextnav reveal" style="border-top:1px solid var(--border);margin-top:48px;padding-top:40px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
       <span style="font-size:var(--fs-tertiary);color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.08em;">Next project →</span>
-      <a href="sous-chef-device.html" style="display:inline-flex;align-items:center;gap:10px;font-size:1.25rem;font-weight:700;color:var(--text-primary);letter-spacing:-0.02em;text-decoration:none;transition:gap 0.2s,color 0.2s;" onmouseover="this.style.color='var(--accent)';this.style.gap='16px';" onmouseout="this.style.color='var(--text-primary)';this.style.gap='10px';">AI Sous Chef Assistant 🍳
+      <a href="sous-chef-device.html" style="display:inline-flex;align-items:center;gap:10px;font-size:1.25rem;font-weight:700;color:var(--text-primary);letter-spacing:-0.02em;text-decoration:none;transition:gap 0.2s,color 0.2s;" onmouseover="this.style.color='var(--accent)';this.style.gap='16px';" onmouseout="this.style.color='var(--text-primary)';this.style.gap='10px';">SousChef Lite 🍳
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
     </div>
@@ -399,6 +729,23 @@
   </ul>
   <div class="footer-copy">© 2026 greateagledesigns.com</div>
 </footer>
+<!-- Click-to-enlarge lightbox for case-study images (.av-zoom). -->
+<script>
+(function () {
+  var imgs = document.querySelectorAll('img.av-zoom');
+  if (!imgs.length) return;
+  var box = document.createElement('div');
+  box.className = 'av-lightbox'; box.setAttribute('aria-hidden', 'true');
+  box.innerHTML = '<button class="av-lightbox-close" aria-label="Close">×</button><img alt="" />';
+  document.body.appendChild(box);
+  var big = box.querySelector('img');
+  function open(src, alt) { big.src = src; big.alt = alt || ''; box.classList.add('open'); box.setAttribute('aria-hidden', 'false'); document.documentElement.style.overflow = 'hidden'; }
+  function close() { box.classList.remove('open'); box.setAttribute('aria-hidden', 'true'); document.documentElement.style.overflow = ''; big.src = ''; }
+  imgs.forEach(function (im) { im.addEventListener('click', function () { open(im.currentSrc || im.src, im.alt); }); });
+  box.addEventListener('click', function (e) { if (e.target === box || e.target.classList.contains('av-lightbox-close')) close(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && box.classList.contains('open')) close(); });
+})();
+</script>
 <script src="../assets/edit-mode.js"></script>
 <script>window.GED_BASE='../';</script>
 <script src="../assets/search-data.js"></script>
@@ -406,7 +753,9 @@
 <!-- Vercel Web Analytics -->
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
 <script defer src="/_vercel/insights/script.js"></script>
-<!-- Cookie consent + deferred Microsoft Clarity (loads only after Accept) -->
+<!-- Contact form + Book a session pop-ups -->
+<script defer src="../assets/connect.js"></script>
+<!-- Microsoft Clarity in cookie-free mode (no banner; see assets/consent.js) -->
 <script defer src="../assets/consent.js"></script>
 </body>
 </html>
