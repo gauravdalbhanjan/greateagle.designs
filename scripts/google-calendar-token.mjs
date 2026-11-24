@@ -50,6 +50,14 @@ const server = http.createServer(async (req, res) => {
     body: new URLSearchParams({ code, client_id: c.client_id, client_secret: c.client_secret, redirect_uri: REDIRECT, grant_type: 'authorization_code' })
   });
   const t = await r.json();
+  const granted = String(t.scope || '').split(' ');
+  const missing = SCOPES.filter(s => !granted.includes(s));
+  if (t.refresh_token && missing.length) {
+    res.writeHead(200, { 'Content-Type': 'text/plain' }).end('Not saved: some access was left unticked. Open the sign-in link again and tick every checkbox.');
+    console.error('\nNot saved: Google granted only part of the access. Missing: ' + missing.join(', ') +
+      '\nRun again and tick EVERY checkbox on the consent screen (free/busy AND events).');
+    server.close(); return;
+  }
   res.writeHead(200, { 'Content-Type': 'text/plain' }).end(t.refresh_token ? 'Done. You can close this tab and return to the terminal.' : 'No refresh token returned. See the terminal.');
   if (!t.refresh_token) { console.error('\nNo refresh_token in the response:', t.error || t); }
   else if (ENV_OUT) {
