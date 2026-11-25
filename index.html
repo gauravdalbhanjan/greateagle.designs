@@ -119,6 +119,8 @@
       100% { opacity: 0; transform: rotate(0deg)   translateX(58vw)   scale(0.8); }
     }
     @media (prefers-reduced-motion: reduce) { .pcard-burst { display: none; } }
+    /* Phones / touch: no directional arrow burst on the badge. */
+    @media (max-width: 760px), (hover: none), (pointer: coarse) { .pcard-burst { display: none !important; } }
     .pcard.flipped .pcard-inner { transform: rotateY(180deg) !important; animation: none; }
     .pcard-face {
       position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
@@ -498,6 +500,8 @@
     }
     .wp-icon-well .ico-acc { color: var(--accent); stroke: var(--accent); }
     /* Lens card body bits. */
+    .wp-env-shot { padding: 0; overflow: hidden; }
+    .wp-env-shot img { display: block; width: 100%; height: 100%; object-fit: cover; }
     .wp-card--lens .wp-sub { font-size: 13px; color: var(--text-tertiary); font-weight: 600; margin-top: 2px; }
     .wp-card--lens .wp-iface-label {
       display: inline-flex; align-self: flex-start; margin-top: 10px;
@@ -1002,7 +1006,11 @@
     }
     .ged-wt-close:hover { background: var(--surface-hover); color: var(--text-primary); }
     .ged-wt-close svg { width: 15px; height: 15px; }
-    @media (max-width: 600px) { .ged-wt-card { top: 12px; padding: 14px 18px 16px; } .ged-wt-title { font-size: 0.95rem; } }
+    @media (max-width: 600px) {
+      .ged-wt-card { top: auto; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); padding: 40px 18px 16px; width: max-content; max-width: calc(100vw - 24px); }
+      .ged-wt-card.ged-wt-hidden { transform: translateX(-50%) translateY(10px); }
+      .ged-wt-title { font-size: 0.95rem; }
+    }
     @media (prefers-reduced-motion: reduce) { .ged-wt-card { transition: opacity 0.15s linear; } }
     @media (prefers-reduced-motion: reduce) {
       .ged-flyout, .ged-fly-item, .ged-fly-label { transition: opacity 0.15s linear; transform: none; }
@@ -3537,7 +3545,9 @@
     function lensCard(p, i, mode) {
       var delay = 'style="animation-delay:' + (i * 70) + 'ms"';
       var icon = (mode === 'environment' ? ENV_ICON[p.id] : IFACE_ICON[p.id]) || svgWrap('<circle cx="24" cy="24" r="16"/>');
-      var iconBlock = '<div class="wp-media"><div class="wp-media-inner wp-icon-well">' + icon + '</div></div>';
+      var iconBlock = mode === 'environment'
+        ? '<div class="wp-media"><div class="wp-media-inner wp-env-shot"><img src="assets/thumbnails/env/' + p.id + '.webp" alt="' + esc(p.environment) + ': ' + esc(p.name) + '" loading="lazy" decoding="async" width="960" height="600" /></div></div>'
+        : '<div class="wp-media"><div class="wp-media-inner wp-icon-well">' + icon + '</div></div>';
       var body;
       if (mode === 'environment') {
         body = '<div class="wp-body">' +
