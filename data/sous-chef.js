@@ -7,7 +7,7 @@ window.CASE_STUDY = {
   name: "SousChef Lite",
 
   sectionOrder: [
-    "title", "hero", "glance", "problem", "shift", "principles",
+    "title", "hero", "glance", "problem", "principles",
     "features", "architecture", "guardrails", "privacy", "security",
     "decisionsTable", "tradeoffs", "tiers", "everyScreen", "gallery",
     "impact", "reflection"
@@ -73,20 +73,9 @@ window.CASE_STUDY = {
     quote: { text: "I would love to have this App. Can I get it, please?", cite: "2023 pilot user" }
   },
 
-  /* 04 · The shift */
-  shift: {
-    num: "04 · The shift",
-    title: "Flip search to select",
-    rows: [
-      { icon: "search", before: "Search a recipe, then check the pantry", after: "Choose from meals your pantry already supports" },
-      { icon: "shield", before: "Trust whatever the page says", after: "Every temperature, allergen and nutrition figure comes with a source" },
-      { icon: "lock", before: "Sign up and hand over your data", after: "Tap Guest access and cook. Nothing is stored on a server." }
-    ]
-  },
-
-  /* 05 · Principles */
+  /* 04 · Principles */
   principles: {
-    num: "05 · Principles",
+    num: "04 · Principles",
     title: "Three rules that decided everything",
     items: [
       { icon: "hand", title: "Suggest, don't decide.", body: "The app narrows the choices and you make the call. Every filter it reads from your request is shown as a chip you can remove." },
@@ -95,10 +84,10 @@ window.CASE_STUDY = {
     ]
   },
 
-  /* 06 · The product */
+  /* 05 · The product */
   features: {
     id: "product",
-    num: "06 · The product",
+    num: "05 · The product",
     title: "What SousChef Lite does",
     nav: {
       label: "Navigation",
@@ -143,12 +132,12 @@ window.CASE_STUDY = {
     ]
   },
 
-  /* 07 · How it works — interactive architecture diagram.
+  /* 06 · How it works — interactive architecture diagram.
      Facts only from the case-study copy and the diagram spec. A node's
      `test` line is omitted where no test or source fact exists. */
   architecture: {
     id: "how-it-works",
-    num: "07 · How it works",
+    num: "06 · How it works",
     title: "No server. The browser does everything.",
     figLabel: "SousChef Lite architecture. Everything runs inside your browser: screens, a local API, guardrails, four engines and on-device storage. Only four small, labelled pieces of data leave the device, to Wikimedia Commons, Open-Meteo, Google Forms and Vercel Analytics. The app ships from GitHub through CI to Vercel and AWS Amplify; the recipe library is built offline. On-device AI and Pro are parked.",
     viewsLabel: "Diagram view",
@@ -359,10 +348,10 @@ window.CASE_STUDY = {
     ]
   },
 
-  /* 08 · Guardrails */
+  /* 07 · Guardrails */
   guardrails: {
     id: "guardrails",
-    num: "08 · Guardrails",
+    num: "07 · Guardrails",
     title: "A cooking assistant that knows its limits",
     items: [
       { icon: "target", title: "Scope", summary: "It only talks about cooking.",
@@ -383,10 +372,10 @@ window.CASE_STUDY = {
     callout: { icon: "thermo", text: "The app never says “safe.” It gives the official temperature and its source, and [[leaves the judgement to you]]." }
   },
 
-  /* 09 · Privacy */
+  /* 08 · Privacy */
   privacy: {
     id: "privacy",
-    num: "09 · Privacy",
+    num: "08 · Privacy",
     title: "Your kitchen never leaves your device",
     cols: 2,
     figure: { img: "../assets/sous-chef/2026/privacy.webp", caption: "The in-app Privacy page",
@@ -405,10 +394,10 @@ window.CASE_STUDY = {
     ]
   },
 
-  /* 10 · Security */
+  /* 09 · Security */
   security: {
     id: "security",
-    num: "10 · Security",
+    num: "09 · Security",
     title: "Secure by construction, not by policy",
     items: [
       { icon: "shield", title: "Locked-down page", summary: "The app can only talk to approved sites.",
@@ -424,10 +413,10 @@ window.CASE_STUDY = {
     ]
   },
 
-  /* 11 · Decisions */
+  /* 10 · Decisions */
   decisionsTable: {
     id: "decisions",
-    num: "11 · Decisions",
+    num: "10 · Decisions",
     title: "What I built, then took out",
     lead: "The strongest decisions in this project were the things I removed.",
     callout: {
@@ -453,10 +442,10 @@ window.CASE_STUDY = {
     ]
   },
 
-  /* 12 · Trade-offs */
+  /* 11 · Trade-offs */
   tradeoffs: {
     id: "trade-offs",
-    num: "12 · Trade-offs",
+    num: "11 · Trade-offs",
     title: "What this design costs, honestly",
     items: [
       { icon: "device", title: "Device-only", body: "Device-only means strong privacy and $0 cost, but no sync between devices beyond the Excel export." },
@@ -468,11 +457,11 @@ window.CASE_STUDY = {
     ]
   },
 
-  /* 13 · Lite → Pro */
+  /* 12 · Lite → Pro */
   // The copy's "Business details" block is empty, so it is not rendered yet.
   tiers: {
     id: "lite-pro",
-    num: "13 · Lite → Pro",
+    num: "12 · Lite → Pro",
     title: "Free to cook. Pro when it earns it.",
     lite: {
       name: "SousChef Lite", badge: "Free, non-profit, live",
@@ -485,10 +474,10 @@ window.CASE_STUDY = {
     summary: "Locked features show a lock and an early-signup link, never a half-working version. Signups measure demand before anything is built."
   },
 
-  /* 14 · Built for every screen */
+  /* 13 · Built for every screen */
   everyScreen: {
     id: "every-screen",
-    num: "14 · Built for every screen",
+    num: "13 · Built for every screen",
     title: "One app: phone, tablet, desktop",
     figures: [
       { kind: "tablet", img: "../assets/sous-chef/2026/tablet-settings.webp", w: 1536, h: 1152, caption: "Tablet (1024 px): Settings opens as a drawer",
@@ -504,9 +493,9 @@ window.CASE_STUDY = {
     ]
   },
 
-  /* 15 · Origin (2023) — the existing device gallery */
+  /* 14 · Origin (2023) — the existing device gallery */
   galleryId: "origin",
-  galleryNum: "15 · Origin (2023)",
+  galleryNum: "14 · Origin (2023)",
   galleryTitle: "Where it started: a countertop device",
   galleryLead: "A team of four designed a countertop cooking companion with an interactive projector, a magnetic charging base and a pop-out stand that tilts up to 125°, built for wet, cluttered counters. It reached a working prototype and was piloted with 25 participants. Its core idea, [[select instead of search]], became the heart of the 2026 app.",
   gallery: [
@@ -530,8 +519,8 @@ window.CASE_STUDY = {
       alt: "The 2023 device's on-screen interface in use on a counter" }
   ],
 
-  /* 16 · Impact */
-  impactNum: "16",
+  /* 15 · Impact */
+  impactNum: "15",
   impactTitle: "Impact",
   impactCols: 2,
   impact: [
@@ -545,9 +534,9 @@ window.CASE_STUDY = {
       body: "A free tier is live, and early signups measure demand for Pro." }
   ],
 
-  /* 17 · Reflection */
+  /* 16 · Reflection */
   reflection: {
-    num: "17",
+    num: "16",
     title: "Reflection",
     principleLabel: "Principle",
     principle: "Cooking is nourishment, connection and comfort. Removing friction from search, distraction and waste brings back the joy, and [[trust is part of that friction]].",
