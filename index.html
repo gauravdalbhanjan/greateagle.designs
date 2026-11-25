@@ -546,6 +546,57 @@
     .wp-ifl-soon { display: flex; align-items: center; gap: 8px; color: var(--text-tertiary); padding: 3px 0; }
     .wp-ifl-soon-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
       color: var(--text-tertiary); border: 1px solid var(--border); border-radius: 100px; padding: 2px 8px; }
+    /* ═══ Interfaces view v2: wide hero cards (text left, photo right) ═══
+       One card per row. Colours come from the theme variables, so light and
+       dark mode follow the site toggle. */
+    .work-list.work-iface { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; max-width: 1180px; gap: 18px; }
+    @media (max-width: 960px) { .work-list.work-iface { grid-template-columns: 1fr !important; max-width: 640px; } }
+    .work-iface .wp-card--iface {
+      display: grid !important; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      align-items: stretch; width: 100%; max-width: none; border-radius: 26px; min-height: 0; height: auto;
+    }
+    .wp-card--iface .wp-body { padding: 20px 14px 20px 24px !important; justify-content: center; }
+    .wp-card--iface .wp-title {
+      font-size: clamp(1.3rem, 1.9vw, 1.65rem); line-height: 1.1; font-weight: 700;
+      letter-spacing: -0.02em; color: var(--text-primary); margin-bottom: 12px;
+    }
+    .wp-card--iface .wp-ifl { gap: 8px; margin: 0; }
+    .wp-card--iface .wp-ifl-item { font-size: 14px; line-height: 1.4; }
+    .wp-card--iface .wp-ifl-item a, .wp-card--iface .wp-ifl-link { color: var(--text-primary); display: inline; padding: 0 0 3px; border-bottom: 1px solid var(--border); transition: color 0.2s, border-color 0.2s; }
+    .wp-card--env:hover .wp-ifl-link { color: var(--accent); border-bottom-color: var(--accent); }
+    .wp-card--env:hover .wp-ifl-arrow { transform: translateX(4px); }
+    .wp-card--env { cursor: pointer !important; }
+    .wp-card--iface .wp-ifl-item a::after { content: none; }
+    .wp-ifl-tail { white-space: nowrap; }
+    .wp-card--iface .wp-ifl-arrow {
+      display: inline-block; transition: transform 0.2s;
+      -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+      width: 14px; height: 14px; margin-left: 8px; vertical-align: -1px; background-color: var(--accent);
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E");
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E");
+    }
+    /* Row hover: the whole horizontal band (set by JS as .is-hot) turns the
+       project name and arrow orange; the underline stays neutral. */
+    .wp-card--iface.has-hot { cursor: pointer; }
+    .wp-card--iface .wp-ifl-item a:hover,
+    .wp-card--iface .wp-ifl-item.is-hot a,
+    .wp-card--iface .wp-ifl-item a:focus-visible { color: var(--accent); border-bottom-color: var(--border); }
+    .wp-card--iface .wp-ifl-item a:hover .wp-ifl-arrow,
+    .wp-card--iface .wp-ifl-item.is-hot .wp-ifl-arrow { transform: translateX(4px); }
+    .wp-iface-shot { padding: 8px 8px 8px 0; display: flex; align-items: center; }
+    .work-list .wp-card--sm .wp-iface-shot .wp-media-inner {
+      flex: 1; aspect-ratio: auto !important; border-radius: 64px 16px 16px 16px;
+      background: var(--bg-tertiary, #ececec);
+    }
+    .work-list .wp-card--sm .wp-iface-shot img { width: 100%; height: auto; object-fit: contain; display: block; transition: transform 0.6s var(--ease); }
+    .wp-card--iface:hover .wp-iface-shot img, .wp-card--env:hover .wp-iface-shot img { transform: scale(1.03); }
+    [data-theme="dark"] .wp-iface-shot img { filter: brightness(0.92); }
+    @media (max-width: 760px) {
+      .work-iface .wp-card--iface { grid-template-columns: 1fr; border-radius: 22px; }
+      .wp-iface-shot { order: -1; padding: 8px 8px 0; }
+      .work-list .wp-card--sm .wp-iface-shot .wp-media-inner { border-radius: 16px 16px 16px 64px; }
+      .wp-card--iface .wp-body { padding: 18px 20px 22px !important; }
+    }
     /* Reduced motion: no lift/scale/entrance on the Interfaces category cards. */
     @media (prefers-reduced-motion: reduce) {
       .wp-card--iface { animation: none; }
@@ -3589,28 +3640,90 @@
     ];
     function ifaceCard(cat, i) {
       var delay = 'style="animation-delay:' + (i * 70) + 'ms"';
-      var iconBlock = '<div class="wp-media"><div class="wp-media-inner wp-icon-well">' + cat.icon + '</div></div>';
+      var iconBlock = '<div class="wp-media wp-iface-shot"><div class="wp-media-inner">' +
+        '<img src="assets/thumbnails/iface/' + cat.key + '.webp" alt="' + esc(cat.title) + ' example" loading="lazy" decoding="async"></div></div>';
       var rows = cat.items.filter(Boolean).map(function (it) {
         if (it.soon) {
           return '<li class="wp-ifl-item wp-ifl-soon"><span>' + esc(it.name) +
             '</span><span class="wp-ifl-soon-tag">Coming soon</span></li>';
         }
-        return '<li class="wp-ifl-item"><a href="' + it.href + '">' + esc(it.name) + '</a></li>';
+        // Keep the last word and the arrow together so the arrow never wraps alone.
+        var words = esc(it.name).split(' '), last = words.pop();
+        return '<li class="wp-ifl-item"><a href="' + it.href + '">' + (words.length ? words.join(' ') + ' ' : '') +
+          '<span class="wp-ifl-tail">' + last + '<i class="wp-ifl-arrow" aria-hidden="true"></i></span></a></li>';
       }).join('');
       return '<div class="wp-card wp-card--sm wp-card--iface" ' + delay + '>' +
-        iconBlock +
         '<div class="wp-body">' +
-          '<div class="wp-title">' + esc(cat.title) + '</div>' +
+          '<div class="wp-title">' + esc(cat.title).replace(' ', '<br>') + '</div>' +
           '<ul class="wp-ifl">' + rows + '</ul>' +
-        '</div></div>';
+        '</div>' + iconBlock + '</div>';
     }
+    // Interfaces cards: each project row acts as a full-width band across the
+    // whole card, including over the photo. The band for a row runs halfway
+    // to its neighbours, so the pointer always lands on the nearest project.
+    function ifaceHotRow(card, y) {
+      var rows = card.querySelectorAll('.wp-ifl-item');
+      if (!rows.length) return null;
+      var r = Array.prototype.map.call(rows, function (li) { return li.getBoundingClientRect(); });
+      for (var i = 0; i < rows.length; i++) {
+        var top = i === 0 ? r[i].top - 10 : (r[i - 1].bottom + r[i].top) / 2;
+        var bottom = i === rows.length - 1 ? r[i].bottom + 10 : (r[i].bottom + r[i + 1].top) / 2;
+        if (y >= top && y < bottom) return rows[i].querySelector('a') ? rows[i] : null;
+      }
+      return null;
+    }
+    function ifaceClearHot(except) {
+      list.querySelectorAll('.wp-card--iface.has-hot').forEach(function (c) {
+        if (c === except) return;
+        c.classList.remove('has-hot');
+        c.querySelectorAll('.wp-ifl-item.is-hot').forEach(function (li) { li.classList.remove('is-hot'); });
+      });
+    }
+    function ifaceCardAt(target) {
+      var c = target.closest && target.closest('.wp-card--iface');
+      return c && !c.classList.contains('wp-card--env') ? c : null;
+    }
+    list.addEventListener('pointermove', function (e) {
+      var card = ifaceCardAt(e.target);
+      ifaceClearHot(card);
+      if (!card) return;
+      var hot = ifaceHotRow(card, e.clientY);
+      card.querySelectorAll('.wp-ifl-item').forEach(function (li) { li.classList.toggle('is-hot', li === hot); });
+      card.classList.toggle('has-hot', !!hot);
+    });
+    list.addEventListener('pointerleave', function () { ifaceClearHot(null); });
+    list.addEventListener('click', function (e) {
+      var card = ifaceCardAt(e.target);
+      if (!card || e.target.closest('a')) return;   // real links handle themselves
+      var hot = ifaceHotRow(card, e.clientY);
+      var a = hot && hot.querySelector('a');
+      if (!a) return;
+      if (e.ctrlKey || e.metaKey || e.button === 1) window.open(a.href, '_blank', 'noopener');
+      else window.location.href = a.href;
+    });
     function renderInterfaces() {
       list.className = 'work-list work-iface';
       list.innerHTML = IFACE_CATS.map(function (c, i) { return ifaceCard(c, i); }).join('');
     }
     function renderEnvironments() {
-      list.className = 'work-list';
-      list.innerHTML = REAL.map(function (p, i) { return lensCard(p, i, 'environment'); }).join('');
+      list.className = 'work-list work-iface';
+      list.innerHTML = REAL.map(function (p, i) { return envCard(p, i); }).join('');
+    }
+    // Environment card: same wide layout as the Interfaces cards. The whole
+    // card is the link; the project name is styled like an Interfaces link.
+    function envCard(p, i) {
+      var delay = 'style="animation-delay:' + (i * 70) + 'ms"';
+      var words = esc(p.name).split(' '), last = words.pop();
+      var title = esc(p.environment);
+      return '<a class="wp-card wp-card--sm wp-card--iface wp-card--env" href="' + p.href + '" ' + delay + '>' +
+        '<div class="wp-body">' +
+          '<div class="wp-title">' + title + '</div>' +
+          '<ul class="wp-ifl"><li class="wp-ifl-item"><span class="wp-ifl-link">' + (words.length ? words.join(' ') + ' ' : '') +
+            '<span class="wp-ifl-tail">' + last + '<i class="wp-ifl-arrow" aria-hidden="true"></i></span></span></li></ul>' +
+        '</div>' +
+        '<div class="wp-media wp-iface-shot"><div class="wp-media-inner">' +
+          '<img src="assets/thumbnails/env/' + p.id + '.webp" alt="' + esc(p.environment) + ': ' + esc(p.name) + '" loading="lazy" decoding="async"></div></div>' +
+        '</a>';
     }
     // ── SERVICES view: 4 iPhone-style app tiles that navigate. ──
     function renderServices() {
